@@ -99,12 +99,11 @@ function LoadAllModules()
 		{ "BoostManager", "boostManager" },
 		{ "TestManager", "testManager" },
 
-		{ "GemManager", "gemManager" },
+		{ "UnitManager", "unitManager" },
 		{ "EggManager", "eggManager" },
-		{ "BuyEggManager", "buyEggManager" },
 
 		{ "DamageManager", "damageManager" },
-		{ "BuyZoneManager", "buyZoneManager" },
+
 		{ "ClaimOfflineManager", "claimOfflineManager" },
 		{ "AfkManager", "afkManager" },
 
@@ -152,8 +151,7 @@ RunService.Heartbeat:Connect(function(deltaTime)
 		"uiScaleManager",
 		"musicManager",
 		"vendorManager",
-		"buyEggManager",
-		"buyZoneManager",
+
 		"gemManager",
 		"deleteManager",
 
@@ -203,10 +201,6 @@ RunService.RenderStepped:Connect(function(deltaTime)
 	end
 
 	ClientMod.petManager:updatePetFrames(petParts, petCFrames)
-
-	for _, shard in pairs(ClientMod.shards) do
-		shard:tickRender(timeRatio)
-	end
 end)
 
 function tickSecond()

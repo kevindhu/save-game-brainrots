@@ -145,8 +145,6 @@ function TutManager:chooseTutMod(tutMod)
 		tutName = tutMod["tutName"]
 	end
 
-	-- print("CHOSEN TUT MOD: ", tutName)
-
 	local chosenData = {
 		tutName = tutName,
 	}

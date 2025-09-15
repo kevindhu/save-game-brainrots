@@ -19,7 +19,6 @@ local modulesToLoad = {
 	{ "RagdollManager", "ragdollManager" },
 
 	{ "WeatherManager", "weatherManager" },
-	{ "BuyEggManager", "buyEggManager" },
 
 	{ "LuckManager", "luckManager" },
 }
@@ -77,7 +76,6 @@ game:GetService("RunService").Heartbeat:Connect(function(deltaTime)
 
 	ServerMod.map:tick(timeRatio)
 	ServerMod.weatherManager:tick(timeRatio)
-	ServerMod.buyEggManager:tick(timeRatio)
 	ServerMod.luckManager:tick(timeRatio)
 
 	-- ServerMod.likeManager:tick(timeRatio)

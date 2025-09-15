@@ -44,7 +44,6 @@ function RewardManager:addRewards(rewardData)
 	local itemStash = home.itemStash
 	local plotManager = home.plotManager
 	local shopManager = home.shopManager
-	local zoneManager = home.zoneManager
 
 	local premiumEggClass = rewardData["premiumEggClass"]
 
@@ -63,13 +62,6 @@ function RewardManager:addRewards(rewardData)
 	if offlineCoinsBoost then
 		self.user.home.petManager:claimOfflineCoins({
 			boost = true,
-		})
-	end
-
-	if zoneClass then
-		zoneManager:unlockZone(zoneClass)
-		zoneManager:tryChooseZone({
-			zoneClass = zoneClass,
 		})
 	end
 

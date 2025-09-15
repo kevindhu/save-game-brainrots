@@ -58,8 +58,7 @@ function ServerEventManager:handleRequest(player, req, data)
 	local rewardManager = home.rewardManager
 	local petManager = home.petManager
 	local eggManager = home.eggManager
-	local gemManager = home.gemManager
-	local zoneManager = home.zoneManager
+	local unitManager = home.unitManager
 	local afkManager = home.afkManager
 	local favoriteManager = home.favoriteManager
 	local alertManager = home.alertManager
@@ -116,12 +115,6 @@ function ServerEventManager:handleRequest(player, req, data)
 	elseif req == "tryClaimIndexReward" then
 		indexManager:tryClaimIndexReward(data)
 
-	-- ZONEMANAGER
-	elseif req == "tryBuyZone" then
-		zoneManager:tryBuyZone(data)
-	elseif req == "tryChooseZone" then
-		zoneManager:tryChooseZone(data)
-
 	-- TUTMANAGER
 	elseif req == "tryUpdateTutMod" then
 		tutManager:tryUpdateTutMod(data)
@@ -143,14 +136,6 @@ function ServerEventManager:handleRequest(player, req, data)
 		tradeManager:tryAcceptGift(data)
 	elseif req == "tryStartTrade" then
 		tradeManager:tryStartTrade(data)
-
-	-- GEMMANAGER
-	elseif req == "tryCollectShard" then
-		gemManager:tryCollectShard(data)
-
-	-- BUYEGGMANAGER
-	elseif req == "tryBuyEgg" then
-		eggManager:tryBuyEgg(data)
 
 	-- SHOPMANAGER
 	elseif req == "tryBuyGamepass" then

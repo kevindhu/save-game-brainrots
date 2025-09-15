@@ -81,10 +81,6 @@ function VendorManager:newVendorMod(shopClass)
 			ClientMod.sellManager:toggle({
 				newBool = true,
 			})
-		elseif shopClass == "EggShop" then
-			ClientMod.buyEggManager:toggle({
-				newBool = true,
-			})
 		end
 	end)
 

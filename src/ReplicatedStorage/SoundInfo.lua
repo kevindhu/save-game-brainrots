@@ -221,16 +221,6 @@ SoundInfo["sounds"] = {
 		volume = 0.8,
 	},
 
-	-- SHARD SOUNDS
-	["ShardCollect1"] = {
-		id = 18466267502,
-		volume = 0.5,
-	},
-	["ShardCollect2"] = {
-		id = 115520671198314,
-		volume = 0.15,
-	},
-
 	-- EGG SOUNDS
 	["EggBreak1"] = {
 		id = 9113959343,

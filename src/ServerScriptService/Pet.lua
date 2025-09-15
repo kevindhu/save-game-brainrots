@@ -90,7 +90,7 @@ function Pet:createEvent(key, alias)
 	table.insert(self.eventsList, event)
 end
 
-local OFFLINE_DEBUFF = 0.01
+-- local OFFLINE_DEBUFF = 0.01
 
 function Pet:calculateOfflineCoins()
 	local leaveTimestamp = self.leaveTimestamp
@@ -102,27 +102,7 @@ function Pet:calculateOfflineCoins()
 	local totalSeconds = os.time() - leaveTimestamp
 	totalSeconds = math.min(totalSeconds, 60 * 60 * 24 * 5)
 
-	local damage = self.petStats["damage"] or 10
-
-	-- get average gem multiplier
-	local totalMultiplier = 0
-	for _, gem in pairs(self.user.home.gemManager.gems) do
-		if gem.destroyed then
-			continue
-		end
-		local gemStats = gem.gemStats
-		local gemMultiplier = gemStats["coinMultiplier"] or 1
-		totalMultiplier += gemMultiplier
-	end
-
-	local averageMultiplier = totalMultiplier / len(self.user.home.gemManager.gems)
-
-	local coinsEarned = damage * averageMultiplier * totalSeconds * OFFLINE_DEBUFF
-
-	self.totalOfflineCoins += coinsEarned
-
-	-- causes offline prompt to open (exactly like build a zoo)
-	-- can only collect this if over an hour
+	-- TODO: take from rope-game
 end
 
 function Pet:sync(otherUser)
@@ -174,33 +154,24 @@ function Pet:tickCurrAction()
 
 	local actionClass = actionMod.actionClass
 
-	if actionClass == "WalkToGem" then
-		local gemName = self.actionMod["gemName"]
-		local gem = self.user.home.gemManager.gems[gemName]
-		if not gem or gem.destroyed then
-			self:findRandomGem()
-			return
-		end
-		if not self.isStationary then
-			return
-		end
+	if actionClass == "WalkToUnit" then
+		local unitName = self.actionMod["unitName"]
+		local unit = self.user.home.unitManager.units[unitName]
 
-		-- arrived at gem
-		self:updateActionMod({
-			actionClass = "HitGem",
-			gemName = self.actionMod["gemName"],
-		})
-	elseif actionClass == "HitGem" then
-		self:tryAttackGem()
+		-- -- arrived at gem
+		-- self:updateActionMod({
+		-- 	actionClass = "HitGem",
+		-- 	gemName = self.actionMod["gemName"],
+		-- })
 	end
 end
 
 local ATTACK_TIMER = 1.2
 
-function Pet:tryAttackGem()
-	local gemName = self.actionMod["gemName"]
-	local gem = self.user.home.gemManager.gems[gemName]
-	if not gem or gem.destroyed then
+function Pet:tryAttackUnit()
+	local unitName = self.actionMod["unitName"]
+	local unit = self.user.home.unitManager.units[unitName]
+	if not unit or unit.destroyed then
 		if not self.startNewActionExpiree then
 			self.startNewActionExpiree = ServerMod.step + 60 * 0.7 -- 0.2
 			return
@@ -210,7 +181,7 @@ function Pet:tryAttackGem()
 		end
 		self.startNewActionExpiree = nil
 
-		self:findRandomGem()
+		self:findRandomUnit()
 		return
 	end
 
@@ -224,59 +195,23 @@ function Pet:tryAttackGem()
 	local baseDamage = self.petStats["attackDamage"] or 10
 	local damage = math.random(baseDamage * 0.8, baseDamage * 1.2)
 
-	gem:updateHealth(-damage, self)
+	unit:updateHealth(-damage, self)
 
 	self.user.home.damageManager:addDamage(damage)
 
-	local gemCoinMultiplier = gem.gemStats["coinMultiplier"] or 1
-	local petCoinMultiplier = self.petStats["coinMultiplier"] or 1
-	local coinsEarned = math.floor(damage * gemCoinMultiplier * petCoinMultiplier)
-
-	-- zone multiplier
-	local zoneCoinMultiplier = self.user.home.zoneManager:getCoinMultiplier()
-	coinsEarned = coinsEarned * zoneCoinMultiplier
-
-	-- level multiplier
-	local levelMultiplier = 1 + (self.level - 1) * 0.01
-	coinsEarned = coinsEarned * levelMultiplier
-
-	-- friend multiplier
-	local friendManager = self.user.home.friendManager
-	local friendStrengthBoost = 1 + (friendManager.friendCount * 0.1)
-	coinsEarned = coinsEarned * friendStrengthBoost
-
-	routine(function()
-		local totalDelay = 0.3 + (self.petStats["attackDelay"] or 0)
-		totalDelay = totalDelay / self.attackSpeedRatio
-
-		wait(totalDelay)
-
-		-- TODO: modify this exp based on other stats
-		local expEarned = damage
-		self:updateExp(expEarned)
-	end)
-
-	self.attackEvent:FireAllClients(gemName, damage, gem.health)
-
-	routine(function()
-		wait(0.3)
-		self.user.home.itemStash:updateItemCount({
-			itemName = "Coins",
-			count = coinsEarned,
-		})
-	end)
+	self.attackEvent:FireAllClients(unitName, damage, unit.health)
 end
 
-function Pet:findRandomGem()
-	local gemManager = self.user.home.gemManager
-	local gem = gemManager:getClosestUnoccupiedGem(self)
-	if not gem then
+function Pet:findRandomUnit()
+	local unitManager = self.user.home.unitManager
+	local unit = unitManager:getClosestUnit(self)
+	if not unit then
 		return
 	end
 
 	self:updateActionMod({
-		actionClass = "WalkToGem",
-		gemName = gem.gemName,
+		actionClass = "WalkToUnit",
+		unitName = unit.unitName,
 	})
 end
 
@@ -303,31 +238,29 @@ function Pet:getGoalFrame()
 	local actionMod = self.actionMod
 	local actionClass = actionMod.actionClass
 
-	local gemManager = self.user.home.gemManager
+	local unitManager = self.user.home.unitManager
 
-	local gem = nil
+	local unit = nil
 	if self.actionMod then
-		local gemName = self.actionMod["gemName"]
-		gem = gemManager.gems[gemName]
+		local unitName = self.actionMod["unitName"]
+		unit = unitManager.units[unitName]
 	end
 
-	if actionClass == "WalkToGem" then
-		if not gem or gem.destroyed then
+	if actionClass == "WalkToUnit" then
+		if not unit or unit.destroyed then
 			return self.currFrame
 		end
-		return CFrame.new(self:getAttackGemPos(gem))
-	elseif actionClass == "HitGem" then
-		return self.currFrame
+		return CFrame.new(self:getAttackUnitPos(unit))
 	end
 end
 
-function Pet:getAttackGemPos(gem)
+function Pet:getAttackUnitPos(unit)
 	local currPos = self.currFrame.Position
-	local gemPos = gem.currFrame.Position
+	local unitPos = unit.currFrame.Position
 
-	local moveDir = (gemPos - currPos).Unit
+	local moveDir = (unitPos - currPos).Unit
 
-	local attackPos = gemPos - moveDir * (self.attackRange + gem.gemStats.attackRadius)
+	local attackPos = unitPos - moveDir * (self.attackRange + unit.unitStats.attackRadius)
 
 	return attackPos
 end

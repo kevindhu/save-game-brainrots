@@ -137,24 +137,6 @@ function TutManager:doFullHintIconAnimation(hintIcon)
 	end)
 end
 
-function TutManager:initBuyEggHintIcons()
-	local itemMod = ClientMod.buyEggManager.itemMods["Egg1"]
-	local frame = itemMod["frame"]
-	local hintIcon = frame.InnerFrame.BuyButton.HintIcon
-	self.buyEggHintIcon = hintIcon
-
-	self:toggleHintIcon(hintIcon, false)
-	self:doFullHintIconAnimation(hintIcon)
-
-	local eggGUI = playerGui:WaitForChild("EggGUI")
-	local buyEggFrame = eggGUI.BuyEggFrame
-
-	local closeEggShopHintIcon = buyEggFrame.TopFrame.CloseButton.HintIcon
-	self.closeEggShopHintIcon = closeEggShopHintIcon
-	self:toggleHintIcon(closeEggShopHintIcon, false)
-	self:doFullHintIconAnimation(closeEggShopHintIcon)
-end
-
 function TutManager:toggleHintIcon(hintIcon, newBool)
 	if not hintIcon then
 		return

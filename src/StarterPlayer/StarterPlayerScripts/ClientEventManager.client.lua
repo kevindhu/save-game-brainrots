@@ -96,20 +96,6 @@ function handleRequest(req, data)
 	elseif req == "updatePetFrame" then
 		ClientMod.petManager:updatePetFrame(data)
 
-	-- GEMMANAGER
-	elseif req == "newGem" then
-		ClientMod.gemManager:newGem(data)
-	elseif req == "removeGem" then
-		ClientMod.gemManager:removeGem(data)
-	elseif req == "updateGemData" then
-		ClientMod.gemManager:updateGemData(data)
-	elseif req == "addShard" then
-		ClientMod.gemManager:addShard(data)
-	elseif req == "removeShard" then
-		ClientMod.gemManager:removeShard(data)
-	elseif req == "removeGemSpawner" then
-		ClientMod.gemManager:removeGemSpawner(data)
-
 	-- ALERTMANAGER
 	elseif req == "updateModuleAlert" then
 		ClientMod.alertManager:updateModuleAlert(data)
@@ -137,14 +123,6 @@ function handleRequest(req, data)
 	-- HATCHMANAGER
 	elseif req == "doHatch" then
 		ClientMod.hatchManager:doHatch(data)
-
-	-- BUYEGGMANAGER
-	elseif req == "updateEggShopStock" then
-		ClientMod.buyEggManager:updateEggShopStock(data)
-
-	-- BUYZONEMANAGER
-	elseif req == "updateAllZoneData" then
-		ClientMod.buyZoneManager:updateAllZoneData(data)
 
 	-- BOOSTMANAGER
 	elseif req == "updateBoostMods" then

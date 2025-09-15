@@ -214,16 +214,6 @@ function PlaceManager:doFullPromptRefresh()
 		hatchPrompt.MaxActivationDistance = 12
 	end
 
-	-- update shards
-	for _, shard in pairs(ClientMod.shards) do
-		local collectPrompt = shard.collectPrompt
-		if not collectPrompt then
-			continue
-		end
-		collectPrompt.Enabled = not deleteToggled and not placeToggled
-		collectPrompt.MaxActivationDistance = 12
-	end
-
 	for _, user in pairs(ClientMod.users) do
 		user:toggleGiftPrompt(petEquipped)
 	end

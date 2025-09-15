@@ -400,7 +400,6 @@ function User:syncAllGlobalMods()
 
 	ServerMod.weatherManager:sync(self)
 	ServerMod.luckManager:sync(self)
-	ServerMod.buyEggManager:sync(self)
 
 	routine(function()
 		wait(3)

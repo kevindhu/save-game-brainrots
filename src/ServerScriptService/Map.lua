@@ -65,9 +65,6 @@ function Map:initFolders()
 		"UserRigs",
 		"PetRigs",
 
-		-- models
-		"GemModels",
-		"ShardModels",
 		"EggModels",
 
 		"HighlightTemplateModels",
@@ -126,15 +123,6 @@ end
 
 function Map:cleanPlotModel(plotName)
 	local plotModel = game.Workspace[plotName]
-	for _, spawnerPart in pairs(plotModel.GemSpawnerParts:GetChildren()) do
-		if not spawnerPart:IsA("BasePart") then
-			continue
-		end
-		spawnerPart.Transparency = 1
-	end
-
-	local machinePart = plotModel.MachinePart
-	machinePart.Transparency = 1
 end
 
 function Map:getRandomEmptyPlotName()

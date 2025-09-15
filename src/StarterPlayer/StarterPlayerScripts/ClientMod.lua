@@ -16,8 +16,6 @@ local ClientMod = {
 	pets = {},
 	gems = {},
 	eggs = {},
-
-	shards = {},
 }
 
 function ClientMod:init()

@@ -206,12 +206,9 @@ function PlotManager:initPlot(data)
 	self.model = model
 
 	self.floorPart = model:WaitForChild("FloorPart")
-	self.eggFloorPart = model:WaitForChild("EggFloorPart")
 
 	local user = ClientMod:getLocalUser()
 	user:addPullArrow()
-
-	ClientMod.buyZoneManager:addBuyZoneArea(model)
 end
 
 function PlotManager:tick() end
