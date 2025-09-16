@@ -40,7 +40,7 @@ function UnitManager:addTestUnits()
 		self:addUnit({
 			unitClass = "Unit1",
 		})
-		wait(1)
+		wait(0.2)
 	end
 end
 
@@ -82,7 +82,9 @@ end
 
 function UnitManager:getUnitStartFrame()
 	local plotManager = self.user.home.plotManager
-	local unitStartFrame = plotManager.unitStartPart.CFrame
+	local unitStartPart = plotManager.unitStartPart
+
+	local unitStartFrame = unitStartPart.CFrame * CFrame.new(0, 0, Common.randomBetween(-30, 30))
 
 	return unitStartFrame
 end
@@ -107,7 +109,10 @@ end
 
 function UnitManager:destroy()
 	for _, unit in pairs(self.units) do
-		unit:destroy()
+		unit:destroy({
+			waitTimer = 0,
+			noRagdoll = true,
+		})
 	end
 	self.units = {}
 end

@@ -3,7 +3,7 @@ local ServerMod = require(script.Parent.ServerMod)
 local Common = require(game.ReplicatedStorage.Common)
 local len, routine, wait = Common.len, Common.routine, Common.wait
 
--- local PetSpotInfo = require(game.ReplicatedStorage.PetSpotInfo)
+local PetInfo = require(game.ReplicatedStorage.PetInfo)
 
 local PetSpot = {}
 PetSpot.__index = PetSpot
@@ -24,6 +24,9 @@ function PetSpot:init()
 	for k, v in pairs(self.data) do
 		self[k] = v
 	end
+
+	self.attackSpeedRatio = Common.randomBetween(1, 1.1)
+	-- self.attackSpeedRatio = Common.randomBetween(2, 3)
 
 	self:initModel()
 	self.standPart = self.model:WaitForChild("StandPart")
@@ -94,11 +97,17 @@ function PetSpot:tickAttack(timeRatio)
 	if self.attackExpiree and self.attackExpiree > ServerMod.step then
 		return
 	end
-	self.attackExpiree = ServerMod.step + 60 * 0.2 -- 0.5
+	self.attackExpiree = ServerMod.step + 60 * 1 / self.attackSpeedRatio
 
 	local damage = math.random(200, 300)
 
-	targetUnit:updateHealth(-damage, self)
+	local totalDelay = 0.3 + (self.petStats["attackDelay"] or 0)
+	totalDelay = totalDelay / self.attackSpeedRatio
+
+	routine(function()
+		wait(totalDelay)
+		targetUnit:updateHealth(-damage, self)
+	end)
 
 	self.user.home.damageManager:addDamage(damage)
 
@@ -122,6 +131,13 @@ end
 function PetSpot:occupyWithPet(petData)
 	self.petData = petData
 
+	if self.petData then
+		for k, v in pairs(self.petData) do
+			self[k] = v
+		end
+		self.petStats = PetInfo:getMeta(self.petClass)
+	end
+
 	print("OCCUPYING PET SPOT: ", self.petSpotName, self.petData)
 
 	self:sendData()
@@ -132,7 +148,7 @@ function PetSpot:sendData()
 		petSpotName = self.petSpotName,
 		petData = self.petData,
 
-		attackSpeedRatio = 2,
+		attackSpeedRatio = self.attackSpeedRatio,
 	})
 end
 

@@ -118,9 +118,6 @@ function PlotManager:initModel()
 	self.savePart = model.SavePart
 	self.unitStartPart = model.UnitStartPart
 
-	self.machinePart = model.MachinePart
-	self.machinePart.Transparency = 1
-
 	self.plotBaseFrame = self.floorPart.CFrame
 
 	self.floorPart:SetAttribute("userName", self.user.name)

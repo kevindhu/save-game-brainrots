@@ -361,6 +361,9 @@ function Unit:destroyRig()
 end
 
 function Unit:destroy(data)
+	local noRagdoll = data["noRagdoll"]
+	local waitTimer = data["waitTimer"] or 1
+
 	if self.destroyed then
 		return
 	end
@@ -372,11 +375,41 @@ function Unit:destroy(data)
 	end
 
 	routine(function()
-		local waitTimer = data["waitTimer"] or 0
+		if noRagdoll then
+			self:destroyRig()
+		else
+			wait(1.5)
+			for _, child in pairs(rig:GetDescendants()) do
+				if child:IsA("BasePart") then
+					ClientMod.tweenManager:createTween({
+						target = child,
+						timer = 0.5,
+						easingStyle = "Linear",
+						easingDirection = "Out",
+						goal = {
+							Transparency = 1,
+						},
+					})
+				elseif child:IsA("Decal") then
+					ClientMod.tweenManager:createTween({
+						target = child,
+						timer = 0.5,
+						easingStyle = "Linear",
+						easingDirection = "Out",
+						goal = {
+							Transparency = 1,
+						},
+					})
+				end
+			end
+
+			wait(2)
+			self:destroyRig()
+		end
+	end)
+
+	routine(function()
 		wait(waitTimer)
-
-		-- self:destroyRig()
-
 		ClientMod.units[self.unitName] = nil
 	end)
 end

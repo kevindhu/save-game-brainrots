@@ -66,10 +66,12 @@ end
 function Unit:updateHealth(delta, attacker)
 	self.health += delta
 
-	print("!! UNIT HEALTH: ", self.unitName, self.health)
+	-- print("!! UNIT HEALTH: ", self.unitName, self.health)
 
 	if self.health <= 0 then
-		self:destroy()
+		self:destroy({
+			waitTimer = 1,
+		})
 	end
 end
 
@@ -104,7 +106,10 @@ function Unit:tickCurrAction()
 	if actionClass == "WalkToSavePart" then
 		if self.isStationary then
 			-- print("!! DESTROYING UNIT: ", self.unitName)
-			self:destroy()
+			self:destroy({
+				waitTimer = 0,
+				noRagdoll = true,
+			})
 		end
 	end
 end
@@ -239,7 +244,7 @@ function Unit:getFloorPos(topPos)
 	return true, hitPosition
 end
 
-function Unit:destroy()
+function Unit:destroy(data)
 	if self.destroyed then
 		warn("ALREADY DESTROYED UNIT HUH: ", self.name)
 		return
@@ -252,11 +257,10 @@ function Unit:destroy()
 
 	self.owner.units[self.unitName] = nil
 
-	print(len(self.owner.units))
-
 	ServerMod:FireAllClients("removeUnit", {
 		unitName = self.unitName,
-		waitTimer = 1,
+		waitTimer = data["waitTimer"] or 1,
+		noRagdoll = data["noRagdoll"],
 	})
 end
 

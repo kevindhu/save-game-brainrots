@@ -202,7 +202,7 @@ function PlaceManager:doFullPromptRefresh()
 			interactPrompt.Enabled = true
 			interactPrompt.ActionText = "Pickup Brainrot"
 		else
-			print("NO PET DATA: ", petSpot.petSpotName)
+			-- print("NO PET DATA: ", petSpot.petSpotName)
 			interactPrompt.ActionText = "Place"
 			if petEquipped then
 				interactPrompt.Enabled = true

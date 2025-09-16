@@ -165,25 +165,24 @@ function PetSpot:addAttack(data)
 		self:addLaser(self.rigFrame, unit.rig.Torso.CFrame)
 
 		-- in the middle
-		local midPos = (petPos + unitPos) / 2
-
-		-- print("ADDING DAMAGE HIT FOR PET SPOT: ", midPos, damage)
+		local attackDir = (unitPos - petPos).Unit
+		local attackDist = (unitPos - petPos).Magnitude
+		local damagePos = petPos + attackDir * attackDist * 0.85
 
 		if self.userName == player.Name then
 			ClientMod.damageManager:addDamageHit({
-				pos = midPos + Vector3.new(0, 3, 0),
+				pos = damagePos + Vector3.new(0, 3, 0),
 				damage = damage,
 			})
 		end
 
 		ClientMod.soundManager:newSoundMod({
 			soundClass = "PetHit" .. math.random(1, 5),
-			pos = midPos,
+			pos = damagePos,
 			volume = 0.025, -- 0.1
 		})
 
-		local hitDir = (unitPos - petPos).Unit
-		local hitPos = petPos + hitDir * 3 + Vector3.new(0, 2, 0)
+		local hitPos = unitPos - attackDir
 
 		ClientMod.spellManager:addExplosion({
 			spellClass = "RockHit",
@@ -207,7 +206,8 @@ function PetSpot:addLaser(petFrame, unitFrame)
 	line.CanCollide = false
 	line.Parent = workspace
 
-	line.Color = Color3.fromRGB(255, 0, 0)
+	-- line.Color = Color3.fromRGB(255, 0, 0)
+	line.Color = Color3.fromRGB(82, 229, 255)
 
 	local midPos = (posA + posB) / 2
 	local vect = (posB - posA).unit
