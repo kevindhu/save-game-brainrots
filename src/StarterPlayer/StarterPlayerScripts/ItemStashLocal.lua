@@ -10,7 +10,7 @@ local ClientMod = require(playerScripts.ClientMod)
 local ItemInfo = require(game.ReplicatedStorage.ItemInfo)
 local ToolInfo = require(game.ReplicatedStorage.ToolInfo)
 local PetInfo = require(game.ReplicatedStorage.PetInfo)
-local EggInfo = require(game.ReplicatedStorage.EggInfo)
+
 local PetBalanceInfo = require(game.ReplicatedStorage.PetBalanceInfo)
 
 local Icon = require(game.ReplicatedStorage.Libraries.Icon)
@@ -143,7 +143,6 @@ function ItemStash:addTabCons()
 	local tabList = {
 		"All",
 		"Pets",
-		"Eggs",
 	}
 
 	for _, tabClass in ipairs(tabList) do
@@ -623,13 +622,10 @@ function ItemStash:updateItemMod(data)
 	if not itemMod then
 		itemMod = self:newItemMod(itemData)
 		-- try to add to bottom mods
-		if len(self.bottomModsList) < 6 then
-			if noClick == nil then
-				noClick = true
-				if itemMod["race"] == "egg" then
-					noClick = false
-				end
-			end
+		if len(self.bottomModsList) < 6 or true then
+			-- if noClick == nil then
+			-- 	noClick = true
+			-- end
 
 			self:toggleBottomItem(itemMod, noClick)
 		end
@@ -791,7 +787,6 @@ function ItemStash:getFullItemStats(itemClass)
 	local itemStats = ItemInfo:getMeta(itemClass, true)
 		or ToolInfo:getMeta(itemClass, true)
 		or PetInfo:getMeta(itemClass, true)
-		or EggInfo:getMeta(itemClass, true)
 
 	if not itemStats then
 		warn("NO ITEM STATS FOUND FOR: ", itemClass)
@@ -827,8 +822,7 @@ function ItemStash:refreshGUI()
 	local totalPetCount = 0
 
 	local raceMap = {
-		egg = 1,
-		pet = 2,
+		pet = 1,
 	}
 
 	local mutationMap = {
@@ -898,8 +892,6 @@ function ItemStash:refreshGUI()
 			frame.Visible = true
 		elseif self.chosenTabClass == "Pets" then
 			frame.Visible = (race == "pet")
-		elseif self.chosenTabClass == "Eggs" then
-			frame.Visible = (race == "egg")
 		end
 
 		if race == "pet" then

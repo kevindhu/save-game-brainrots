@@ -17,31 +17,40 @@ local plotGUI = playerGui:WaitForChild("PlotGUI")
 local MapInfo = require(game.ReplicatedStorage.MapInfo)
 
 local PlotManager = {
-	plotSignMap = {},
+	plotMods = {},
 }
 PlotManager.__index = PlotManager
 
 function PlotManager:init()
 	self:addCons()
 
-	routine(function()
-		self:addAllPlotSmallSigns()
-	end)
+	self:initAllPlotMods()
 end
 
-function PlotManager:addAllPlotSmallSigns()
+function PlotManager:initAllPlotMods()
 	for i = 1, MapInfo.PLOT_COUNT do
 		local plotName = "Plot" .. i
 
 		local plotModel = game.Workspace:WaitForChild(plotName)
-		local signModel = plotModel:WaitForChild("SmallSign")
 
-		local newPlotSignMod = {
+		local floorPart = plotModel:WaitForChild("FloorPart")
+		local savePart = plotModel:WaitForChild("SavePart")
+		local unitStartPart = plotModel:WaitForChild("UnitStartPart")
+
+		local newPlotMod = {
 			plotName = plotName,
 			userName = nil,
-		}
-		self.plotSignMap[plotName] = newPlotSignMod
 
+			floorPart = floorPart,
+			savePart = savePart,
+			unitStartPart = unitStartPart,
+
+			model = plotModel,
+		}
+		self.plotMods[plotName] = newPlotMod
+
+		-- init the sign bb
+		local signModel = plotModel:WaitForChild("SmallSign")
 		routine(function()
 			local bb = signModel:WaitForChild("BBPart"):WaitForChild("BB")
 
@@ -51,7 +60,7 @@ function PlotManager:addAllPlotSmallSigns()
 			local likeButton = bb.MainFrame.LikeButton
 			ClientMod.buttonManager:addBasicButtonCons(likeButton)
 			ClientMod.buttonManager:addActivateCons(likeButton, function()
-				local userName = newPlotSignMod.userName
+				local userName = newPlotMod.userName
 				if not userName then
 					warn("COULD NOT ADD LIKE: NO USER NAME")
 					return
@@ -62,22 +71,22 @@ function PlotManager:addAllPlotSmallSigns()
 				})
 			end)
 
-			newPlotSignMod["bb"] = bb
-			self:refreshPlotSignMod(newPlotSignMod)
+			newPlotMod["bb"] = bb
+			self:refreshPlotMod(newPlotMod)
 		end)
 	end
 end
 
-function PlotManager:clearPlotSignMod(plotName)
-	local plotSignMod = self.plotSignMap[plotName]
-	if not plotSignMod then
+function PlotManager:clearPlotMod(plotName)
+	local plotMod = self.plotMods[plotName]
+	if not plotMod then
 		return
 	end
 
-	plotSignMod["userId"] = nil
-	plotSignMod["userName"] = nil
+	plotMod["userId"] = nil
+	plotMod["userName"] = nil
 
-	self:refreshPlotSignMod(plotSignMod)
+	self:refreshPlotMod(plotMod)
 end
 
 function PlotManager:updateGlobalPlot(data)
@@ -87,24 +96,29 @@ function PlotManager:updateGlobalPlot(data)
 	local hatchedCount = data.hatchedCount
 	local likeUserList = data.likeUserList
 
-	local plotSignMod = self.plotSignMap[plotName]
+	local plotMod = self.plotMods[plotName]
 
-	plotSignMod.userName = userName
-	plotSignMod.userId = userId
-	plotSignMod.hatchedCount = hatchedCount
-	plotSignMod.likeUserList = likeUserList
+	plotMod.userName = userName
+	plotMod.userId = userId
+	plotMod.hatchedCount = hatchedCount
+	plotMod.likeUserList = likeUserList
 
-	self:refreshPlotSignMod(plotSignMod)
+	if plotMod.userName == player.Name then
+		self.model = plotMod.model
+		self.floorPart = plotMod.floorPart
+		self.savePart = plotMod.savePart
+		self.unitStartPart = plotMod.unitStartPart
+	end
+
+	self:refreshPlotMod(plotMod)
 end
 
-function PlotManager:refreshPlotSignMod(plotSignMod)
-	local bb = plotSignMod["bb"]
-	local userName = plotSignMod.userName
-	local userId = plotSignMod.userId
-	local hatchedCount = plotSignMod.hatchedCount
-	local likeUserList = plotSignMod.likeUserList
-
-	-- print("!! REFRESHING PLOT SIGN MOD: ", plotSignMod)
+function PlotManager:refreshPlotMod(plotMod)
+	local bb = plotMod["bb"]
+	local userName = plotMod.userName
+	local userId = plotMod.userId
+	local hatchedCount = plotMod.hatchedCount
+	local likeUserList = plotMod.likeUserList
 
 	-- no bb yet
 	if not bb then
@@ -128,7 +142,6 @@ function PlotManager:refreshPlotSignMod(plotSignMod)
 		mainFrame.ProfileIcon.Image = Common.getProfileImageFromUserId(userId)
 	end)
 
-	mainFrame.HatchedTitle.Text = string.format("Hatched: %s times", Common.commas(hatchedCount))
 	mainFrame.LikeButton.Title.Text = "x" .. Common.commas(len(likeUserList))
 end
 
@@ -177,12 +190,6 @@ function PlotManager:addCons()
 	ClientMod.buttonManager:addActivateCons(myPlotButton, function()
 		self:tryTeleportTo("MyPlot")
 	end)
-
-	local eggsButton = topFrame.Eggs
-	ClientMod.buttonManager:addBasicButtonCons(eggsButton)
-	ClientMod.buttonManager:addActivateCons(eggsButton, function()
-		self:tryTeleportTo("EggShop")
-	end)
 end
 
 function PlotManager:tryTeleportTo(teleportClass)
@@ -193,22 +200,7 @@ function PlotManager:tryTeleportTo(teleportClass)
 		local spawnFrame = floorPart.CFrame * CFrame.new(xOffset, 10, 0) * CFrame.Angles(0, math.rad(-90), 0)
 
 		user.rig:PivotTo(spawnFrame)
-	elseif teleportClass == "EggShop" then
-		user.rig:PivotTo(game.Workspace.EggShopModel.TeleportPart.CFrame * CFrame.new(0, 10, 0))
 	end
-end
-
-function PlotManager:initPlot(data)
-	local plotName = data.plotName
-	self.plotName = plotName
-
-	local model = game.Workspace:WaitForChild(plotName)
-	self.model = model
-
-	self.floorPart = model:WaitForChild("FloorPart")
-
-	local user = ClientMod:getLocalUser()
-	user:addPullArrow()
 end
 
 function PlotManager:tick() end

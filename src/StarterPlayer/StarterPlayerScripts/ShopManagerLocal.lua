@@ -35,8 +35,7 @@ function ShopManager:init()
 	self:initGamepassMods()
 	-- self:initProductMods()
 
-	self:addLuckyBlockCons()
-	self:addServerLuckCons()
+	-- self:addServerLuckCons()
 
 	self:initCurrencyMods()
 
@@ -52,43 +51,6 @@ function ShopManager:addServerLuckCons()
 	ClientMod.buttonManager:addActivateCons(buyButton, function()
 		ClientMod:FireServer("tryBuyNextServerLuck", {})
 	end)
-end
-
-function ShopManager:addLuckyBlockCons()
-	local luckyBlockFrame = shopFrame.MainItemList.LuckyBlock
-	local buy10Button = luckyBlockFrame.BuyButtonList.Buy10Button
-	local buy3Button = luckyBlockFrame.BuyButtonList.Buy3Button
-	local buy1Button = luckyBlockFrame.BuyButtonList.Buy1Button
-
-	ClientMod.buttonManager:addActivateCons(buy10Button, function()
-		ClientMod:FireServer("tryBuyProduct", {
-			productClass = "LuckyBlock10",
-		})
-	end)
-	ClientMod.buttonManager:addBasicButtonCons(buy10Button)
-
-	local productStats = ShopInfo:getMeta("LuckyBlock10")
-	self:retryProductPrice(buy10Button.Title, productStats["id"], Enum.InfoType.Product)
-
-	ClientMod.buttonManager:addActivateCons(buy3Button, function()
-		ClientMod:FireServer("tryBuyProduct", {
-			productClass = "LuckyBlock3",
-		})
-	end)
-	ClientMod.buttonManager:addBasicButtonCons(buy3Button)
-
-	local productStats = ShopInfo:getMeta("LuckyBlock3")
-	self:retryProductPrice(buy3Button.Title, productStats["id"], Enum.InfoType.Product)
-
-	ClientMod.buttonManager:addActivateCons(buy1Button, function()
-		ClientMod:FireServer("tryBuyProduct", {
-			productClass = "LuckyBlock1",
-		})
-	end)
-	ClientMod.buttonManager:addBasicButtonCons(buy1Button)
-
-	local productStats = ShopInfo:getMeta("LuckyBlock1")
-	self:retryProductPrice(buy1Button.Title, productStats["id"], Enum.InfoType.Product)
 end
 
 local TOP_PADDING_RATIO = 0.09

@@ -57,7 +57,6 @@ function ServerEventManager:handleRequest(player, req, data)
 	local tradeManager = home.tradeManager
 	local rewardManager = home.rewardManager
 	local petManager = home.petManager
-	local eggManager = home.eggManager
 	local unitManager = home.unitManager
 	local afkManager = home.afkManager
 	local favoriteManager = home.favoriteManager
@@ -104,12 +103,8 @@ function ServerEventManager:handleRequest(player, req, data)
 		petManager:tryRewardCoins(data)
 	elseif req == "tryClaimOfflineCoins" then
 		petManager:tryClaimOfflineCoins(data)
-
-	-- EGGMANAGER
-	elseif req == "tryInstantHatchEgg" then
-		eggManager:tryInstantHatchEgg(data)
-	elseif req == "tryHatchEgg" then
-		eggManager:tryHatchEgg(data)
+	elseif req == "tryPickupFromPetSpot" then
+		petManager:tryPickupFromPetSpot(data)
 
 	-- INDEXMANAGER
 	elseif req == "tryClaimIndexReward" then
@@ -126,8 +121,8 @@ function ServerEventManager:handleRequest(player, req, data)
 	-- TOOLMANAGER
 	elseif req == "tryBuyTool" then
 		toolManager:tryBuyTool(data)
-	elseif req == "tryPlaceStashTool" then
-		toolManager:tryPlaceStashTool(data)
+	elseif req == "tryPlacePetAtPetSpot" then
+		toolManager:tryPlacePetAtPetSpot(data)
 	elseif req == "tryEquipBottomMod" then
 		toolManager:tryEquipBottomMod(data)
 

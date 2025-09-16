@@ -3,7 +3,6 @@ local ServerMod = require(game.ServerScriptService.ServerMod)
 local Common = require(game.ReplicatedStorage.Common)
 local len, routine, wait = Common.len, Common.routine, Common.wait
 
--- local EggInfo = require(game.ReplicatedStorage.EggInfo)
 local MutationInfo = require(game.ReplicatedStorage.MutationInfo)
 
 local ProbManager = {}

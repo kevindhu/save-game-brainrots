@@ -54,16 +54,12 @@ function Pet:init()
 end
 
 function Pet:initAllEvents()
-	self:initEventReceiver("attack", "ATTACK", function(gemName, damage, newGemHealth)
+	self:initEventReceiver("attack", "ATTACK", function(unitName, damage, newUnitHealth)
 		self:addAttack({
-			gemName = gemName,
+			unitName = unitName,
 			damage = damage,
-			newGemHealth = newGemHealth,
+			newUnitHealth = newUnitHealth,
 		})
-	end)
-
-	self:initEventReceiver("exp", "EXP", function(exp, level)
-		self:updateExp(exp, level)
 	end)
 end
 
@@ -80,44 +76,12 @@ function Pet:initEventReceiver(key, alias, callback)
 	event.OnClientEvent:Connect(callback)
 end
 
-function Pet:updateExp(exp, level)
-	local oldLevel = self.level
-
-	self.exp = exp
-	self.level = level
-
-	if oldLevel ~= level then
-		self:refreshRigScale()
-	end
-
-	self:refreshExpBar()
-end
-
 function Pet:refreshRigScale()
 	if not self.rig then
 		return
 	end
 	local realScale = PetInfo:getRealScale(self.baseWeight, self.level)
 	self.rig:ScaleTo(self.baseRigScale * realScale)
-end
-
-function Pet:refreshExpBar()
-	local bb = self.bb
-	if not bb then
-		return
-	end
-
-	local levelExpCap = PetInfo:calculateLevelExpCap(self.level, self.rating)
-
-	bb.MainFrame.LevelTitle.Text = "Level " .. self.level
-
-	local expBar = bb.MainFrame.ExpBar
-	expBar.Title.Text =
-		string.format("%s/%s", Common.abbreviateNumber(self.exp) .. "XP", Common.abbreviateNumber(levelExpCap) .. "XP")
-
-	local progressRatio = self.exp / levelExpCap
-	progressRatio = math.clamp(progressRatio, 0, 1)
-	expBar.CurrProgress.Size = UDim2.fromScale(progressRatio, 1)
 end
 
 function Pet:initRig()
@@ -288,19 +252,12 @@ function Pet:tickCurrAction(timeRatio)
 		return
 	end
 
-	local actionClass = self.actionMod.actionClass
-
-	if actionClass == "HitGem" then
-		local gem = ClientMod.gems[self.actionMod["gemName"]]
-		if not gem then
-			return
-		end
-	end
+	-- TODO:
 end
 
 function Pet:addAttack(data)
-	local gemName = data["gemName"]
-	local newGemHealth = data["newGemHealth"]
+	local unitName = data["unitName"]
+	local newUnitHealth = data["newUnitHealth"]
 	local damage = data["damage"]
 
 	-- animate
@@ -322,17 +279,17 @@ function Pet:addAttack(data)
 		totalDelay = totalDelay / self.attackSpeedRatio
 
 		wait(totalDelay)
-		local gem = ClientMod.gems[gemName]
-		if not gem then
-			warn("NO GEM FOUND: ", gemName)
+		local unit = ClientMod.units[unitName]
+		if not unit then
+			warn("NO UNIT FOUND: ", unitName)
 			return
 		end
 
 		local petPos = self.currFrame.Position
-		local gemPos = gem.currFrame.Position
+		local unitPos = unit.currFrame.Position
 
 		-- in the middle
-		local midPos = (petPos + gemPos) / 2
+		local midPos = (petPos + unitPos) / 2
 
 		if self.userName == player.Name then
 			ClientMod.damageManager:addDamageHit({
@@ -347,7 +304,7 @@ function Pet:addAttack(data)
 			volume = 0.025, -- 0.1
 		})
 
-		local hitDir = (gemPos - petPos).Unit
+		local hitDir = (unitPos - petPos).Unit
 		local hitPos = petPos + hitDir * 3 + Vector3.new(0, 2, 0)
 
 		ClientMod.spellManager:addExplosion({
@@ -358,25 +315,7 @@ function Pet:addAttack(data)
 			-- baseColor = Color3.fromRGB(255, 0, 0),
 		})
 
-		if newGemHealth <= 0 then
-			-- ClientMod.soundManager:newSoundMod({
-			-- 	soundClass = "BoopHit" .. math.random(1, 5),
-			-- 	pos = self.currFrame.Position,
-			-- 	volume = 0.08,
-			-- })
-
-			local extentsSize = gem.model:GetExtentsSize()
-
-			ClientMod.spellManager:addExplosion({
-				-- spellClass = "AttackSlice2",
-				spellClass = "RockDestroy",
-				pos = gemPos + Vector3.new(0, extentsSize.Y / 2, 0),
-				scale = 2, -- 1.5
-				-- baseColor = Color3.fromRGB(255, 0, 0),
-			})
-		end
-
-		gem:animateHit(newGemHealth)
+		unit:animateHit(newUnitHealth)
 	end)
 end
 
@@ -420,26 +359,24 @@ function Pet:refreshBB()
 	local mutationClass = self.mutationClass
 	local mutationTitle = bb.MainFrame.MutationTitle
 	ClientMod.mutationManager:applyMutationColor(mutationTitle, mutationClass)
-
-	self:refreshExpBar()
 end
 
 function Pet:getGoalFrame()
 	local actionMod = self.actionMod
 	local actionClass = actionMod.actionClass
 
-	local gem = nil
+	local unit = nil
 	if actionMod then
-		local gemName = actionMod["gemName"]
-		gem = ClientMod.gems[gemName]
+		local unitName = actionMod["unitName"]
+		unit = ClientMod.units[unitName]
 	end
 
-	if actionClass == "WalkToGem" then
-		if not gem then
+	if actionClass == "AttackUnit" then
+		if not unit then
 			return self.currFrame
 		end
 
-		local attackPos = self:getAttackGemPos(gem)
+		local attackPos = self:getAttackUnitPos(unit)
 
 		local lookAngle = Common.getCAngle(self.currFrame)
 		local distance = Common.getHorizontalDist(self.currFrame.Position, attackPos)
@@ -449,26 +386,15 @@ function Pet:getGoalFrame()
 		end
 
 		return CFrame.new(attackPos) * lookAngle * CFrame.new(0, 0, -distance)
-	elseif actionClass == "HitGem" then
-		if not gem then
-			return self.currFrame
-		end
-
-		local attackFrame = self.currFrame
-
-		local gemPosition = gem.currFrame.Position
-		gemPosition = Vector3.new(gemPosition.X, attackFrame.Position.Y, gemPosition.Z)
-
-		return CFrame.new(attackFrame.Position, gemPosition)
 	end
 end
 
-function Pet:getAttackGemPos(gem)
+function Pet:getAttackUnitPos(unit)
 	local currPos = self.currFrame.Position
-	local gemPos = gem.currFrame.Position
+	local unitPos = unit.currFrame.Position
 
-	local moveDir = (gemPos - currPos).Unit
-	local attackPos = gemPos - moveDir * (self.attackRange + gem.gemStats.attackRadius)
+	local moveDir = (unitPos - currPos).Unit
+	local attackPos = unitPos - moveDir * (self.attackRange + unit.unitStats.attackRange)
 
 	return attackPos
 end

@@ -34,7 +34,6 @@ function RewardManager:addRewards(rewardData)
 	local setServerLuck = rewardData["setServerLuck"]
 	local permanentToolClass = rewardData["permanentToolClass"]
 	local potionClass = rewardData["potionClass"]
-	local skipEgg = rewardData["skipEgg"]
 	local zoneClass = rewardData["zoneClass"]
 	local offlineCoinsBoost = rewardData["offlineCoinsBoost"]
 
@@ -44,8 +43,6 @@ function RewardManager:addRewards(rewardData)
 	local itemStash = home.itemStash
 	local plotManager = home.plotManager
 	local shopManager = home.shopManager
-
-	local premiumEggClass = rewardData["premiumEggClass"]
 
 	if gamepassClass then
 		shopManager:addGamepass(gamepassClass)
@@ -63,40 +60,6 @@ function RewardManager:addRewards(rewardData)
 		self.user.home.petManager:claimOfflineCoins({
 			boost = true,
 		})
-	end
-
-	if premiumEggClass then
-		local lastPremiumEggClass = self.user.home.eggManager.lastPremiumEggClass
-
-		local count = rewardData["count"] or 1
-
-		for i = 1, count do
-			local mutationClass = self.user.home.probManager:generateMutationClass()
-			if mutationClass and mutationClass ~= "None" then
-				self.user:notifySuccess(string.format("Your %s mutated to %s!", lastPremiumEggClass, mutationClass))
-				ServerMod:FireClient(self.user.player, "newSoundMod", {
-					soundClass = "Notice",
-					volume = 0.5,
-				})
-			end
-
-			itemStash:addEgg({
-				eggClass = lastPremiumEggClass,
-				mutationClass = mutationClass,
-			})
-		end
-	end
-
-	if skipEgg then
-		local lastPremiumSkipEggName = self.user.home.eggManager.lastPremiumSkipEggName
-		local egg = self.user.home.eggManager.eggs[lastPremiumSkipEggName]
-		if not egg then
-			warn("!!!! NO EGG FOUND FOR: ", lastPremiumSkipEggName)
-			return
-		end
-
-		-- force the hatch immediately
-		egg:hatch()
 	end
 
 	if itemMod then

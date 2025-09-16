@@ -31,9 +31,12 @@ function Unit:init()
 
 	self.unitStats = UnitInfo:getMeta(self.unitClass)
 
-	self.baseMoveSpeed = 0.25
+	self.baseMoveSpeed = 0.2 -- 0.25
 
 	self.baseRig = game.ReplicatedStorage.Assets[self.unitClass]
+
+	self.health = self.unitStats["health"]
+	self.maxHealth = self.unitStats["health"]
 
 	if TOGGLE_TEST_TORSO then
 		local torso = Instance.new("Part")
@@ -52,8 +55,22 @@ function Unit:init()
 			self:sync(otherUser)
 		end
 
+		self:updateActionMod({
+			actionClass = "WalkToSavePart",
+		})
+
 		self.initialized = true
 	end)
+end
+
+function Unit:updateHealth(delta, attacker)
+	self.health += delta
+
+	print("!! UNIT HEALTH: ", self.unitName, self.health)
+
+	if self.health <= 0 then
+		self:destroy()
+	end
 end
 
 function Unit:sync(otherUser)
@@ -84,9 +101,11 @@ function Unit:tickCurrAction()
 	local actionMod = self.actionMod
 	local actionClass = actionMod.actionClass
 
-	if actionClass == "WalkToUnit" then
-		local unitName = self.actionMod["unitName"]
-		local unit = self.user.home.unitManager.units[unitName]
+	if actionClass == "WalkToSavePart" then
+		if self.isStationary then
+			-- print("!! DESTROYING UNIT: ", self.unitName)
+			self:destroy()
+		end
 	end
 end
 
@@ -113,19 +132,10 @@ function Unit:getGoalFrame()
 	local actionMod = self.actionMod
 	local actionClass = actionMod.actionClass
 
-	local unitManager = self.user.home.unitManager
-
-	local unit = nil
-	if self.actionMod then
-		local unitName = self.actionMod["unitName"]
-		unit = unitManager.units[unitName]
-	end
-
 	if actionClass == "WalkToSavePart" then
-		if not unit or unit.destroyed then
-			return self.currFrame
-		end
 		return self.user.home.plotManager.savePart.CFrame
+	else
+		warn("!!! NO ACTION CLASS: ", actionClass)
 	end
 end
 
@@ -231,7 +241,7 @@ end
 
 function Unit:destroy()
 	if self.destroyed then
-		warn("ALREADY DESTROYED USER HUH: ", self.name)
+		warn("ALREADY DESTROYED UNIT HUH: ", self.name)
 		return
 	end
 	self.destroyed = true
@@ -240,15 +250,13 @@ function Unit:destroy()
 		self.torso:Destroy()
 	end
 
-	for _, event in pairs(self.eventsList) do
-		event:Destroy()
-	end
-	self.eventsList = {}
-
 	self.owner.units[self.unitName] = nil
+
+	print(len(self.owner.units))
 
 	ServerMod:FireAllClients("removeUnit", {
 		unitName = self.unitName,
+		waitTimer = 1,
 	})
 end
 

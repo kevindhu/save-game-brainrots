@@ -85,16 +85,20 @@ function handleRequest(req, data)
 		ClientMod.soundManager:newSoundMod(data)
 
 	-- PETMANAGER
-	elseif req == "newPet" then
-		ClientMod.petManager:newPet(data)
-	elseif req == "removePet" then
-		ClientMod.petManager:removePet(data)
-	elseif req == "updatePetAction" then
-		ClientMod.petManager:updatePetAction(data)
-	elseif req == "updatePetData" then
-		ClientMod.petManager:updatePetData(data)
-	elseif req == "updatePetFrame" then
-		ClientMod.petManager:updatePetFrame(data)
+	elseif req == "newPetSpot" then
+		ClientMod.petManager:newPetSpot(data)
+	elseif req == "removePetSpot" then
+		ClientMod.petManager:removePetSpot(data)
+	elseif req == "updatePetSpot" then
+		ClientMod.petManager:updatePetSpot(data)
+
+	-- UNITMANAGER
+	elseif req == "newUnit" then
+		ClientMod.unitManager:newUnit(data)
+	elseif req == "removeUnit" then
+		ClientMod.unitManager:removeUnit(data)
+	elseif req == "updateUnitAction" then
+		ClientMod.unitManager:updateUnitAction(data)
 
 	-- ALERTMANAGER
 	elseif req == "updateModuleAlert" then
@@ -109,16 +113,6 @@ function handleRequest(req, data)
 		ClientMod.claimOfflineManager:updateOfflineData(data)
 	elseif req == "claimedOfflineCoins" then
 		ClientMod.claimOfflineManager:claimedOfflineCoins(data)
-
-	-- EGGMANAGER
-	elseif req == "newEgg" then
-		ClientMod.eggManager:newEgg(data)
-	elseif req == "removeEgg" then
-		ClientMod.eggManager:removeEgg(data)
-	elseif req == "updateEggData" then
-		ClientMod.eggManager:updateEggData(data)
-	elseif req == "addHatchAnimation" then
-		ClientMod.eggManager:addHatchAnimation(data)
 
 	-- HATCHMANAGER
 	elseif req == "doHatch" then
@@ -161,14 +155,6 @@ function handleRequest(req, data)
 		ClientMod.shopManager:toggleProductLoading(data)
 
 	-- PLOTMANAGER
-	elseif req == "togglePlotLockDoor" then
-		ClientMod.plotManager:toggleLockDoor(data)
-	elseif req == "updateWeldedStealUnitData" then
-		ClientMod.plotManager:updateWeldedStealUnitData(data)
-	elseif req == "initPlot" then
-		ClientMod.plotManager:initPlot(data)
-	elseif req == "addUnlockPlotPart" then
-		ClientMod.plotManager:addUnlockPlotPart(data)
 	elseif req == "updateGlobalPlot" then
 		ClientMod.plotManager:updateGlobalPlot(data)
 	elseif req == "clearPlotSignMod" then

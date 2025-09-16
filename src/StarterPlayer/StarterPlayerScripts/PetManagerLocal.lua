@@ -9,110 +9,67 @@ local len, routine, wait = Common.len, Common.routine, Common.wait
 
 local PetInfo = require(game.ReplicatedStorage.PetInfo)
 
-local Pet = require(playerScripts.PetLocal)
+local PetSpot = require(playerScripts.PetSpotLocal)
 
 local PetManager = {}
 PetManager.__index = PetManager
 
 function PetManager:init() end
 
-function PetManager:newPet(data)
-	local petName = data.petName
-	if ClientMod.pets[petName] then
+function PetManager:newPetSpot(data)
+	local petSpotName = data.petSpotName
+	if ClientMod.petSpots[petSpotName] then
 		return
 	end
 
-	local pet = Pet.new(data)
-	pet:init()
-	ClientMod.pets[petName] = pet
-
-	-- if pet.userName == player.Name then
-	-- 	ClientMod.petChooseManager:refreshAllPetMods()
-	-- end
-
-	routine(function()
-		ClientMod.placeManager:refreshAllPrompts()
-		wait(0.1)
-		ClientMod.placeManager:refreshAllPrompts()
-	end)
+	local petSpot = PetSpot.new(data)
+	petSpot:init()
+	ClientMod.petSpots[petSpotName] = petSpot
 end
 
-function PetManager:updatePetAction(data)
-	local petName = data["petName"]
-	local pet = ClientMod.pets[petName]
-	if not pet then
-		return
-	end
-	pet:updateActionFromServer(data)
-end
-
-function PetManager:updatePetData(data)
-	local petName = data["petName"]
-	local pet = ClientMod.pets[petName]
-	if not pet then
-		warn("!!! NO PET FOUND TO UPDATE DATA: ", petName)
+function PetManager:updatePetSpot(data)
+	local petSpotName = data["petSpotName"]
+	local petSpot = ClientMod.petSpots[petSpotName]
+	if not petSpot then
 		return
 	end
 
-	pet:updateData(data)
-
-	-- try update the best pet for this plot
-	self:updateBestPetForPlot(pet.plotName)
+	petSpot:updateData(data)
 end
 
-function PetManager:updateBestPetForPlot(plotName)
-	local petList = {}
-	for _, pet in pairs(ClientMod.pets) do
-		if pet.plotName ~= plotName then
+function PetManager:removePetSpot(data)
+	local petSpotName = data["petSpotName"]
+	local petSpot = ClientMod.petSpots[petSpotName]
+	if not petSpot then
+		return
+	end
+	petSpot:destroy()
+
+	ClientMod.petSpots[petSpotName] = nil
+end
+
+function PetManager:tickRender(timeRatio)
+	local petParts = {}
+	local petCFrames = {}
+
+	for _, petSpot in pairs(ClientMod.petSpots) do
+		petSpot:tickRender(timeRatio)
+		if not petSpot.rig or not petSpot.rig.PrimaryPart then
 			continue
 		end
-		table.insert(petList, pet)
-	end
-	table.sort(petList, function(a, b)
-		return a.totalStrength > b.totalStrength
-	end)
 
-	local bestPet = petList[1]
-	ClientMod.plotManager:addBestPetSign(bestPet)
+		table.insert(petParts, petSpot.rig.PrimaryPart)
+		table.insert(petCFrames, petSpot.rigFrame)
+	end
+	self:updatePetSpotFrames(petParts, petCFrames)
 end
 
-function PetManager:updatePetFrame(data)
-	local petName = data["petName"]
-	local pet = ClientMod.pets[petName]
-	if not pet then
+function PetManager:updatePetSpotFrames(petParts, petCFrames)
+	if len(petParts) == 0 then
 		return
 	end
 
-	pet:updateFrameFromServer(data)
-end
-
-function PetManager:updatePetFrames(petParts, petCFrames)
 	workspace:BulkMoveTo(petParts, petCFrames, Enum.BulkMoveMode.FireCFrameChanged)
-end
-
-function PetManager:addRewardCoins(data)
-	local petName = data["petName"]
-
-	local pet = ClientMod.pets[petName]
-	if not pet then
-		return
-	end
-	pet:addRewardCoins(data)
-end
-
-function PetManager:removePet(data)
-	local petName = data["petName"]
-	local pet = ClientMod.pets[petName]
-	if not pet then
-		return
-	end
-	pet:destroy()
-
-	ClientMod.pets[petName] = nil
-
-	-- if pet.userName == player.Name then
-	-- 	ClientMod.petChooseManager:refreshAllPetMods()
-	-- end
 end
 
 PetManager:init()

@@ -27,82 +27,34 @@ function UnitManager:init()
 
 	routine(function()
 		wait(1)
-		if self.isNew then
-			self:addTestUnits()
-		end
-
 		self.initialized = true
+	end)
+
+	routine(function()
+		self:addTestUnits()
 	end)
 end
 
-function UnitManager:tryStoreUnit(data)
-	local unitName = data["unitName"]
-	local unit = self.units[unitName]
-	if not unit then
-		return
-	end
-
-	self:storeUnit(unit)
-end
-
 function UnitManager:addTestUnits()
-	if not Common.checkDeveloper(self.user.userId) then
-		return
-	end
-
-	self:addUnit({
-		unitClass = "Unit1",
-	})
-end
-
-function UnitManager:tryClaimOfflineCoins(data)
-	local boost = data["boost"]
-	if self.claimedOfflineCoins then
-		return
-	end
-
-	if boost then
-		self.user.home.shopManager:tryBuyProduct({
-			productClass = "OfflineCoinsClaimBoost",
+	while true do
+		self:addUnit({
+			unitClass = "Unit1",
 		})
-		return
+		wait(1)
 	end
-
-	self:claimOfflineCoins({
-		boost = false,
-	})
 end
 
-function UnitManager:claimOfflineCoins(data)
-	local boost = data["boost"]
-
-	self.claimedOfflineCoins = true
-
-	local totalOfflineCoins = 0
+function UnitManager:getClosestUnit(petPos)
+	local closestDist = math.huge
+	local closestUnit = nil
 	for _, unit in pairs(self.units) do
-		totalOfflineCoins += unit.totalOfflineCoins
+		local dist = (unit.currFrame.Position - petPos).Magnitude
+		if dist < closestDist then
+			closestDist = dist
+			closestUnit = unit
+		end
 	end
-
-	if boost then
-		totalOfflineCoins = totalOfflineCoins * 10
-	end
-
-	-- print("CLAIMING OFFLINE COINS: ", totalOfflineCoins)
-
-	self.user.home.itemStash:updateItemCount({
-		itemName = "Coins",
-		count = totalOfflineCoins,
-	})
-
-	-- clear all offline coins
-	for _, unit in pairs(self.units) do
-		unit.totalOfflineCoins = 0
-		-- unit:sendData()
-	end
-
-	ServerMod:FireClient(self.user.player, "claimedOfflineCoins", {
-		totalOfflineCoins = totalOfflineCoins,
-	})
+	return closestUnit
 end
 
 function UnitManager:tick(timeRatio)
@@ -128,35 +80,23 @@ function UnitManager:getRandomFrame()
 	return randomFrame
 end
 
+function UnitManager:getUnitStartFrame()
+	local plotManager = self.user.home.plotManager
+	local unitStartFrame = plotManager.unitStartPart.CFrame
+
+	return unitStartFrame
+end
+
 function UnitManager:addUnit(unitData)
-	-- handle firstFrame
-	if not unitData["firstFrame"] then
-		unitData["firstFrame"] = self:getRandomFrame()
+	if not unitData["unitName"] then
+		unitData["unitName"] = "UNIT_" .. Common.getGUID()
 	end
+
+	unitData["firstFrame"] = self:getUnitStartFrame()
 
 	local unit = Unit.new(self, unitData)
 	unit:init()
 	self.units[unitData["unitName"]] = unit
-end
-
-function UnitManager:storeUnit(unit)
-	self.user:notifySuccess(string.format("%s stored", unit.unitStats["alias"]))
-	ServerMod:FireClient(self.user.player, "newSoundMod", {
-		soundClass = "HammerHit",
-		-- volume = 0.5,
-	})
-
-	local itemData = unit:getSaveData()
-
-	-- TODO: do we need this?
-	itemData["itemName"] = "STASHTOOL_" .. Common.getGUID()
-	itemData["itemClass"] = itemData["unitClass"]
-	itemData["race"] = "unit"
-	itemData["noImmediateEquip"] = true
-
-	self.user.home.itemStash:addItemMod(itemData)
-
-	unit:destroy()
 end
 
 function UnitManager:sync(otherUser)

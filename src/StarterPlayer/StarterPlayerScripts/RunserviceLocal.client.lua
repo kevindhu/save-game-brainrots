@@ -100,7 +100,6 @@ function LoadAllModules()
 		{ "TestManager", "testManager" },
 
 		{ "UnitManager", "unitManager" },
-		{ "EggManager", "eggManager" },
 
 		{ "DamageManager", "damageManager" },
 
@@ -112,6 +111,8 @@ function LoadAllModules()
 		{ "FireworksManager", "fireworksManager" },
 		{ "HatchManager", "hatchManager" },
 		{ "AlertManager", "alertManager" },
+
+		{ "RagdollManager", "ragdollManager" },
 	}
 
 	local startTime = os.clock()
@@ -147,30 +148,25 @@ RunService.Heartbeat:Connect(function(deltaTime)
 		"tutManager",
 		"plotManager",
 		"sellManager",
-		"tradeManager",
 		"uiScaleManager",
 		"musicManager",
 		"vendorManager",
 
-		"gemManager",
 		"deleteManager",
 
 		"hintManager",
 
-		-- "placeManager",
+		"tradeManager",
 	}
 	for _, moduleName in ipairs(moduleList) do
 		if ClientMod[moduleName] then
+			-- print("TICKING MODULE: ", moduleName)
 			ClientMod[moduleName]:tick(timeRatio)
 		end
 	end
 
 	for _, user in pairs(ClientMod.users) do
 		user:tick()
-	end
-
-	for _, egg in pairs(ClientMod.eggs) do
-		egg:tick(timeRatio)
 	end
 end)
 
@@ -185,22 +181,15 @@ RunService.RenderStepped:Connect(function(deltaTime)
 		"rainbowManager",
 		"placeManager",
 		-- "uiScaleManager",
+
+		"petManager",
+		"unitManager",
 	}
 	for _, moduleName in ipairs(moduleList) do
 		if ClientMod[moduleName] then
 			ClientMod[moduleName]:tickRender(timeRatio)
 		end
 	end
-
-	local petParts = {}
-	local petCFrames = {}
-	for _, pet in pairs(ClientMod.pets) do
-		pet:tickRender(timeRatio)
-		table.insert(petParts, pet.rig.PrimaryPart)
-		table.insert(petCFrames, pet.rigFrame)
-	end
-
-	ClientMod.petManager:updatePetFrames(petParts, petCFrames)
 end)
 
 function tickSecond()

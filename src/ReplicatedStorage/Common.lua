@@ -758,7 +758,7 @@ end
 
 function Common.createTestLine(posA, posB, duration, color)
 	local line = Instance.new("Part")
-	line.Size = Vector3.new(1, 1, 1)
+
 	line.Anchored = true
 	line.CanCollide = false
 	line.Parent = workspace

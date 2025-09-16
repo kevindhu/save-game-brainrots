@@ -115,7 +115,8 @@ function PlotManager:initModel()
 	self.model = model
 
 	self.floorPart = model.FloorPart
-	self.eggFloorPart = model.EggFloorPart
+	self.savePart = model.SavePart
+	self.unitStartPart = model.UnitStartPart
 
 	self.machinePart = model.MachinePart
 	self.machinePart.Transparency = 1
@@ -123,10 +124,6 @@ function PlotManager:initModel()
 	self.plotBaseFrame = self.floorPart.CFrame
 
 	self.floorPart:SetAttribute("userName", self.user.name)
-
-	ServerMod:FireClient(self.user.player, "initPlot", {
-		plotName = self.plotName,
-	})
 
 	self:initPlotOverhead()
 end

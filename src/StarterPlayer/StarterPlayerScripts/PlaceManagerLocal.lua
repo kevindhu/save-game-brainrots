@@ -107,7 +107,7 @@ function PlaceManager:addPlacementCons()
 			return
 		end
 		local race = chosenToolMod["race"]
-		if Common.listContains({ "pet", "egg" }, race) then
+		if Common.listContains({ "pet" }, race) then
 			self:tryConfirmPlacement()
 			return
 		end
@@ -130,9 +130,7 @@ function PlaceManager:tryConfirmPlacement()
 	})
 end
 
-function PlaceManager:tickRender()
-	self:tickPlaceFrame()
-end
+function PlaceManager:tickRender() end
 
 function PlaceManager:toggleHintFrame(newBool)
 	hintFrame.Visible = newBool
@@ -195,162 +193,27 @@ function PlaceManager:doFullPromptRefresh()
 		petEquipped = true
 	end
 
-	-- update pets
-	for _, pet in pairs(ClientMod.pets) do
-		local deletePrompt = pet.deletePrompt
-		if not deletePrompt then
-			continue
-		end
-		deletePrompt.Enabled = deleteToggled
-		deletePrompt.MaxActivationDistance = 15
-	end
+	-- print("PET EQUIPPED: ", petEquipped)
 
-	for _, egg in pairs(ClientMod.eggs) do
-		local hatchPrompt = egg.hatchPrompt
-		if not hatchPrompt then
-			continue
+	for _, petSpot in pairs(ClientMod.petSpots) do
+		local interactPrompt = petSpot.interactPrompt
+		if petSpot.petData then
+			print("PET DATA: ", petSpot.petData)
+			interactPrompt.Enabled = true
+			interactPrompt.ActionText = "Pickup Brainrot"
+		else
+			print("NO PET DATA: ", petSpot.petSpotName)
+			interactPrompt.ActionText = "Place"
+			if petEquipped then
+				interactPrompt.Enabled = true
+			else
+				interactPrompt.Enabled = false
+			end
 		end
-		hatchPrompt.Enabled = not deleteToggled and not placeToggled
-		hatchPrompt.MaxActivationDistance = 12
 	end
 
 	for _, user in pairs(ClientMod.users) do
 		user:toggleGiftPrompt(petEquipped)
-	end
-end
-
-function PlaceManager:raycastPlaceModel(frame)
-	local whiteList = {}
-
-	local chosenToolMod = self:getEquippedToolMod()
-	local race = chosenToolMod["race"]
-	if race == "pet" then
-		table.insert(whiteList, ClientMod.plotManager.floorPart)
-		table.insert(whiteList, ClientMod.plotManager.eggFloorPart)
-	elseif race == "egg" then
-		table.insert(whiteList, ClientMod.plotManager.eggFloorPart)
-		table.insert(whiteList, ClientMod.plotManager.floorPart)
-	end
-
-	local raycastParams = RaycastParams.new()
-	raycastParams.FilterType = Enum.RaycastFilterType.Whitelist
-	raycastParams.FilterDescendantsInstances = whiteList
-
-	local raycastResult =
-		workspace:Raycast(frame.Position + Vector3.new(0, 10, 0), Vector3.new(0, -20, 0), raycastParams)
-
-	if not raycastResult then
-		return CFrame.new(0, -100, 0)
-	end
-
-	local finalFrame = CFrame.new(raycastResult.Position) * Common.getCAngle(ClientMod.plotManager.floorPart.CFrame)
-	return finalFrame
-end
-
-function PlaceManager:tickPlaceFrame()
-	local user = ClientMod:getLocalUser()
-	if not user then
-		return
-	end
-
-	if not self.placeToggled then
-		self:setPlaceFrame(Vector3.new(0, -100, 0))
-		return
-	end
-
-	local userFrame = user.currFrame
-	local userPos = userFrame.Position
-
-	local cameraHorizontalDir = camera.CFrame.LookVector
-	cameraHorizontalDir = Vector3.new(cameraHorizontalDir.X, 0, cameraHorizontalDir.Z)
-
-	local newPos = userPos -- + cameraHorizontalDir * 15
-	local newFrame = CFrame.new(newPos)
-	newFrame = self:raycastPlaceModel(newFrame)
-
-	self:setPlaceFrame(newFrame.Position)
-end
-
-function PlaceManager:setPlaceFrame(pos)
-	local floorPart = ClientMod.plotManager.floorPart
-	if not floorPart then
-		return
-	end
-
-	local frame = CFrame.new(pos) * Common.getCAngle(floorPart.CFrame)
-	self.currPlaceFrame = frame
-
-	self:setPlaceModel(frame)
-end
-
-function PlaceManager:setPlaceModel(frame)
-	local hOffset = self.placeCollideModel.PrimaryPart.Size.Y / 2
-	local finalFrame = frame * CFrame.new(0, hOffset, 0)
-
-	if self:checkValidPlacement() then
-		for _, thing in pairs(self.placeCollideModel:GetDescendants()) do
-			if not thing:IsA("BasePart") then
-				continue
-			end
-			thing.Color = Color3.fromRGB(159, 159, 162)
-		end
-		self.placePrompt.Enabled = true
-	else
-		for _, thing in pairs(self.placeCollideModel:GetDescendants()) do
-			if not thing:IsA("BasePart") then
-				continue
-			end
-			thing.Color = Color3.fromRGB(141, 3, 6)
-		end
-		self.placePrompt.Enabled = false
-	end
-
-	self.placeCollideModel:SetPrimaryPartCFrame(finalFrame)
-end
-
-function PlaceManager:checkValidPlacement()
-	local chosenToolMod = self:getEquippedToolMod()
-	if not chosenToolMod then
-		return false
-	end
-
-	local race = chosenToolMod["race"]
-	if race == "pet" then
-		-- TODO: check if enough room
-		return true
-	elseif race == "egg" then
-		local placeCollidePart = self.placeCollidePart
-
-		-- see if this placeCollidePart collides with other eggs
-		local filter = OverlapParams.new()
-		filter.FilterType = Enum.RaycastFilterType.Include
-		for _, egg in pairs(ClientMod.eggs) do
-			filter:AddToFilter(egg.placeCollidePart)
-		end
-
-		local foundParts = game.Workspace:GetPartsInPart(placeCollidePart, filter)
-		if len(foundParts) > 0 then
-			-- not valid
-			return false
-		end
-
-		-- check raycast to the ground
-		local whiteList = {
-			ClientMod.plotManager.eggFloorPart,
-			ClientMod.plotManager.floorPart,
-		}
-		local raycastParams = RaycastParams.new()
-		raycastParams.FilterType = Enum.RaycastFilterType.Whitelist
-		raycastParams.FilterDescendantsInstances = whiteList
-
-		local raycastResult =
-			workspace:Raycast(placeCollidePart.Position + Vector3.new(0, 10, 0), Vector3.new(0, -20, 0), raycastParams)
-
-		if not raycastResult then
-			return false
-		end
-
-		return true
 	end
 end
 

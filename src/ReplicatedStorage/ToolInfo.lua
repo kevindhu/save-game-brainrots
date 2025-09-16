@@ -14,7 +14,6 @@ ToolInfo["tools"] = {
 }
 
 ToolInfo["noAnimateToolRaces"] = {
-	"egg",
 	"pet",
 }
 

@@ -6,7 +6,6 @@ local len, routine, wait = Common.len, Common.routine, Common.wait
 local ItemInfo = require(game.ReplicatedStorage.ItemInfo)
 local PetInfo = require(game.ReplicatedStorage.PetInfo)
 local FoodInfo = require(game.ReplicatedStorage.FoodInfo)
-local EggInfo = require(game.ReplicatedStorage.EggInfo)
 
 local ItemStash = {}
 ItemStash.__index = ItemStash
@@ -61,37 +60,6 @@ function ItemStash:addFirstItems()
 	})
 
 	self:addTestPetTools()
-	self:addTestEggTools()
-end
-
-function ItemStash:addTestEggTools()
-	routine(function()
-		for i = 1, 3 do
-			local eggList = {
-				"Egg1",
-				"Egg2",
-				"LuckyBlockEgg",
-			}
-			for _, eggClass in ipairs(eggList) do
-				self:addEgg({
-					eggClass = eggClass,
-					mutationClass = nil,
-				})
-			end
-		end
-	end)
-
-	local foodList = {
-		-- "Cake",
-		-- "SuperFood",
-	}
-	for _, foodClass in ipairs(foodList) do
-		self:addItemMod({
-			itemName = "FOODTOOL_" .. Common.getGUID(),
-			itemClass = foodClass,
-			race = "food",
-		})
-	end
 end
 
 function ItemStash:checkFullPets()
@@ -99,73 +67,37 @@ function ItemStash:checkFullPets()
 	return totalPetCount >= 1000
 end
 
-function ItemStash:addEgg(data)
-	local eggClass = data["eggClass"]
-	local mutationClass = data["mutationClass"]
-
-	-- print("ADDING EGG: ", eggClass, mutationClass)
-
-	for _, currItemMod in pairs(self.itemMods) do
-		if not currItemMod["race"] == "egg" then
-			continue
-		end
-		if currItemMod["itemClass"] ~= eggClass or currItemMod["mutationClass"] ~= mutationClass then
-			continue
-		end
-
-		self:updateItemCount({
-			itemName = currItemMod["itemName"],
-			count = 1,
-		})
-
-		return
-	end
-
-	local itemName = "EGGTOOL_" .. Common.getGUID()
-	self:addItemMod({
-		itemName = itemName,
-		itemClass = eggClass,
-		mutationClass = mutationClass,
-		race = "egg",
-	})
-
-	self:updateItemCount({
-		itemName = itemName,
-		count = 1,
-	})
-end
-
 function ItemStash:addTestPetTools()
 	local petList = {
 		"CappuccinoAssassino",
 		"TungTungSahur",
-		"TrippiTroppi",
+		-- "TrippiTroppi",
 
-		"Boneca",
-		"LiriLira",
-		"Ballerina",
-		"FrigoCamelo",
-		"ChimpBanana",
-		"TaTaTaSahur",
-		"CapybaraCoconut",
-		"DolphinBanana",
-		"FishCatLegs",
-		"GooseBomber",
-		"TralaleloTralala",
-		"GlorboFruttoDrillo",
-		"RhinoToast",
-		"BrrBrrPatapim",
-		"ElephantCoconut",
-		"TimCheese",
-		"GiraffeWatermelon",
-		"MonkeyPineapple",
-		"OwlAvocado",
-		"OrangeDunDun",
-		"CowPlanet",
+		-- "Boneca",
+		-- "LiriLira",
+		-- "Ballerina",
+		-- "FrigoCamelo",
+		-- "ChimpBanana",
+		-- "TaTaTaSahur",
+		-- "CapybaraCoconut",
+		-- "DolphinBanana",
+		-- "FishCatLegs",
+		-- "GooseBomber",
+		-- "TralaleloTralala",
+		-- "GlorboFruttoDrillo",
+		-- "RhinoToast",
+		-- "BrrBrrPatapim",
+		-- "ElephantCoconut",
+		-- "TimCheese",
+		-- "GiraffeWatermelon",
+		-- "MonkeyPineapple",
+		-- "OwlAvocado",
+		-- "OrangeDunDun",
+		-- "CowPlanet",
 
-		"OctopusBlueberry",
-		"SaltCombined",
-		"GorillaWatermelon",
+		-- "OctopusBlueberry",
+		-- "SaltCombined",
+		-- "GorillaWatermelon",
 
 		-- "MilkShake",
 		-- "GrapeSquid",
@@ -173,12 +105,12 @@ function ItemStash:addTestPetTools()
 	local mutationList = {
 		"None",
 		"Gold",
-		-- "Diamond",
+		"Diamond",
 		-- "Bubblegum",
 	}
 	for _, petClass in ipairs(petList) do
 		for _, mutationClass in ipairs(mutationList) do
-			local count = math.random(3, 10)
+			local count = 3
 			for i = 1, count do
 				if mutationClass == "None" then
 					mutationClass = nil
@@ -303,7 +235,6 @@ function ItemStash:getFullItemStats(itemClass)
 	local itemStats = ItemInfo:getMeta(itemClass, true)
 		or PetInfo:getMeta(itemClass, true)
 		or FoodInfo:getMeta(itemClass, true)
-		or EggInfo:getMeta(itemClass, true)
 
 	if not itemStats then
 		warn("NO ITEM STATS FOUND FOR: ", itemClass)

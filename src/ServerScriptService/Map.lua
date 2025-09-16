@@ -64,8 +64,7 @@ function Map:initFolders()
 		-- rigs
 		"UserRigs",
 		"PetRigs",
-
-		"EggModels",
+		"UnitRigs",
 
 		"HighlightTemplateModels",
 		"VendorHighlightModels",

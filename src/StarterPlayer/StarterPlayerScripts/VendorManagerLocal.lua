@@ -27,7 +27,6 @@ end
 
 function VendorManager:initModels()
 	local shopList = {
-		"EggShop",
 		"SellPets",
 	}
 

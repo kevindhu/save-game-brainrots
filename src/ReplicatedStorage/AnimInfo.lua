@@ -7,8 +7,8 @@ local len, routine = Common.len, Common.routine
 
 AnimInfo["baseAnimations"] = {
 	-- UNIT
-	["UnitIdle"] = 14742643141,
-	["UnitRun"] = 14742655430,
+	["idleUnit"] = 14742643141,
+	["runUnit"] = 14742655430,
 
 	["ClassicUnitIdle"] = 180435571,
 	["ClassicUnitRun"] = 180426354,

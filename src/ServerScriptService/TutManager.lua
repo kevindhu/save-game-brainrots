@@ -80,8 +80,6 @@ function TutManager:initFirstTutMods()
 	self.chosenTutModName = nil
 
 	self.user.home.analyticsManager:logOnboardingFunnelEvent(1, "Tutorial Started", {})
-
-	self:newTutMod("TeleportToEggShop1")
 end
 
 function TutManager:newTutMod(tutName)

@@ -59,8 +59,10 @@ function Home:initAllModules()
 		{ "RewardManager", "rewardManager" },
 
 		{ "AnalyticsManager", "analyticsManager" },
+
 		{ "PetManager", "petManager" },
-		{ "EggManager", "eggManager" },
+		{ "UnitManager", "unitManager" },
+
 		{ "DamageManager", "damageManager" },
 
 		{ "AfkManager", "afkManager" },
@@ -98,11 +100,12 @@ function Home:tick(timeRatio)
 
 		"tradeManager",
 
-		"petManager",
-		"eggManager",
 		"damageManager",
 		"favoriteManager",
 		"friendManager",
+
+		"petManager",
+		"unitManager",
 	}
 	for _, managerClass in pairs(managerList) do
 		local manager = self[managerClass]
@@ -122,7 +125,6 @@ function Home:destroy()
 	local managerList = {
 		"plotManager",
 		"petManager",
-		"eggManager",
 	}
 	for _, managerClass in pairs(managerList) do
 		local manager = self[managerClass]
@@ -136,7 +138,7 @@ end
 function Home:sync(otherUser)
 	local modules = {
 		"petManager",
-		"eggManager",
+		"unitManager",
 	}
 	for _, moduleName in ipairs(modules) do
 		local module = self[moduleName]
@@ -168,8 +170,6 @@ function Home:saveState()
 
 		"rewardManager",
 		"testManager",
-
-		"eggManager",
 
 		"itemStash",
 	}

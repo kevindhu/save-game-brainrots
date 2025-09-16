@@ -251,9 +251,6 @@ function IndexManager:newRewardItem(rewardClass, itemData)
 	elseif itemData["coinCount"] then
 		itemClass = "Coins"
 		topTitle.Text = "x" .. Common.abbreviateNumber(itemData["coinCount"])
-	elseif itemData["gemCount"] then
-		itemClass = "Gems"
-		topTitle.Text = "x" .. Common.abbreviateNumber(itemData["gemCount"])
 	end
 
 	local itemStats = ItemInfo:getMeta(itemClass)

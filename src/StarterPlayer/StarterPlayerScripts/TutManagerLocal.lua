@@ -57,11 +57,6 @@ function TutManager:toggleLocationBeam(newBool)
 end
 
 function TutManager:initButtonHintIcons()
-	local eggHintIcon = topFrame.Eggs.HintIcon
-	self.eggHintIcon = eggHintIcon
-	self:toggleHintIcon(eggHintIcon, false)
-	self:doFullHintIconAnimation(eggHintIcon)
-
 	local myPlotHintIcon = topFrame.MyPlot.HintIcon
 	self.myPlotHintIcon = myPlotHintIcon
 	self:toggleHintIcon(myPlotHintIcon, false)
@@ -175,10 +170,7 @@ function TutManager:chooseTutMod(data)
 	local tutName = data["tutName"]
 
 	-- clear all existing animations
-	self:toggleHintIcon(self.eggHintIcon, false)
 	self:toggleHintIcon(self.myPlotHintIcon, false)
-	self:toggleHintIcon(self.closeEggShopHintIcon, false)
-	self:toggleHintIcon(self.buyEggHintIcon, false)
 
 	self:toggleLocationBeam(false)
 
@@ -192,15 +184,6 @@ function TutManager:chooseTutMod(data)
 	self.chosenTutMod = tutMod
 
 	local targetClass = tutMod["targetClass"]
-	if targetClass == "TeleportToEggShop" then
-		self:toggleHintIcon(self.eggHintIcon, true)
-	elseif targetClass == "BuyEgg1" then
-		self:toggleHintIcon(self.buyEggHintIcon, true)
-	elseif targetClass == "PlaceFirstEgg" then
-		self:toggleHintIcon(self.myPlotHintIcon, true)
-	elseif targetClass == "CloseEggShop" then
-		self:toggleHintIcon(self.closeEggShopHintIcon, true)
-	end
 
 	self:updateLocationBeam(targetClass)
 
@@ -209,39 +192,6 @@ end
 
 function TutManager:updateLocationBeam(targetClass)
 	local endPart = self.locationBeamModel.End
-
-	local eggShopTargetPos =
-		game.Workspace:WaitForChild("EggShopModel"):WaitForChild("Rig"):WaitForChild("HumanoidRootPart").Position
-
-	if targetClass == "TeleportToEggShop" then
-		self:toggleLocationBeam(true)
-		endPart.Position = eggShopTargetPos
-	elseif targetClass == "BuyEgg1" then
-		self:toggleLocationBeam(true)
-		endPart.Position = eggShopTargetPos
-	elseif targetClass == "PlaceFirstEgg" then
-		self:toggleLocationBeam(true)
-		local floorPart = ClientMod.plotManager.floorPart
-		if not floorPart then
-			warn("!!! COULD NOT FIND FLOOR PART FOR LOCATION BEAM")
-			return
-		end
-		endPart.Position = floorPart.Position
-	elseif targetClass == "HatchFirstEgg" then
-		self:toggleLocationBeam(true)
-		local chosenEgg = nil
-		for _, egg in pairs(ClientMod.eggs) do
-			if egg.userName == player.Name then
-				chosenEgg = egg
-				break
-			end
-		end
-		if not chosenEgg then
-			warn("!!! COULD NOT FIND CHOSEN EGG FOR LOCATION BEAM")
-			return
-		end
-		endPart.Position = chosenEgg.model.PrimaryPart.Position
-	end
 end
 
 function TutManager:startTextAnimation()
@@ -329,36 +279,9 @@ function TutManager:tickHintIconsVisible()
 	if not userFrame then
 		return
 	end
+
 	local userPos = userFrame.Position
-
 	local targetClass = chosenTutMod["targetClass"]
-	if targetClass == "PlaceFirstEgg" then
-		-- see how far you are from the floor part
-		local floorPart = ClientMod.plotManager.floorPart
-		if not floorPart then
-			warn("!!! COULD NOT FIND FLOOR PART FOR HINT ICON")
-			return
-		end
-		local distance = Common.getHorizontalDist(userPos, floorPart.Position)
-		if distance < 115 then
-			self:toggleHintIcon(self.myPlotHintIcon, false)
-		else
-			self:toggleHintIcon(self.myPlotHintIcon, true)
-		end
-	elseif targetClass == "TeleportToEggShop" then
-		local eggShopTargetPos =
-			game.Workspace:WaitForChild("EggShopModel"):WaitForChild("Rig"):WaitForChild("HumanoidRootPart").Position
-
-		local distance = (userPos - eggShopTargetPos).Magnitude
-
-		-- print("DISTANCE: ", distance)
-
-		if distance < 30 then
-			self:toggleHintIcon(self.eggHintIcon, false)
-		else
-			self:toggleHintIcon(self.eggHintIcon, true)
-		end
-	end
 end
 
 function TutManager:tickLocationBeamModel()

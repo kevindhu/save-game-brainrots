@@ -33,36 +33,7 @@ function DeleteManager:toggleDelete(newBool)
 	ClientMod.placeManager:refreshAllPrompts()
 end
 
-local MAX_ACTIVATION_DISTANCE = 15
-
-function DeleteManager:tick()
-	local userFrame = ClientMod:getLocalUser().currFrame
-	if not userFrame then
-		return
-	end
-
-	if not self.deleteToggled then
-		self:chooseDeletePet(nil)
-		return
-	end
-
-	local chosenDeletePet = nil
-	local closestDistance = MAX_ACTIVATION_DISTANCE
-	for _, pet in pairs(ClientMod.pets) do
-		if not pet.deletePrompt then
-			continue
-		end
-
-		local distance = (pet.rig.RootPart.AuraAttachment.WorldCFrame.Position - userFrame.Position).Magnitude
-
-		if distance < closestDistance then
-			closestDistance = distance
-			chosenDeletePet = pet
-		end
-	end
-
-	self:chooseDeletePet(chosenDeletePet)
-end
+function DeleteManager:tick() end
 
 function DeleteManager:chooseDeletePet(chosenDeletePet)
 	if not chosenDeletePet then

@@ -22,6 +22,8 @@ function UnitManager:newUnit(data)
 		return
 	end
 
+	-- print("!! NEW UNIT: ", data)
+
 	local unit = Unit.new(data)
 	unit:init()
 	ClientMod.units[unitName] = unit
@@ -57,19 +59,34 @@ function UnitManager:updateUnitFrame(data)
 	unit:updateFrameFromServer(data)
 end
 
-function UnitManager:updateUnitFrames(unitParts, unitCFrames)
-	workspace:BulkMoveTo(unitParts, unitCFrames, Enum.BulkMoveMode.FireCFrameChanged)
-end
-
 function UnitManager:removeUnit(data)
 	local unitName = data["unitName"]
 	local unit = ClientMod.units[unitName]
 	if not unit then
 		return
 	end
-	unit:destroy()
+	unit:destroy(data)
+end
 
-	ClientMod.units[unitName] = nil
+function UnitManager:updateUnitFrames(unitParts, unitCFrames)
+	workspace:BulkMoveTo(unitParts, unitCFrames, Enum.BulkMoveMode.FireCFrameChanged)
+end
+
+function UnitManager:tickRender(timeRatio)
+	local unitParts = {}
+	local unitCFrames = {}
+	for _, unit in pairs(ClientMod.units) do
+		unit:tickRender(timeRatio)
+
+		if unit.destroyed then
+			continue
+		end
+
+		table.insert(unitParts, unit.rig.PrimaryPart)
+		table.insert(unitCFrames, unit.rigFrame)
+	end
+
+	self:updateUnitFrames(unitParts, unitCFrames)
 end
 
 UnitManager:init()

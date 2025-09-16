@@ -42,8 +42,8 @@ function Pet:init()
 
 	self.rating = self.petStats["rating"]
 
-	self.baseMoveSpeed = 0.25
-	self.attackRange = PetInfo.attackRangeMap[self.petClass] or 2
+	self.baseMoveSpeed = 0.5 -- 0.25
+	self.attackRange = 10 -- PetInfo.attackRangeMap[self.petClass] or 2
 
 	self.baseRig = game.ReplicatedStorage.Assets[self.petClass]
 
@@ -78,7 +78,6 @@ function Pet:init()
 end
 
 function Pet:initAllEvents()
-	self:createEvent("exp", "EXP")
 	self:createEvent("attack", "ATTACK")
 end
 
@@ -124,7 +123,6 @@ function Pet:sync(otherUser)
 
 		attackSpeedRatio = self.attackSpeedRatio,
 
-		exp = self.exp,
 		level = self.level,
 
 		baseWeight = self.baseWeight,
@@ -148,21 +146,14 @@ end
 function Pet:tickCurrAction()
 	local actionMod = self.actionMod
 	if not actionMod then
-		self:findRandomGem()
+		self:findRandomUnit()
 		return
 	end
 
 	local actionClass = actionMod.actionClass
 
-	if actionClass == "WalkToUnit" then
-		local unitName = self.actionMod["unitName"]
-		local unit = self.user.home.unitManager.units[unitName]
-
-		-- -- arrived at gem
-		-- self:updateActionMod({
-		-- 	actionClass = "HitGem",
-		-- 	gemName = self.actionMod["gemName"],
-		-- })
+	if actionClass == "AttackUnit" then
+		self:tryAttackUnit()
 	end
 end
 
@@ -172,16 +163,24 @@ function Pet:tryAttackUnit()
 	local unitName = self.actionMod["unitName"]
 	local unit = self.user.home.unitManager.units[unitName]
 	if not unit or unit.destroyed then
-		if not self.startNewActionExpiree then
-			self.startNewActionExpiree = ServerMod.step + 60 * 0.7 -- 0.2
-			return
-		end
-		if self.startNewActionExpiree > ServerMod.step then
-			return
-		end
-		self.startNewActionExpiree = nil
+		-- if not self.startNewActionExpiree then
+		-- 	self.startNewActionExpiree = ServerMod.step + 60 * 0.7 -- 0.2
+		-- 	return
+		-- end
+		-- if self.startNewActionExpiree > ServerMod.step then
+		-- 	return
+		-- end
+		-- self.startNewActionExpiree = nil
 
 		self:findRandomUnit()
+		return
+	end
+	-- see how close you are to the unit
+	local unitDist = (self.currFrame.Position - unit.currFrame.Position).Magnitude
+
+	-- print("!! UNIT DIST: ", unitDist)
+
+	if unitDist > 20 then
 		return
 	end
 
@@ -192,7 +191,7 @@ function Pet:tryAttackUnit()
 	local attackTimer = ATTACK_TIMER / self.attackSpeedRatio
 	self.attackExpiree = ServerMod.step + 60 * attackTimer -- 0.5
 
-	local baseDamage = self.petStats["attackDamage"] or 10
+	local baseDamage = 10000 -- self.petStats["attackDamage"] or 10
 	local damage = math.random(baseDamage * 0.8, baseDamage * 1.2)
 
 	unit:updateHealth(-damage, self)
@@ -204,13 +203,13 @@ end
 
 function Pet:findRandomUnit()
 	local unitManager = self.user.home.unitManager
-	local unit = unitManager:getClosestUnit(self)
+	local unit = unitManager:getClosestUnit(self.currFrame.Position)
 	if not unit then
 		return
 	end
 
 	self:updateActionMod({
-		actionClass = "WalkToUnit",
+		actionClass = "AttackUnit",
 		unitName = unit.unitName,
 	})
 end
@@ -246,7 +245,7 @@ function Pet:getGoalFrame()
 		unit = unitManager.units[unitName]
 	end
 
-	if actionClass == "WalkToUnit" then
+	if actionClass == "AttackUnit" then
 		if not unit or unit.destroyed then
 			return self.currFrame
 		end
@@ -260,7 +259,7 @@ function Pet:getAttackUnitPos(unit)
 
 	local moveDir = (unitPos - currPos).Unit
 
-	local attackPos = unitPos - moveDir * (self.attackRange + unit.unitStats.attackRadius)
+	local attackPos = unitPos - moveDir * (self.attackRange + unit.unitStats.attackRange)
 
 	return attackPos
 end
@@ -354,32 +353,8 @@ function Pet:getFloorPos(topPos)
 	return true, hitPosition
 end
 
-function Pet:updateExp(count)
-	self.exp += count
-
-	self:tryLevelUp()
-
-	self.expEvent:FireAllClients(self.exp, self.level)
-end
-
-function Pet:tryLevelUp()
-	local levelExpCap = PetInfo:calculateLevelExpCap(self.level, self.rating)
-	if levelExpCap > self.exp then
-		return
-	end
-
-	local maxLevel = RatingInfo.ratingMaxLevelMap[self.rating]
-	if self.level >= maxLevel then
-		warn("PET MAX LEVEL: ", self.petName, self.level, maxLevel)
-		return
-	end
-
-	self.exp -= levelExpCap
+function Pet:levelUp()
 	self.level += 1
-
-	-- print("LEVELED UP TO: ", self.level, self.petName)
-
-	self:tryLevelUp()
 end
 
 function Pet:getSaveData()
@@ -400,7 +375,6 @@ function Pet:getSaveData()
 		baseWeight = self.baseWeight,
 
 		level = self.level,
-		exp = self.exp,
 
 		favorited = self.favorited,
 	}

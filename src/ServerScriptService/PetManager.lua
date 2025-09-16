@@ -3,7 +3,9 @@ local ServerMod = require(game.ServerScriptService.ServerMod)
 local Common = require(game.ReplicatedStorage.Common)
 local len, routine, wait = Common.len, Common.routine, Common.wait
 
-local Pet = require(game.ServerScriptService.Pet)
+local PetInfo = require(game.ReplicatedStorage.PetInfo)
+
+local PetSpot = require(game.ServerScriptService.PetSpot)
 
 local PetManager = {}
 PetManager.__index = PetManager
@@ -13,7 +15,7 @@ function PetManager.new(owner, data)
 	u.owner = owner
 	u.data = data
 
-	u.pets = {}
+	u.petSpots = {}
 	u.fullPetData = {}
 
 	setmetatable(u, PetManager)
@@ -26,61 +28,44 @@ function PetManager:init()
 		self[k] = v
 	end
 
-	self:loadState()
+	self:addAllPetSpots()
+
+	-- self:loadState()
 
 	routine(function()
 		wait(1)
-
-		if self.isNew then
-			self:addTestPets()
-		end
-
-		wait(1)
-
-		if not self.isNew then
-			self:sendOfflineCoinsData()
-		end
 
 		self.initialized = true
 	end)
 end
 
-function PetManager:sendOfflineCoinsData()
-	local totalOfflineCoins = 0
+local PET_SPOT_COUNT = 3 -- 2
 
-	local totalSeconds = 0
-	for _, pet in pairs(self.pets) do
-		totalOfflineCoins += pet.totalOfflineCoins
-		totalSeconds = math.max(totalSeconds, os.time() - pet.leaveTimestamp)
+function PetManager:addAllPetSpots()
+	for index = 1, PET_SPOT_COUNT do
+		self:addPetSpot(index)
 	end
+end
 
-	-- less than 30 minutes
-	if totalSeconds < 60 * 30 then
-		-- immediately just claim without boost
-		print("CLAIMING WITHOUT BOOST")
-		self:claimOfflineCoins({
-			boost = false,
-		})
-		return
-	end
+function PetManager:addPetSpot(index)
+	local plotName = self.user.home.plotManager.plotName
+	local petSpotName = plotName .. "_PetSpot" .. index
 
-	ServerMod:FireClient(self.user.player, "updateCoinsOfflineData", {
-		totalOfflineCoins = totalOfflineCoins,
+	local petSpot = PetSpot.new(self, {
+		petSpotName = petSpotName,
+		index = index,
 	})
+	petSpot:init()
+	self.petSpots[petSpotName] = petSpot
 end
 
 function PetManager:loadState()
 	local fullPetData = self.fullPetData
 
 	for petName, petData in pairs(fullPetData) do
-		local firstFrameComp = petData["firstFrameComp"]
-
 		local currPetData = Common.deepCopy(petData)
 
-		local firstFrame = self.user.home.plotManager.plotBaseFrame * CFrame.new(table.unpack(firstFrameComp))
-		currPetData["firstFrame"] = firstFrame
-
-		self:addPet(currPetData)
+		self:occupyPetSpot(self.petSpots[petName], currPetData)
 	end
 end
 
@@ -95,133 +80,9 @@ function PetManager:tryRewardCoins(data)
 	pet:tryRewardCoins()
 end
 
-function PetManager:tryStorePet(data)
-	local petName = data["petName"]
-	local pet = self.pets[petName]
-	if not pet then
-		return
-	end
-
-	self:storePet(pet)
-end
-
-function PetManager:generateRandomBaseWeight()
-	local baseWeight = Common.randomBetween(1, 1.3)
-
-	-- if math.random() * 100 < 100 then
-	-- 	baseWeight *= 100
-	-- end
-
-	return baseWeight
-end
-
-function PetManager:addTestPets()
-	if not Common.checkDeveloper(self.user.userId) then
-		return
-	end
-
-	local petClasses = {
-		-- "CowPlanet",
-
-		-- "FishCatLegs",
-		"TungTungSahur",
-		-- "CappuccinoAssassino",
-		-- "FrigoCamelo",
-		-- "TaTaTaSahur",
-
-		-- "ElephantCoconut",
-		-- "TrippiTroppi",
-		-- "DolphinBanana",
-		-- "TralaleloTralala",
-		-- "ChimpBanana",
-		-- "Boneca",
-	}
-
-	for i = 1, 1 do
-		for _, petClass in ipairs(petClasses) do
-			self:addPet({
-				petClass = petClass,
-
-				mutationClass = "Gold",
-				variationScale = Common.randomBetween(1, 1.2),
-
-				baseWeight = 1,
-			})
-		end
-
-		for _, petClass in ipairs(petClasses) do
-			self:addPet({
-				petClass = petClass,
-
-				mutationClass = "Diamond",
-				variationScale = Common.randomBetween(1, 1.2),
-			})
-		end
-
-		for _, petClass in ipairs(petClasses) do
-			self:addPet({
-				petClass = petClass,
-
-				mutationClass = "Bubblegum",
-				variationScale = Common.randomBetween(1, 1.2),
-			})
-		end
-	end
-end
-
-function PetManager:tryClaimOfflineCoins(data)
-	local boost = data["boost"]
-	if self.claimedOfflineCoins then
-		return
-	end
-
-	if boost then
-		self.user.home.shopManager:tryBuyProduct({
-			productClass = "OfflineCoinsClaimBoost",
-		})
-		return
-	end
-
-	self:claimOfflineCoins({
-		boost = false,
-	})
-end
-
-function PetManager:claimOfflineCoins(data)
-	local boost = data["boost"]
-
-	self.claimedOfflineCoins = true
-
-	local totalOfflineCoins = 0
-	for _, pet in pairs(self.pets) do
-		totalOfflineCoins += pet.totalOfflineCoins
-	end
-
-	if boost then
-		totalOfflineCoins = totalOfflineCoins * 10
-	end
-
-	-- print("CLAIMING OFFLINE COINS: ", totalOfflineCoins)
-
-	self.user.home.itemStash:updateItemCount({
-		itemName = "Coins",
-		count = totalOfflineCoins,
-	})
-
-	-- clear all offline coins
-	for _, pet in pairs(self.pets) do
-		pet.totalOfflineCoins = 0
-		-- pet:sendData()
-	end
-
-	ServerMod:FireClient(self.user.player, "claimedOfflineCoins", {
-		totalOfflineCoins = totalOfflineCoins,
-	})
-end
-
 function PetManager:tick(timeRatio)
-	for _, pet in pairs(self.pets) do
-		pet:tick(timeRatio)
+	for _, petSpot in pairs(self.petSpots) do
+		petSpot:tick(timeRatio)
 	end
 end
 
@@ -242,6 +103,16 @@ function PetManager:getRandomFrame()
 	return randomFrame
 end
 
+function PetManager:generateRandomBaseWeight()
+	local baseWeight = Common.randomBetween(1, 1.3)
+
+	-- if math.random() * 100 < 100 then
+	-- 	baseWeight *= 100
+	-- end
+
+	return baseWeight
+end
+
 function PetManager:fillPetDataWithDefaults(petData)
 	-- handle petName
 	if petData["itemName"] then
@@ -259,62 +130,72 @@ function PetManager:fillPetDataWithDefaults(petData)
 	if not petData["level"] then
 		petData["level"] = 1
 	end
-	if not petData["exp"] then
-		petData["exp"] = 0
-	end
 end
 
-function PetManager:addPet(petData)
+function PetManager:occupyPetSpot(petSpot, petData)
 	self:fillPetDataWithDefaults(petData)
 
-	-- handle firstFrame
-	if not petData["firstFrame"] then
-		petData["firstFrame"] = self:getRandomFrame()
-	end
-
-	local pet = Pet.new(self, petData)
-	pet:init()
-	self.pets[petData["petName"]] = pet
+	petSpot:occupyWithPet(petData)
 end
 
-function PetManager:storePet(pet)
-	self.user:notifySuccess(string.format("%s stored", pet.petStats["alias"]))
+function PetManager:tryPickupFromPetSpot(data)
+	local petSpotName = data["petSpotName"]
+	local petSpot = self.petSpots[petSpotName]
+	if not petSpot then
+		warn("NO PET SPOT TO PICKUP FROM: ", petSpotName)
+		return
+	end
+	if not petSpot.petData then
+		warn("NO PET DATA TO PICKUP FROM: ", petSpot.petSpotName)
+		return
+	end
+
+	self:storePet(petSpot)
+end
+
+function PetManager:storePet(petSpot)
+	local itemData = petSpot:getSaveData()
+
+	local petClass = itemData["petClass"]
+	local petStats = PetInfo:getMeta(petClass)
+
+	self.user:notifySuccess(string.format("%s stored", petStats["alias"]))
 	ServerMod:FireClient(self.user.player, "newSoundMod", {
 		soundClass = "HammerHit",
 		-- volume = 0.5,
 	})
 
-	local itemData = pet:getSaveData()
-
 	-- TODO: do we need this?
 	itemData["itemName"] = "STASHTOOL_" .. Common.getGUID()
-	itemData["itemClass"] = itemData["petClass"]
+	itemData["itemClass"] = petClass
 	itemData["race"] = "pet"
 	itemData["noImmediateEquip"] = true
 
 	self.user.home.itemStash:addItemMod(itemData)
 
-	pet:destroy()
+	petSpot:clearPet()
 end
 
 function PetManager:sync(otherUser)
-	for _, pet in pairs(self.pets) do
-		pet:sync(otherUser)
+	for _, petSpot in pairs(self.petSpots) do
+		petSpot:sync(otherUser)
 	end
 end
 
 function PetManager:destroy()
-	for _, pet in pairs(self.pets) do
-		pet:destroy()
+	for _, petSpot in pairs(self.petSpots) do
+		petSpot:destroy()
 	end
-	self.pets = {}
+	self.petSpots = {}
 end
 
 function PetManager:saveState()
 	local fullPetData = {}
-	for _, pet in pairs(self.pets) do
-		fullPetData[pet.petName] = pet:getSaveData()
-	end
+
+	-- for _, petSpot in pairs(self.petSpots) do
+	-- 	fullPetData[petSpot.petSpotName] = petSpot:getSaveData()
+	-- end
+
 	local managerData = {
 		fullPetData = fullPetData,
 	}

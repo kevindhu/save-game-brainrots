@@ -5,11 +5,18 @@ local len, routine, wait = Common.len, Common.routine, Common.wait
 
 local UnitInfo = {}
 
+UnitInfo["animationMap"] = {
+	["idle"] = 180435571,
+	["run"] = 180426354,
+}
+
 UnitInfo["units"] = {
 	["Unit1"] = {
 		alias = "Unit1",
 		health = 1000,
 		speed = 10,
+
+		attackRange = 2,
 	},
 }
 

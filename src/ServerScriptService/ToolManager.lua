@@ -267,15 +267,23 @@ function ToolManager:removeStashTool(data)
 	self.stashToolMods[toolName] = nil
 end
 
-function ToolManager:tryPlaceStashTool(data)
+function ToolManager:tryPlacePetAtPetSpot(data)
 	local toolName = data["toolName"]
+	local petSpotName = data["petSpotName"]
+
+	local petSpot = self.user.home.petManager.petSpots[petSpotName]
+	if not petSpot then
+		warn("NO PET SPOT TO PLACE PET AT: ", petSpotName)
+		return
+	end
+
 	local toolMod = self.stashToolMods[toolName]
 	if not toolMod then
 		warn("NO TOOL MOD TO PLACE: ", toolName)
 		return
 	end
 
-	toolMod:tryConfirmPlacement(data)
+	toolMod:confirmPlacement(petSpot)
 end
 
 function ToolManager:saveState()
