@@ -113,6 +113,7 @@ function LoadAllModules()
 		{ "AlertManager", "alertManager" },
 
 		{ "RagdollManager", "ragdollManager" },
+		{ "SaveManager", "saveManager" },
 	}
 
 	local startTime = os.clock()
@@ -157,6 +158,8 @@ RunService.Heartbeat:Connect(function(deltaTime)
 		"hintManager",
 
 		"tradeManager",
+
+		"petManager",
 	}
 	for _, moduleName in ipairs(moduleList) do
 		if ClientMod[moduleName] then
@@ -184,6 +187,8 @@ RunService.RenderStepped:Connect(function(deltaTime)
 
 		"petManager",
 		"unitManager",
+
+		"saveManager",
 	}
 	for _, moduleName in ipairs(moduleList) do
 		if ClientMod[moduleName] then

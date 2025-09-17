@@ -72,6 +72,15 @@ function UnitManager:updateUnitFrames(unitParts, unitCFrames)
 	workspace:BulkMoveTo(unitParts, unitCFrames, Enum.BulkMoveMode.FireCFrameChanged)
 end
 
+function UnitManager:unitCapturedSavedPet(data)
+	local unitName = data["unitName"]
+	local unit = ClientMod.units[unitName]
+	if not unit then
+		return
+	end
+	unit:captureSavePet(data)
+end
+
 function UnitManager:tickRender(timeRatio)
 	local unitParts = {}
 	local unitCFrames = {}

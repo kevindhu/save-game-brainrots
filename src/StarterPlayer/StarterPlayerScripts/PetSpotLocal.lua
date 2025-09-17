@@ -1,3 +1,5 @@
+local Debris = game:GetService("Debris")
+
 local player = game.Players.LocalPlayer
 local playerScripts = player.PlayerScripts
 local playerGui = player.PlayerGui
@@ -9,6 +11,8 @@ local len, routine, wait = Common.len, Common.routine, Common.wait
 
 local PetInfo = require(game.ReplicatedStorage.PetInfo)
 local MapInfo = require(game.ReplicatedStorage.MapInfo)
+local RatingInfo = require(game.ReplicatedStorage.RatingInfo)
+local PetBalanceInfo = require(game.ReplicatedStorage.PetBalanceInfo)
 
 local PetSpot = {}
 PetSpot.__index = PetSpot
@@ -28,10 +32,15 @@ function PetSpot:init()
 		self[k] = v
 	end
 
-	self:initModel()
-	self:initPrompts()
-
+	self:initBuyModel()
 	self:initAllEvents()
+
+	routine(function()
+		wait(1)
+		if self.unlocked then
+			self:unlock()
+		end
+	end)
 end
 
 function PetSpot:initAllEvents()
@@ -57,16 +66,157 @@ function PetSpot:initEventReceiver(key, alias, callback)
 	event.OnClientEvent:Connect(callback)
 end
 
-function PetSpot:initModel()
+function PetSpot:initBuyModel()
 	local plotModel = ClientMod.plotManager.model
-	local model = plotModel:FindFirstChild("PetSpot" .. self.index)
-	if not model then
+	local buyModel = plotModel:FindFirstChild("PetSpot" .. self.index)
+	if not buyModel then
 		warn("!! PET SPOT MODEL NOT FOUND: ", self.petSpotName, self.index)
 		return
 	end
-	self.model = model
+	self.buyModel = buyModel
+
+	local buyBB = game.ReplicatedStorage.Assets.BuyPlatformBBPart.BB:Clone()
+	buyBB.Parent = buyModel.Collect.Attachment
+
+	local coinsCost = PetBalanceInfo["unlockCostMap"][tostring(self.index)]
+	buyBB.MainFrame.Title.Text = "$" .. Common.abbreviateNumber(coinsCost)
+
+	self.buyBB = buyBB
+
+	if player.Name == self.userName then
+		buyModel.Collect.Touched:Connect(function(hit)
+			local touchPlayer = game.Players:GetPlayerFromCharacter(hit.Parent)
+			if touchPlayer ~= player then
+				return
+			end
+			ClientMod.petManager:tryUnlockPetSpot(self, coinsCost)
+		end)
+	end
+
+	ClientMod.uiScaleManager:addDistStrokeModsFromBB({
+		bb = buyBB,
+		adornee = buyModel.Collect,
+		baseDistance = 40,
+	})
+
+	self:toggleBuyModel(false)
+end
+
+function PetSpot:showBuyModel()
+	self:toggleBuyModel(true)
+end
+
+function PetSpot:toggleBuyModel(newBool)
+	self.buyBB.Enabled = newBool
+end
+
+function PetSpot:unlock()
+	self.unlocked = true
+
+	self:toggleBuyModel(false)
+	self:initRealModel()
+end
+
+function PetSpot:initRealModel()
+	local model = game.Workspace.BoughtPetSpots:WaitForChild(self.petSpotName, 2)
+	if not model then
+		warn("!! REAL PET SPOT MODEL NOT FOUND: ", self.petSpotName)
+		return
+	end
 
 	self.standPart = model:WaitForChild("StandPart")
+
+	self.baseFrame = self.standPart.CFrame
+		* CFrame.new(0, self.standPart.Size.Y * 0.5, 0)
+		* CFrame.Angles(0, math.rad(180), 0)
+	self.currFrame = self.baseFrame
+
+	local levelBBPart = model:WaitForChild("LevelBBPart")
+	levelBBPart.Transparency = 1
+
+	local baseLevelBB = levelBBPart.BB
+	baseLevelBB.Enabled = false
+	self.baseLevelBB = baseLevelBB
+
+	local collectPart = model:WaitForChild("CollectButton").Collect
+	self.collectPart = collectPart
+
+	if player.Name == self.userName then
+		collectPart.Touched:Connect(function(hit)
+			local touchPlayer = game.Players:GetPlayerFromCharacter(hit.Parent)
+			if touchPlayer ~= player then
+				return
+			end
+			self:tryCollectCoins()
+		end)
+
+		self:initPrompts()
+
+		ClientMod.placeManager:refreshAllPrompts()
+	end
+
+	self.collectBB = collectPart.BB
+	self.collectBB.Enabled = false
+end
+
+function PetSpot:tryCollectCoins()
+	if self.collectCoinExpiree and self.collectCoinExpiree > ClientMod.step then
+		return
+	end
+	self.collectCoinExpiree = ClientMod.step + 60 * 1
+
+	self:animateCoinsCollection()
+
+	ClientMod:FireServer("tryCollectCoins", {
+		petSpotName = self.petSpotName,
+	})
+end
+
+function PetSpot:animateCoinsCollection()
+	local emitterModel = ClientMod.spellUtils:createEmitterModel({
+		spellClass = "CoinsExplosion",
+	})
+	emitterModel.Name = "CoinsModel"
+
+	emitterModel:SetPrimaryPartCFrame(CFrame.new(self.collectPart.Position) * CFrame.new(0, 2.5, 0))
+	Debris:AddItem(emitterModel, 4)
+
+	ClientMod.soundManager:newSoundMod({
+		soundClass = "CoinCollect2",
+		volume = 0.5,
+		playbackSpeed = ClientMod.petManager:getCollectSpeed(),
+	})
+
+	emitterModel.PrimaryPart.Transparency = 1
+
+	local scale = 1.1 -- 1 (orig) -- 0.5
+	ClientMod.spellUtils:shootEmitter({
+		emitterModel = emitterModel,
+		scale = scale,
+	})
+end
+
+function PetSpot:addLevelBB()
+	local levelBB = self.baseLevelBB:Clone()
+
+	levelBB.Adornee = self.baseLevelBB.Parent
+	levelBB.Enabled = true
+	levelBB.Parent = playerGui
+
+	self.levelBB = levelBB
+
+	local levelUpButton = levelBB.MainFrame.Button
+	ClientMod.buttonManager:addActivateCons(levelUpButton, function()
+		ClientMod:FireServer("tryLevelUpPet", {
+			petSpotName = self.petSpotName,
+		})
+
+		ClientMod.soundManager:newSoundMod({
+			soundClass = "CashBuy",
+			volume = 0.2,
+		})
+	end)
+	ClientMod.buttonManager:addBasicButtonCons(levelUpButton)
 end
 
 function PetSpot:initPrompts()
@@ -96,6 +246,13 @@ function PetSpot:initPrompts()
 	end)
 end
 
+function PetSpot:destroyLevelBB()
+	if self.levelBB then
+		self.levelBB:Destroy()
+		self.levelBB = nil
+	end
+end
+
 function PetSpot:updateData(data)
 	local attackSpeedRatio = data["attackSpeedRatio"]
 	local petData = data["petData"]
@@ -110,7 +267,18 @@ function PetSpot:updateData(data)
 		if self.userName == player.Name then
 			ClientMod.placeManager:refreshAllPrompts()
 		end
+
+		self.collectBB.Enabled = false
+
+		self:destroyLevelBB()
+
 		return
+	end
+
+	self.collectBB.Enabled = true
+
+	if not self.levelBB then
+		self:addLevelBB()
 	end
 
 	for k, v in pairs(self.petData) do
@@ -120,13 +288,51 @@ function PetSpot:updateData(data)
 	self.petStats = PetInfo:getMeta(self.petClass)
 
 	if oldPetName ~= self.petName then
-		print("REFRESHING RIG FOR PET SPOT: ", self.petSpotName)
+		-- print("REFRESHING RIG FOR PET SPOT: ", self.petSpotName)
 		self:refreshRig()
 	end
 
 	if self.userName == player.Name then
 		ClientMod.placeManager:refreshAllPrompts()
 	end
+
+	self:refreshLevelBB()
+end
+
+function PetSpot:updateCoins(data)
+	local totalCoins = data["totalCoins"]
+	local totalOfflineCoins = data["totalOfflineCoins"]
+
+	local collectBB = self.collectBB
+
+	local collectButton = collectBB.MainFrame.Button
+
+	local offlineTitle = collectButton.OfflineTitle
+	local coinsTitle = collectButton.CoinsTitle
+
+	if totalOfflineCoins > 0 then
+		offlineTitle.Text = "$" .. Common.abbreviateNumber(totalOfflineCoins, 1)
+		offlineTitle.Visible = true
+	else
+		offlineTitle.Visible = false
+	end
+
+	coinsTitle.Text = "$" .. Common.abbreviateNumber(totalCoins, 1)
+end
+
+function PetSpot:refreshLevelBB()
+	local levelBB = self.levelBB
+	if not levelBB then
+		return
+	end
+
+	local levelUpButton = levelBB.MainFrame.Button
+
+	-- TODO: calculate level up price
+	local levelUpPrice = PetInfo:calculateLevelUpPrice(self.petData)
+	levelUpButton.PriceTitle.Text = "$" .. Common.abbreviateNumber(levelUpPrice)
+
+	levelUpButton.LevelTitle.Text = string.format("Lvl %s > Lvl %s", self.level, self.level + 1)
 end
 
 function PetSpot:addAttack(data)
@@ -154,7 +360,7 @@ function PetSpot:addAttack(data)
 
 		wait(totalDelay)
 		local unit = ClientMod.units[unitName]
-		if not unit then
+		if not unit or not unit.rig then
 			warn("NO UNIT FOUND: ", unitName)
 			return
 		end
@@ -167,7 +373,7 @@ function PetSpot:addAttack(data)
 		-- in the middle
 		local attackDir = (unitPos - petPos).Unit
 		local attackDist = (unitPos - petPos).Magnitude
-		local damagePos = petPos + attackDir * attackDist * 0.85
+		local damagePos = unitPos - attackDir * Common.randomBetween(0.7, 1.15)
 
 		if self.userName == player.Name then
 			ClientMod.damageManager:addDamageHit({
@@ -207,7 +413,10 @@ function PetSpot:addLaser(petFrame, unitFrame)
 	line.Parent = workspace
 
 	-- line.Color = Color3.fromRGB(255, 0, 0)
-	line.Color = Color3.fromRGB(82, 229, 255)
+	-- line.Color = Color3.fromRGB(82, 229, 255)
+
+	local ratingColor = RatingInfo["ratingColorMap"][self.petStats["rating"]]
+	line.Color = ratingColor
 
 	local midPos = (posA + posB) / 2
 	local vect = (posB - posA).unit
@@ -321,6 +530,11 @@ function PetSpot:initRig()
 
 	self:updateRigFrame(self.currFrame)
 
+	local trackMod = ClientMod.animUtils:animate(self, {
+		race = "Idle",
+		animationId = PetInfo.idleAnimationMap[self.petClass],
+	})
+
 	-- self:initBB()
 end
 
@@ -391,7 +605,10 @@ function PetSpot:destroy()
 	end
 	self.destroyed = true
 
+	self:destroyLevelBB()
 	self:destroyRig()
+
+	self:toggleBuyModel(false)
 end
 
 return PetSpot

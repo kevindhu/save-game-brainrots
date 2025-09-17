@@ -25,20 +25,29 @@ function PetSpot:init()
 		self[k] = v
 	end
 
-	self.attackSpeedRatio = Common.randomBetween(1, 1.1)
-	-- self.attackSpeedRatio = Common.randomBetween(2, 3)
+	self:refreshAttackSpeedRatio()
 
-	self:initModel()
-	self.standPart = self.model:WaitForChild("StandPart")
-
-	self.baseFrame = self.standPart.CFrame * CFrame.new(0, self.standPart.Size.Y * 0.5, 0)
-	self.currFrame = self.baseFrame
-
+	self:initBuyModel()
 	self:initAllEvents()
 
 	for _, otherUser in pairs(ServerMod.users) do
 		self:sync(otherUser)
 	end
+end
+
+function PetSpot:refreshAttackSpeedRatio()
+	if not self.petData then
+		self.attackSpeedRatio = 1
+		return
+	end
+
+	local level = self.petData["level"]
+
+	local levelIncrement = 0.003
+	local levelMultiplier = 1 + (level - 1) * levelIncrement
+	self.attackSpeedRatio = 1 * levelMultiplier
+
+	-- print("ATTACK SPEED RATIO: ", self.attackSpeedRatio)
 end
 
 function PetSpot:initAllEvents()
@@ -53,15 +62,57 @@ function PetSpot:createEvent(key, alias)
 	table.insert(self.eventsList, event)
 end
 
-function PetSpot:initModel()
+function PetSpot:toggleBuyModel(newBool)
+	for _, child in pairs(self.buyModel:GetChildren()) do
+		if child:IsA("BasePart") then
+			child.Transparency = newBool and 0 or 1
+			child.CanCollide = newBool
+			child.CanTouch = newBool
+		end
+	end
+end
+
+function PetSpot:unlock()
+	self:toggleBuyModel(false)
+
+	-- init the real model
+	local model = game.ReplicatedStorage.Assets.BoughtPetSpotModel:Clone()
+	model.Name = self.petSpotName
+
+	local buyBasePart = self.buyModel.BasePart
+	model:PivotTo(buyBasePart.CFrame * CFrame.new(0, -buyBasePart.Size.Y * 0.5 + model.PrimaryPart.Size.Y * 0.5, 0))
+	model.Parent = game.Workspace.BoughtPetSpots
+
+	self.standPart = model:WaitForChild("StandPart")
+	self.baseFrame = self.standPart.CFrame * CFrame.new(0, self.standPart.Size.Y * 0.5, 0)
+	self.currFrame = self.baseFrame
+
+	self.unlocked = true
+
+	ServerMod:FireAllClients("unlockPetSpot", {
+		petSpotName = self.petSpotName,
+	})
+end
+
+function PetSpot:showBuyModel()
+	self:toggleBuyModel(true)
+
+	ServerMod:FireAllClients("showPetSpotBuyModel", {
+		petSpotName = self.petSpotName,
+	})
+end
+
+function PetSpot:initBuyModel()
 	local plotModel = self.user.home.plotManager.model
-	local model = plotModel:FindFirstChild("PetSpot" .. self.index)
-	if not model then
-		warn("!! PET SPOT MODEL NOT FOUND: ", self.petSpotName, self.index)
+	local buyModel = plotModel:FindFirstChild("PetSpot" .. self.index)
+	if not buyModel then
+		warn("!! PET SPOT MODEL NOT FOUND: ", self.index, plotModel.Name)
 		return
 	end
 
-	self.model = model
+	self.buyModel = buyModel
+
+	self:toggleBuyModel(false)
 end
 
 function PetSpot:tick(timeRatio)
@@ -70,6 +121,22 @@ function PetSpot:tick(timeRatio)
 	end
 
 	self:tickAttack(timeRatio)
+	self:tickCoinsGeneration(timeRatio)
+end
+
+function PetSpot:tickCoinsGeneration(timeRatio)
+	if self.coinGenerationExpiree and self.coinGenerationExpiree > ServerMod.step then
+		return
+	end
+	self.coinGenerationExpiree = ServerMod.step + 60 * 1
+
+	local coinsCount = self.petStats["coinsPerSecond"]
+
+	-- TODO: add multipliers here
+
+	self.petData["totalCoins"] += coinsCount
+
+	self:sendCoinsData()
 end
 
 function PetSpot:tickAttack(timeRatio)
@@ -83,6 +150,16 @@ function PetSpot:tickAttack(timeRatio)
 	local currPosition = self.currFrame.Position
 
 	for _, unit in pairs(self.user.home.unitManager.units) do
+		if unit.inSafeZone then
+			continue
+		end
+		if unit.dead then
+			continue
+		end
+		if unit.capturedSavedPet then
+			continue
+		end
+
 		local dist = Common.getHorizontalDist(currPosition, unit.currFrame.p)
 		if dist < closestDist then
 			closestDist = dist
@@ -101,17 +178,58 @@ function PetSpot:tickAttack(timeRatio)
 
 	local damage = math.random(200, 300)
 
+	local level = self.petData["level"]
+	local levelMultiplier = 1 + (level - 1) * 0.01
+
+	-- print("LEVEL MULTIPLIER: ", levelMultiplier)
+
+	damage = damage * levelMultiplier
+
 	local totalDelay = 0.3 + (self.petStats["attackDelay"] or 0)
 	totalDelay = totalDelay / self.attackSpeedRatio
 
 	routine(function()
-		wait(totalDelay)
-		targetUnit:updateHealth(-damage, self)
+		targetUnit:updateHealth(-damage, self, totalDelay)
 	end)
 
 	self.user.home.damageManager:addDamage(damage)
 
 	self.attackEvent:FireAllClients(targetUnit.unitName, damage, targetUnit.health)
+end
+
+function PetSpot:tryLevelUp()
+	local petData = self.petData
+	if not petData then
+		warn("NO PET DATA TO LEVEL UP: ", self.petSpotName)
+		return
+	end
+
+	local maxLevel = PetInfo:getMaxLevel(self.petStats["rating"])
+	if petData["level"] >= maxLevel then
+		self.user:notifyError("Already max level!")
+		return
+	end
+
+	local price = PetInfo:calculateLevelUpPrice(petData)
+	local coinsCount = self.user.home.itemStash:getItemCount({
+		itemName = "Coins",
+	})
+
+	if coinsCount < price then
+		self.user:notifyError("Not enough coins!")
+		return
+	end
+
+	petData["level"] += 1
+
+	self.user.home.itemStash:updateItemCount({
+		itemName = "Coins",
+		count = -price,
+	})
+
+	self:refreshAttackSpeedRatio()
+
+	self:sendData()
 end
 
 function PetSpot:sync(otherUser)
@@ -121,10 +239,9 @@ function PetSpot:sync(otherUser)
 
 		petData = self.petData,
 
-		baseFrame = self.baseFrame,
-		currFrame = self.currFrame,
-
 		userName = self.user.name,
+
+		unlocked = self.unlocked,
 	})
 end
 
@@ -138,9 +255,36 @@ function PetSpot:occupyWithPet(petData)
 		self.petStats = PetInfo:getMeta(self.petClass)
 	end
 
+	self:refreshAttackSpeedRatio()
+
 	print("OCCUPYING PET SPOT: ", self.petSpotName, self.petData)
 
 	self:sendData()
+end
+
+function PetSpot:tryCollectCoins()
+	if not self.petData then
+		return
+	end
+
+	local coinsCount = self.petData["totalCoins"]
+
+	self.user.home.itemStash:updateItemCount({
+		itemName = "Coins",
+		count = coinsCount,
+	})
+	self.petData["totalCoins"] = 0
+
+	self:sendCoinsData()
+end
+
+function PetSpot:sendCoinsData()
+	ServerMod:FireClient(self.user.player, "updatePetSpotCoins", {
+		petSpotName = self.petSpotName,
+
+		totalCoins = self.petData["totalCoins"],
+		totalOfflineCoins = self.petData["totalOfflineCoins"],
+	})
 end
 
 function PetSpot:sendData()
@@ -154,6 +298,8 @@ end
 
 function PetSpot:clearPet()
 	self.petData = nil
+
+	self:refreshAttackSpeedRatio()
 
 	self:sendData()
 end
@@ -177,6 +323,13 @@ function PetSpot:destroy()
 		event:Destroy()
 	end
 	self.eventsList = {}
+
+	if self.model then
+		self.model:Destroy()
+		self.model = nil
+	end
+
+	self:showBuyModel()
 
 	self.petData = nil
 

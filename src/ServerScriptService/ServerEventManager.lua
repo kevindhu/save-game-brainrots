@@ -99,12 +99,16 @@ function ServerEventManager:handleRequest(player, req, data)
 		petManager:tryStorePet(data)
 	elseif req == "tryFeedPet" then
 		petManager:tryFeedPet(data)
-	elseif req == "tryRewardPetCoins" then
-		petManager:tryRewardCoins(data)
 	elseif req == "tryClaimOfflineCoins" then
 		petManager:tryClaimOfflineCoins(data)
 	elseif req == "tryPickupFromPetSpot" then
 		petManager:tryPickupFromPetSpot(data)
+	elseif req == "tryLevelUpPet" then
+		petManager:tryLevelUpPet(data)
+	elseif req == "tryCollectCoins" then
+		petManager:tryCollectCoins(data)
+	elseif req == "tryUnlockPetSpot" then
+		petManager:tryUnlockPetSpot(data)
 
 	-- INDEXMANAGER
 	elseif req == "tryClaimIndexReward" then

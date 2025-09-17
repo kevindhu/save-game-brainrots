@@ -4,6 +4,7 @@ local Common = require(game.ReplicatedStorage.Common)
 local len, routine, wait = Common.len, Common.routine, Common.wait
 
 local MutationInfo = require(game.ReplicatedStorage.MutationInfo)
+local PetRollInfo = require(game.ReplicatedStorage.PetRollInfo)
 
 local ProbManager = {}
 ProbManager.__index = ProbManager
@@ -29,6 +30,16 @@ function ProbManager:init()
 		wait(0.5)
 		self.initialized = true
 	end)
+end
+
+function ProbManager:generatePetClass()
+	local petProbMap = Common.deepCopy(PetRollInfo.probMap)
+
+	-- self:addWeatherWeight(petProbMap)
+	-- self:addLuckWeights(petProbMap)
+
+	local petClass = Common.rollFromProbMap(petProbMap)
+	return petClass
 end
 
 function ProbManager:generateMutationClass()

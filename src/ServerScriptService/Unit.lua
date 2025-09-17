@@ -19,6 +19,8 @@ function Unit.new(owner, data)
 
 	u.moveTimeRatio = 0
 
+	u.inSafeZone = true
+
 	setmetatable(u, Unit)
 	return u
 end
@@ -31,7 +33,7 @@ function Unit:init()
 
 	self.unitStats = UnitInfo:getMeta(self.unitClass)
 
-	self.baseMoveSpeed = 0.2 -- 0.25
+	self.baseMoveSpeed = self.unitStats["moveSpeed"]
 
 	self.baseRig = game.ReplicatedStorage.Assets[self.unitClass]
 
@@ -63,16 +65,31 @@ function Unit:init()
 	end)
 end
 
-function Unit:updateHealth(delta, attacker)
+function Unit:updateHealth(delta, attacker, totalDelay)
 	self.health += delta
 
 	-- print("!! UNIT HEALTH: ", self.unitName, self.health)
 
 	if self.health <= 0 then
+		self:die(totalDelay)
+	end
+end
+
+function Unit:die(totalDelay)
+	if self.dead then
+		return
+	end
+	self.dead = true
+
+	routine(function()
+		wait(totalDelay)
 		self:destroy({
 			waitTimer = 1,
 		})
-	end
+
+		local waveMod = self.waveMod
+		self.user.home.saveManager:killUnitFromWave(waveMod, self)
+	end)
 end
 
 function Unit:sync(otherUser)
@@ -94,6 +111,9 @@ function Unit:tick(timeRatio)
 	if not self.initialized then
 		return
 	end
+	if self.capturedSavedPet or self.destroyed or self.dead then
+		return
+	end
 
 	self:tickCurrFrame(timeRatio)
 	self:tickCurrAction()
@@ -105,13 +125,33 @@ function Unit:tickCurrAction()
 
 	if actionClass == "WalkToSavePart" then
 		if self.isStationary then
-			-- print("!! DESTROYING UNIT: ", self.unitName)
-			self:destroy({
-				waitTimer = 0,
-				noRagdoll = true,
-			})
+			self:captureSavedPet()
 		end
 	end
+end
+
+function Unit:captureSavedPet()
+	if self.capturedSavedPet then
+		return
+	end
+	self.capturedSavedPet = true
+
+	local waveMod = self.waveMod
+
+	self.user.home.saveManager:failWaveMod(waveMod, self)
+
+	routine(function()
+		wait(5)
+		self:destroyImmediately()
+	end)
+end
+
+function Unit:destroyImmediately()
+	-- print("!! DESTROYING UNIT: ", self.unitName)
+	self:destroy({
+		waitTimer = 0,
+		noRagdoll = true,
+	})
 end
 
 function Unit:updateActionMod(actionData)
@@ -138,7 +178,7 @@ function Unit:getGoalFrame()
 	local actionClass = actionMod.actionClass
 
 	if actionClass == "WalkToSavePart" then
-		return self.user.home.plotManager.savePart.CFrame
+		return self.user.home.plotManager.saveModel.BasePart.CFrame
 	else
 		warn("!!! NO ACTION CLASS: ", actionClass)
 	end
@@ -177,6 +217,8 @@ function Unit:tickCurrFrame(timeRatio)
 	local newFrame = CFrame.new(newPos) * newAngle
 	self.currFrame = newFrame
 
+	self:checkSafeZone()
+
 	local changeDist = Common.getHorizontalDist(currFrame.Position, goalFrame.Position)
 	local isStationary = changeDist <= 0.8
 	self.isStationary = isStationary
@@ -187,6 +229,26 @@ function Unit:tickCurrFrame(timeRatio)
 
 	-- reset the moveTimeRatio
 	self.moveTimeRatio = 0
+end
+
+function Unit:checkSafeZone()
+	local safeZone = self.user.home.plotManager.safeZone
+
+	local currPosition = self.currFrame.Position
+	local rayOrigin = Vector3.new(currPosition.X, safeZone.Position.Y + 10, currPosition.Z)
+	local rayDirection = Vector3.new(0, -20, 0)
+	local ray = Ray.new(rayOrigin, rayDirection)
+
+	local whiteList = {
+		safeZone,
+	}
+	local hitPart, hitPosition = workspace:FindPartOnRayWithWhitelist(ray, whiteList)
+	if not hitPart then
+		self.inSafeZone = false
+		return
+	end
+
+	self.inSafeZone = true
 end
 
 function Unit:calculateNewAngle(currFrame, goalFrame, timeRatio)
@@ -246,7 +308,7 @@ end
 
 function Unit:destroy(data)
 	if self.destroyed then
-		warn("ALREADY DESTROYED UNIT HUH: ", self.name)
+		-- warn("ALREADY DESTROYED UNIT HUH: ", self.name)
 		return
 	end
 	self.destroyed = true

@@ -14,7 +14,7 @@ PetInfo.runningAnimationMap = PetAnimInfo.running
 PetInfo.attackAnimationMap = PetAnimInfo.attack
 
 PetInfo.attackDamageMap = PetBalanceInfo.attackDamageMap
-PetInfo.coinMultiplierMap = PetBalanceInfo.coinMultiplierMap
+PetInfo.coinsPerSecondMap = PetBalanceInfo.coinsPerSecondMap
 
 PetInfo["petOrderList"] = {
 	"CappuccinoAssassino",
@@ -391,7 +391,7 @@ function PetInfo:init()
 			rating = rating,
 			attackDelay = self.attackDelayMap[petClass],
 			attackDamage = self.attackDamageMap[petClass],
-			coinMultiplier = self.coinMultiplierMap[petClass],
+			coinsPerSecond = self.coinsPerSecondMap[petClass],
 			image = self.imageMap[petClass],
 			mutationImageMap = self.mutationImageMap[petClass],
 		}
@@ -447,6 +447,10 @@ PetInfo.weightMultiplierMap = {
 }
 
 function PetInfo:getRealScale(baseWeight, level)
+	if true then
+		return 1
+	end
+
 	local levelMultiplier = 1 + (level - 1) * 0.01
 	local finalScale = baseWeight * levelMultiplier
 
@@ -472,17 +476,19 @@ function PetInfo:calculateSellPrice(data)
 	return sellPrice
 end
 
-function PetInfo:calculateLevelExpCap(level, rating)
-	local maxLevel = RatingInfo.ratingMaxLevelMap[rating]
-	if level >= maxLevel then
-		return 0
-	end
+function PetInfo:getMaxLevel(rating)
+	return RatingInfo.ratingMaxLevelMap[rating]
+end
 
-	-- Calculate required exp using formula: 50 * 1.1^currentLevel
-	local requiredExp = 50 * 1.1 ^ level
-	requiredExp = math.floor(requiredExp)
+function PetInfo:calculateLevelUpPrice(petData)
+	local level = petData["level"]
+	-- local rating = petData["rating"]
 
-	return requiredExp
+	-- Calculate required coins using formula: 50 * 1.1^currentLevel
+	local coinsCount = 50 * 1.1 ^ level
+	coinsCount = math.floor(coinsCount)
+
+	return coinsCount
 end
 
 function PetInfo:preloadPetImages()

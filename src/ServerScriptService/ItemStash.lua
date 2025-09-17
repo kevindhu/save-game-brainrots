@@ -76,36 +76,36 @@ function ItemStash:addTestPetTools()
 		"Boneca",
 		"LiriLira",
 		"Ballerina",
-		"FrigoCamelo",
-		"ChimpBanana",
-		"TaTaTaSahur",
-		"CapybaraCoconut",
-		"DolphinBanana",
-		"FishCatLegs",
-		"GooseBomber",
-		"TralaleloTralala",
-		"GlorboFruttoDrillo",
-		"RhinoToast",
-		"BrrBrrPatapim",
-		"ElephantCoconut",
-		"TimCheese",
-		"GiraffeWatermelon",
-		"MonkeyPineapple",
-		"OwlAvocado",
-		"OrangeDunDun",
-		"CowPlanet",
+		-- "FrigoCamelo",
+		-- "ChimpBanana",
+		-- "TaTaTaSahur",
+		-- "CapybaraCoconut",
+		-- "DolphinBanana",
+		-- "FishCatLegs",
+		-- "GooseBomber",
+		-- "TralaleloTralala",
+		-- "GlorboFruttoDrillo",
+		-- "RhinoToast",
+		-- "BrrBrrPatapim",
+		-- "ElephantCoconut",
+		-- "TimCheese",
+		-- "GiraffeWatermelon",
+		-- "MonkeyPineapple",
+		-- "OwlAvocado",
+		-- "OrangeDunDun",
+		-- "CowPlanet",
 
-		"OctopusBlueberry",
-		"SaltCombined",
-		"GorillaWatermelon",
+		-- "OctopusBlueberry",
+		-- "SaltCombined",
+		-- "GorillaWatermelon",
 
 		-- "MilkShake",
 		-- "GrapeSquid",
 	}
 	local mutationList = {
 		"None",
-		"Gold",
-		"Diamond",
+		-- "Gold",
+		-- "Diamond",
 		-- "Bubblegum",
 	}
 	for _, petClass in ipairs(petList) do
@@ -214,7 +214,9 @@ function ItemStash:setItemCount(itemName, newCount)
 
 	itemMod["count"] = newCount
 
-	self:sendItemMod(itemMod)
+	self:sendItemMod({
+		itemMod = itemMod,
+	})
 end
 
 function ItemStash:getItemMod(itemName)
@@ -249,6 +251,9 @@ function ItemStash:addItemMod(data)
 	local noSend = data["noSend"]
 	local hatchDelayTimer = data["hatchDelayTimer"] or 0
 
+	local noClick = data["noClick"]
+	local forceBottom = data["forceBottom"]
+
 	local itemStats = self:getFullItemStats(itemClass)
 	data["alias"] = itemStats["alias"]
 
@@ -263,6 +268,8 @@ function ItemStash:addItemMod(data)
 			moduleName = "itemStash",
 			count = 1,
 		})
+
+		-- print("ADDING PET WITH MUTATION: ", data["mutationClass"])
 	end
 
 	local newItemMod = self:newItemMod(data)
@@ -270,7 +277,11 @@ function ItemStash:addItemMod(data)
 	if not noSend then
 		routine(function()
 			wait(hatchDelayTimer)
-			self:sendItemMod(newItemMod)
+			self:sendItemMod({
+				itemMod = newItemMod,
+				forceBottom = forceBottom,
+				noClick = noClick,
+			})
 		end)
 	end
 
@@ -295,7 +306,9 @@ function ItemStash:removeItemMod(data)
 	itemMod["deleted"] = true
 
 	if not noSend then
-		self:sendItemMod(itemMod)
+		self:sendItemMod({
+			itemMod = itemMod,
+		})
 	end
 
 	self.itemMods[itemName] = nil
@@ -311,7 +324,9 @@ function ItemStash:toggleItemFavorite(data)
 	end
 
 	itemMod["favorited"] = not itemMod["favorited"]
-	self:sendItemMod(itemMod)
+	self:sendItemMod({
+		itemMod = itemMod,
+	})
 end
 
 function ItemStash:trySellAllToolItems()
@@ -470,10 +485,7 @@ function ItemStash:sendAllItemMods()
 	})
 end
 
-function ItemStash:sendItemMod(itemMod)
-	local data = {
-		itemMod = itemMod,
-	}
+function ItemStash:sendItemMod(data)
 	ServerMod:FireClient(self.user.player, "updateItemMod", data)
 end
 

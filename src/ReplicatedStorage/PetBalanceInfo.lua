@@ -1,6 +1,6 @@
 local PetBalanceInfo = {}
 
-PetBalanceInfo["coinMultiplierMap"] = {
+PetBalanceInfo["coinsPerSecondMap"] = {
 	["CappuccinoAssassino"] = 1,
 	["TungTungSahur"] = 2,
 	["TrippiTroppi"] = 3,
@@ -71,6 +71,17 @@ PetBalanceInfo["attackDamageMap"] = {
 	["GorillaWatermelon"] = 60,
 	["MilkShake"] = 60,
 	["GrapeSquid"] = 60,
+}
+
+PetBalanceInfo["unlockCostMap"] = {
+	["1"] = 0,
+	["2"] = 100,
+	["3"] = 200,
+	["4"] = 300,
+	["5"] = 400,
+	["6"] = 500,
+	["7"] = 600,
+	["8"] = 700,
 }
 
 return PetBalanceInfo

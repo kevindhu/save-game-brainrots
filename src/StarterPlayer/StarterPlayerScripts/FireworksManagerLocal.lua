@@ -28,7 +28,9 @@ local FireworkColors = {
 function FireworksManager:init() end
 
 -- Shoots multiple fireworks in sequence with sound effect
-function FireworksManager:shootFireworkSequence(launchCFrame)
+function FireworksManager:shootFireworkSequence(data)
+	local launchCFrame = data["launchCFrame"]
+
 	local fireworkCount = math.random(6, 8)
 
 	local colors = Common.deepCopy(FireworkColors)

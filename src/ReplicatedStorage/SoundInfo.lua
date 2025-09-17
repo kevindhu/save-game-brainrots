@@ -97,6 +97,11 @@ SoundInfo["sounds"] = {
 		volume = 0.5,
 	},
 
+	["EvilLaugh"] = {
+		id = 99037509129849,
+		volume = 0.1, -- 0.15
+	},
+
 	["ItemPlacement"] = {
 		id = 7650220708,
 		volume = 0.2,
@@ -238,6 +243,12 @@ SoundInfo["sounds"] = {
 	["TypeWriter"] = {
 		id = 9120299506,
 		volume = 0.3,
+	},
+
+	-- shard collect
+	["CoinCollect2"] = {
+		id = 115520671198314,
+		volume = 0.1,
 	},
 }
 

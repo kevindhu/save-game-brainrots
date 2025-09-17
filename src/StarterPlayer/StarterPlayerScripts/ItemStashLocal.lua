@@ -605,6 +605,7 @@ function ItemStash:updateItemMod(data)
 	local itemData = data["itemMod"]
 	local noRefreshGUI = data["noRefreshGUI"]
 	local noClick = data["noClick"]
+	local forceBottom = data["forceBottom"]
 
 	local itemClass = itemData["itemClass"]
 	if Common.listContains({ "Coins" }, itemClass) then
@@ -622,10 +623,10 @@ function ItemStash:updateItemMod(data)
 	if not itemMod then
 		itemMod = self:newItemMod(itemData)
 		-- try to add to bottom mods
-		if len(self.bottomModsList) < 6 or true then
-			-- if noClick == nil then
-			-- 	noClick = true
-			-- end
+		if len(self.bottomModsList) < 6 or forceBottom then
+			if noClick == nil then
+				noClick = true
+			end
 
 			self:toggleBottomItem(itemMod, noClick)
 		end
@@ -849,10 +850,10 @@ function ItemStash:refreshGUI()
 
 		local itemClassA = a["itemClass"]
 		local itemClassB = b["itemClass"]
-		local coinMultiplierA = PetBalanceInfo.coinMultiplierMap[itemClassA] or 0
-		local coinMultiplierB = PetBalanceInfo.coinMultiplierMap[itemClassB] or 0
-		if coinMultiplierA ~= coinMultiplierB then
-			return coinMultiplierA > coinMultiplierB
+		local coinsPerSecondA = PetBalanceInfo.coinsPerSecondMap[itemClassA] or 0
+		local coinsPerSecondB = PetBalanceInfo.coinsPerSecondMap[itemClassB] or 0
+		if coinsPerSecondA ~= coinsPerSecondB then
+			return coinsPerSecondA > coinsPerSecondB
 		end
 
 		-- if itemClassA ~= itemClassB then

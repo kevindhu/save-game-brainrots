@@ -74,6 +74,7 @@ function Map:initFolders()
 		"DamageParts",
 
 		"NoticeModels",
+		"BoughtPetSpots",
 	}
 	for _, folderName in pairs(workspaceFolders) do
 		local folder = Instance.new("Folder")

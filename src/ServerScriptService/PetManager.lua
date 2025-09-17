@@ -4,6 +4,7 @@ local Common = require(game.ReplicatedStorage.Common)
 local len, routine, wait = Common.len, Common.routine, Common.wait
 
 local PetInfo = require(game.ReplicatedStorage.PetInfo)
+local PetBalanceInfo = require(game.ReplicatedStorage.PetBalanceInfo)
 
 local PetSpot = require(game.ServerScriptService.PetSpot)
 
@@ -18,9 +19,13 @@ function PetManager.new(owner, data)
 	u.petSpots = {}
 	u.fullPetData = {}
 
+	u.unlockedPetSpotIndex = 1
+
 	setmetatable(u, PetManager)
 	return u
 end
+
+local PET_SPOT_COUNT = 5
 
 function PetManager:init()
 	self.user = self.owner.user
@@ -28,22 +33,90 @@ function PetManager:init()
 		self[k] = v
 	end
 
-	self:addAllPetSpots()
-
-	-- self:loadState()
-
 	routine(function()
 		wait(1)
+		self:addAllPetSpots()
+
+		if self.isNew then
+			local plotName = self.user.home.plotManager.plotName
+			local firstIndex = 1
+			self:tryUnlockPetSpot({
+				petSpotName = plotName .. "_PetSpot" .. firstIndex,
+			})
+		end
+
+		self:refreshUnlockedPetSpots()
 
 		self.initialized = true
 	end)
 end
 
-local PET_SPOT_COUNT = 3 -- 2
-
 function PetManager:addAllPetSpots()
 	for index = 1, PET_SPOT_COUNT do
 		self:addPetSpot(index)
+	end
+end
+
+function PetManager:tryUnlockPetSpot(data)
+	local petSpotName = data["petSpotName"]
+
+	local nextUnlockPetSpotName = nil
+	for index = 1, PET_SPOT_COUNT do
+		local plotName = self.user.home.plotManager.plotName
+		local currPetSpotName = plotName .. "_PetSpot" .. index
+		local currPetSpot = self.petSpots[currPetSpotName]
+		if currPetSpot.unlocked then
+			continue
+		end
+		nextUnlockPetSpotName = currPetSpotName
+		break
+	end
+
+	if nextUnlockPetSpotName ~= petSpotName then
+		warn("CANNOT UNLOCK THIS PET SPOT YET: ", petSpotName, nextUnlockPetSpotName)
+		return
+	end
+
+	local petSpot = self.petSpots[petSpotName]
+	if not petSpot then
+		warn("NO PET SPOT TO UNLOCK: ", petSpotName)
+		return
+	end
+
+	local index = petSpot.index
+	local unlockCost = PetBalanceInfo["unlockCostMap"][tostring(index)]
+	local coinsCount = self.user.home.itemStash:getItemCount({
+		itemName = "Coins",
+	})
+	if coinsCount < unlockCost then
+		self.user:notifyError("Not enough coins!")
+		return
+	end
+
+	petSpot:unlock()
+
+	self.user.home.itemStash:updateItemCount({
+		itemName = "Coins",
+		count = -unlockCost,
+	})
+
+	self:refreshUnlockedPetSpots()
+end
+
+function PetManager:refreshUnlockedPetSpots()
+	for index = 1, PET_SPOT_COUNT do
+		local plotName = self.user.home.plotManager.plotName
+		local currPetSpotName = plotName .. "_PetSpot" .. index
+		local currPetSpot = self.petSpots[currPetSpotName]
+
+		-- print("SHOWING BUY MODEL FOR: ", currPetSpot.petSpotName)
+
+		if currPetSpot.unlocked then
+			continue
+		end
+
+		currPetSpot:showBuyModel()
+		return
 	end
 end
 
@@ -67,17 +140,6 @@ function PetManager:loadState()
 
 		self:occupyPetSpot(self.petSpots[petName], currPetData)
 	end
-end
-
-function PetManager:tryRewardCoins(data)
-	local petName = data["petName"]
-	local pet = self.pets[petName]
-	if not pet then
-		-- warn("PET NOT FOUND TO REWARD COINS: ", petName)
-		return
-	end
-
-	pet:tryRewardCoins()
 end
 
 function PetManager:tick(timeRatio)
@@ -113,6 +175,17 @@ function PetManager:generateRandomBaseWeight()
 	return baseWeight
 end
 
+function PetManager:tryCollectCoins(data)
+	local petSpotName = data["petSpotName"]
+	local petSpot = self.petSpots[petSpotName]
+	if not petSpot then
+		warn("NO PET SPOT TO COLLECT COINS FROM: ", petSpotName)
+		return
+	end
+
+	petSpot:tryCollectCoins()
+end
+
 function PetManager:fillPetDataWithDefaults(petData)
 	-- handle petName
 	if petData["itemName"] then
@@ -129,6 +202,12 @@ function PetManager:fillPetDataWithDefaults(petData)
 	-- handle levels and exp
 	if not petData["level"] then
 		petData["level"] = 1
+	end
+	if not petData["totalCoins"] then
+		petData["totalCoins"] = 0
+	end
+	if not petData["totalOfflineCoins"] then
+		petData["totalOfflineCoins"] = 0
 	end
 end
 
@@ -153,6 +232,17 @@ function PetManager:tryPickupFromPetSpot(data)
 	self:storePet(petSpot)
 end
 
+function PetManager:tryLevelUpPet(data)
+	local petSpotName = data["petSpotName"]
+	local petSpot = self.petSpots[petSpotName]
+	if not petSpot then
+		warn("NO PET SPOT TO LEVEL UP: ", petSpotName)
+		return
+	end
+
+	petSpot:tryLevelUp()
+end
+
 function PetManager:storePet(petSpot)
 	local itemData = petSpot:getSaveData()
 
@@ -169,7 +259,9 @@ function PetManager:storePet(petSpot)
 	itemData["itemName"] = "STASHTOOL_" .. Common.getGUID()
 	itemData["itemClass"] = petClass
 	itemData["race"] = "pet"
-	itemData["noImmediateEquip"] = true
+
+	itemData["noClick"] = false
+	itemData["forceBottom"] = true
 
 	self.user.home.itemStash:addItemMod(itemData)
 

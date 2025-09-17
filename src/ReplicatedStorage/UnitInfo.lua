@@ -12,9 +12,23 @@ UnitInfo["animationMap"] = {
 
 UnitInfo["units"] = {
 	["Unit1"] = {
-		alias = "Unit1",
+		alias = "Noob",
 		health = 10,
-		speed = 10,
+		moveSpeed = 0.2,
+
+		attackRange = 2,
+	},
+	["Unit2"] = {
+		alias = "Big Noob",
+		health = 50,
+		moveSpeed = 0.8,
+
+		attackRange = 2,
+	},
+	["Unit3"] = {
+		alias = "Gigantic Noob",
+		health = 10000,
+		moveSpeed = 0.4,
 
 		attackRange = 2,
 	},

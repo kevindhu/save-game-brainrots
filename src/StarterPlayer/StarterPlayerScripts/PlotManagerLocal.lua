@@ -34,16 +34,18 @@ function PlotManager:initAllPlotMods()
 		local plotModel = game.Workspace:WaitForChild(plotName)
 
 		local floorPart = plotModel:WaitForChild("FloorPart")
-		local savePart = plotModel:WaitForChild("SavePart")
+		local saveModel = plotModel:WaitForChild("SaveModel")
 		local unitStartPart = plotModel:WaitForChild("UnitStartPart")
+		local runawayPart = plotModel:WaitForChild("RunawayPart")
 
 		local newPlotMod = {
 			plotName = plotName,
 			userName = nil,
 
 			floorPart = floorPart,
-			savePart = savePart,
+			saveModel = saveModel,
 			unitStartPart = unitStartPart,
+			runawayPart = runawayPart,
 
 			model = plotModel,
 		}
@@ -106,7 +108,7 @@ function PlotManager:updateGlobalPlot(data)
 	if plotMod.userName == player.Name then
 		self.model = plotMod.model
 		self.floorPart = plotMod.floorPart
-		self.savePart = plotMod.savePart
+		self.saveModel = plotMod.saveModel
 		self.unitStartPart = plotMod.unitStartPart
 	end
 

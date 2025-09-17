@@ -30,6 +30,9 @@ function PlotManager:init()
 		self:initModel()
 
 		self:sendPlotInfo()
+
+		wait(1)
+		self.user.home.saveManager:initSaveModel(self.saveModel)
 	end)
 end
 
@@ -115,8 +118,10 @@ function PlotManager:initModel()
 	self.model = model
 
 	self.floorPart = model.FloorPart
-	self.savePart = model.SavePart
 	self.unitStartPart = model.UnitStartPart
+	self.safeZone = model.SafeZone
+
+	self.saveModel = model.SaveModel
 
 	self.plotBaseFrame = self.floorPart.CFrame
 

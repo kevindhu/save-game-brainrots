@@ -30,9 +30,9 @@ function UnitManager:init()
 		self.initialized = true
 	end)
 
-	routine(function()
-		self:addTestUnits()
-	end)
+	-- routine(function()
+	-- 	self:addTestUnits()
+	-- end)
 end
 
 function UnitManager:addTestUnits()
@@ -99,6 +99,18 @@ function UnitManager:addUnit(unitData)
 	local unit = Unit.new(self, unitData)
 	unit:init()
 	self.units[unitData["unitName"]] = unit
+end
+
+function UnitManager:clearAllWaveUnits(waveMod)
+	for _, unit in pairs(self.units) do
+		if unit.capturedSavedPet then
+			continue
+		end
+
+		if unit.waveMod == waveMod then
+			unit:destroyImmediately()
+		end
+	end
 end
 
 function UnitManager:sync(otherUser)

@@ -9,6 +9,7 @@ local len, routine, wait = Common.len, Common.routine, Common.wait
 
 local TOGGLE_TEST_TORSO = false
 
+local PetInfo = require(game.ReplicatedStorage.PetInfo)
 local UnitInfo = require(game.ReplicatedStorage.UnitInfo)
 local MapInfo = require(game.ReplicatedStorage.MapInfo)
 
@@ -95,6 +96,13 @@ function Unit:initRig()
 	Common.weldPartsToRig(rig)
 
 	self.humanoid = rig:WaitForChild("Humanoid", 2)
+
+	self.humanoid.MaxHealth = self.unitStats["health"]
+	self.humanoid.Health = self.unitStats["health"]
+
+	self.humanoid.HealthDisplayType = Enum.HumanoidHealthDisplayType.AlwaysOn
+	self.humanoid.DisplayDistanceType = Enum.HumanoidDisplayDistanceType.Viewer
+	self.humanoid.DisplayName = self.unitStats["alias"]
 
 	self.humanoid.EvaluateStateMachine = false
 	self.humanoid:ChangeState(Enum.HumanoidStateType.Physics)
@@ -186,7 +194,9 @@ function Unit:getGoalFrame()
 
 	if actionClass == "WalkToSavePart" then
 		local plotMod = ClientMod.plotManager.plotMods[self.plotName]
-		return plotMod.savePart.CFrame
+		return plotMod.saveModel.BasePart.CFrame * CFrame.Angles(0, math.rad(180), 0)
+	elseif actionClass == "WalkToRunawayPart" then
+		return actionMod["goalFrame"]
 	end
 end
 
@@ -305,7 +315,8 @@ function Unit:getFloorPos(topPos)
 end
 
 function Unit:animateHit(newUnitHealth)
-	-- print("TODO: ANIMATE GET HIT: ", newUnitHealth)
+	local humanoid = self.humanoid
+	humanoid.Health = newUnitHealth
 end
 
 -- Check if unit is stationary and update animation state
@@ -346,6 +357,15 @@ function Unit:setStationary(newBool)
 end
 
 function Unit:destroyRig()
+	if self.capturedBB then
+		self.capturedBB:Destroy()
+		self.capturedBB = nil
+	end
+	if self.capturedPetRig then
+		self.capturedPetRig:Destroy()
+		self.capturedPetRig = nil
+	end
+
 	if self.rig then
 		self.rig:Destroy()
 	end
@@ -412,6 +432,126 @@ function Unit:destroy(data)
 		wait(waitTimer)
 		ClientMod.units[self.unitName] = nil
 	end)
+end
+
+function Unit:addCapturedPetRig(petData)
+	local petClass = petData["petClass"]
+	local mutationClass = petData["mutationClass"]
+
+	local head = self.rig.Torso
+
+	local fakeRig = game.ReplicatedStorage.Assets[petClass]:Clone()
+
+	local toolScaleRatio = 1 -- PetInfo:getRealScale(petData["baseWeight"], petData["level"])
+	local finalScale = fakeRig:GetScale() * toolScaleRatio
+	fakeRig:ScaleTo(finalScale)
+
+	local modelFrame, extentsSize = fakeRig:GetBoundingBox()
+	local centerOffset = modelFrame:inverse() * fakeRig.PrimaryPart.CFrame
+
+	fakeRig:Destroy()
+
+	local petRig = ClientMod.weldPetManager:addWeldPetRig({
+		petClass = petClass,
+		baseWeight = petData["baseWeight"],
+		level = petData["level"],
+		anchorPart = head,
+		anchorOffsetFrame = centerOffset * CFrame.new(0, 0, -3),
+
+		-- mutations
+		mutationManager = ClientMod.mutationManager,
+		mutationClass = mutationClass,
+	})
+
+	petRig.Name = petClass .. "_WELD_RIG"
+	petRig.Parent = self.rig
+
+	self:animatePetRig(petRig, petClass)
+
+	local fakeRootPart = petRig:FindFirstChild("RootPart")
+
+	local bb = game.ReplicatedStorage.Assets.CapturedBBPart.BB:Clone()
+	bb.Adornee = fakeRootPart:FindFirstChild("BBAttachment")
+	bb.Parent = playerGui
+
+	local petStats = PetInfo:getMeta(petClass)
+
+	local mutationTitle = bb.MainFrame.MutationTitle
+	ClientMod.mutationManager:applyMutationColor(mutationTitle, mutationClass)
+
+	local rating = petStats["rating"]
+	local nameTitle = bb.MainFrame.NameTitle
+
+	nameTitle.Text = petStats["alias"]
+	ClientMod.ratingManager:applyRatingColor(nameTitle, rating)
+
+	ClientMod.uiScaleManager:addDistStrokeModsFromBB({
+		bb = bb,
+		adornee = fakeRootPart,
+		baseDistance = 40,
+	})
+
+	self.capturedBB = bb
+	self.capturedPetRig = petRig
+end
+
+function Unit:animatePetRig(petRig, petClass)
+	local animationId = PetInfo["idleAnimationMap"][petClass]
+	local weldRigEntity = {
+		rig = petRig,
+	}
+	local trackMod = ClientMod.animUtils:animate(weldRigEntity, {
+		race = "Idle",
+		animationId = animationId,
+	})
+
+	if not trackMod then
+		return
+	end
+
+	trackMod["track"]:Play()
+end
+
+function Unit:captureSavePet(data)
+	ClientMod.saveManager:removeWaveMod(self.plotName)
+
+	local petData = data["petData"]
+	self.capturedSavedPet = true
+
+	-- print("!! CAPTURED SAVED PET: ", self.unitName, petData)
+
+	if not Common.isStudio then
+		ClientMod.soundManager:newSoundMod({
+			soundClass = "EvilLaugh",
+			pos = self.currFrame.Position,
+			playbackSpeed = Common.randomBetween(0.8, 1),
+		})
+	end
+
+	self.baseMoveSpeed = 0.2
+
+	self:addCapturedPetRig(petData)
+
+	ClientMod.animUtils:animate(self, {
+		race = "HoldTool",
+		animationClass = "HoldStashTool",
+	})
+
+	local plotMod = ClientMod.plotManager.plotMods[self.plotName]
+	local baseGoalFrame = plotMod.runawayPart.CFrame * CFrame.Angles(0, math.rad(180), 0)
+
+	local range = 100
+	local currFrame = self.currFrame
+	local goalFrame = baseGoalFrame * CFrame.new(Common.randomBetween(-range, range), 0, 0)
+
+	local goalPos = goalFrame.Position
+	goalPos = Vector3.new(goalPos.X, currFrame.Position.Y, goalPos.Z)
+	local finalGoalFrame = CFrame.new(goalPos) * Common.getCAngle(CFrame.new(currFrame.Position, goalPos))
+
+	self.actionMod = {
+		actionClass = "WalkToRunawayPart",
+		goalFrame = finalGoalFrame,
+	}
 end
 
 return Unit

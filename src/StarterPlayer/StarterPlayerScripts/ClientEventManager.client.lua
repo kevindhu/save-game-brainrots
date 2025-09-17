@@ -91,6 +91,26 @@ function handleRequest(req, data)
 		ClientMod.petManager:removePetSpot(data)
 	elseif req == "updatePetSpot" then
 		ClientMod.petManager:updatePetSpot(data)
+	elseif req == "updatePetSpotCoins" then
+		ClientMod.petManager:updatePetSpotCoins(data)
+	elseif req == "showPetSpotBuyModel" then
+		ClientMod.petManager:showPetSpotBuyModel(data)
+	elseif req == "unlockPetSpot" then
+		ClientMod.petManager:unlockPetSpot(data)
+
+	-- HATCHMANAGER
+	elseif req == "doHatch" then
+		ClientMod.hatchManager:doHatch(data)
+
+	-- FIREWORKSMANAGER
+	elseif req == "shootFireworks" then
+		ClientMod.fireworksManager:shootFireworkSequence(data)
+
+	-- SAVEMANAGER
+	elseif req == "addWaveMod" then
+		ClientMod.saveManager:addWaveMod(data)
+	elseif req == "updateWaveModData" then
+		ClientMod.saveManager:updateWaveModData(data)
 
 	-- UNITMANAGER
 	elseif req == "newUnit" then
@@ -99,6 +119,8 @@ function handleRequest(req, data)
 		ClientMod.unitManager:removeUnit(data)
 	elseif req == "updateUnitAction" then
 		ClientMod.unitManager:updateUnitAction(data)
+	elseif req == "unitCapturedSavedPet" then
+		ClientMod.unitManager:unitCapturedSavedPet(data)
 
 	-- ALERTMANAGER
 	elseif req == "updateModuleAlert" then

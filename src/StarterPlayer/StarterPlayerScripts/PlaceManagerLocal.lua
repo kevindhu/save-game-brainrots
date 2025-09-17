@@ -197,8 +197,12 @@ function PlaceManager:doFullPromptRefresh()
 
 	for _, petSpot in pairs(ClientMod.petSpots) do
 		local interactPrompt = petSpot.interactPrompt
+		if not interactPrompt then
+			continue
+		end
+
 		if petSpot.petData then
-			print("PET DATA: ", petSpot.petData)
+			-- print("PET DATA: ", petSpot.petData)
 			interactPrompt.Enabled = true
 			interactPrompt.ActionText = "Pickup Brainrot"
 		else
