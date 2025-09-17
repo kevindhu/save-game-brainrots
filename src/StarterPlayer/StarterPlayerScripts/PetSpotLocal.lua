@@ -360,7 +360,7 @@ function PetSpot:addAttack(data)
 
 		wait(totalDelay)
 		local unit = ClientMod.units[unitName]
-		if not unit or not unit.rig then
+		if not unit or not unit.rig or not unit.rig.Parent then
 			warn("NO UNIT FOUND: ", unitName)
 			return
 		end
