@@ -9,8 +9,6 @@ function RagdollManager:ragdollRig(rig, newBool)
 		-- Enable ragdoll physics
 		local badMotor6Ds = {
 			"RigWeldMotor123",
-			"FakeHandle",
-			"Pump",
 		}
 		for _, child in pairs(rig:GetDescendants()) do
 			if Common.listContains(badMotor6Ds, child.Name) then
@@ -95,8 +93,13 @@ function RagdollManager:setupJoints(rig)
 end
 
 function RagdollManager:setupBallSocketJoints(rig)
+	local ragdollPartsModel = game.ReplicatedStorage.Assets.RagdollPartsModel:Clone()
+	ragdollPartsModel:ScaleTo(rig:GetScale())
+
+	local ragdollParts = ragdollPartsModel.RagdollParts
+
 	local attachments = {}
-	for _, child in pairs(game.ReplicatedStorage.Assets.RagdollParts:GetChildren()) do
+	for _, child in pairs(ragdollParts:GetChildren()) do
 		if child:IsA("Attachment") then
 			local targetPart = rig:FindFirstChild(child:GetAttribute("Parent"))
 			local clone = child:Clone()
@@ -106,7 +109,7 @@ function RagdollManager:setupBallSocketJoints(rig)
 	end
 
 	-- now add the ballsocket constraints
-	for _, child in pairs(game.ReplicatedStorage.Assets.RagdollParts:GetChildren()) do
+	for _, child in pairs(ragdollParts:GetChildren()) do
 		if child:IsA("BallSocketConstraint") then
 			local ballSocket = child:Clone()
 			local attachment0 = attachments[ballSocket:GetAttribute("0")]
@@ -151,8 +154,13 @@ function RagdollManager:setupBallSocketJoints(rig)
 			if child.Name ~= "HumanoidRootPart" then
 				child.CanCollide = true
 			end
+			if child:GetAttribute("IsWeldPart") then
+				child.CanCollide = false
+			end
 		end
 	end
+
+	ragdollPartsModel:Destroy()
 end
 
 return RagdollManager

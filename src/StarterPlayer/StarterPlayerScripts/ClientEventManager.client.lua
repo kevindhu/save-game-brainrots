@@ -98,10 +98,6 @@ function handleRequest(req, data)
 	elseif req == "unlockPetSpot" then
 		ClientMod.petManager:unlockPetSpot(data)
 
-	-- HATCHMANAGER
-	elseif req == "doHatch" then
-		ClientMod.hatchManager:doHatch(data)
-
 	-- FIREWORKSMANAGER
 	elseif req == "shootFireworks" then
 		ClientMod.fireworksManager:shootFireworkSequence(data)

@@ -34,43 +34,43 @@ PetBalanceInfo["coinsPerSecondMap"] = {
 
 PetBalanceInfo["attackDamageMap"] = {
 	["CappuccinoAssassino"] = 10,
-	["TungTungSahur"] = 11,
-	["TrippiTroppi"] = 12,
+	["TungTungSahur"] = 486,
+	["TrippiTroppi"] = 962,
 
-	["Boneca"] = 13,
-	["LiriLira"] = 14,
-	["Ballerina"] = 15,
+	["Boneca"] = 1438,
+	["LiriLira"] = 1914,
+	["Ballerina"] = 2390,
 
-	["FrigoCamelo"] = 20,
-	["ChimpBanana"] = 20,
-	["TaTaTaSahur"] = 20,
+	["FrigoCamelo"] = 2867,
+	["ChimpBanana"] = 3343,
+	["TaTaTaSahur"] = 3819,
 
-	["CapybaraCoconut"] = 20,
-	["DolphinBanana"] = 20,
+	["CapybaraCoconut"] = 4295,
+	["DolphinBanana"] = 4771,
 
-	["FishCatLegs"] = 20,
+	["FishCatLegs"] = 5248,
 
-	["GooseBomber"] = 30,
-	["TralaleloTralala"] = 30,
+	["GooseBomber"] = 5724,
+	["TralaleloTralala"] = 6200,
 
-	["GlorboFruttoDrillo"] = 30,
-	["RhinoToast"] = 30,
+	["GlorboFruttoDrillo"] = 6676,
+	["RhinoToast"] = 7152,
 
-	["BrrBrrPatapim"] = 40,
-	["ElephantCoconut"] = 40,
+	["BrrBrrPatapim"] = 7629,
+	["ElephantCoconut"] = 8105,
 
-	["TimCheese"] = 50,
-	["GiraffeWatermelon"] = 50,
-	["MonkeyPineapple"] = 50,
-	["OwlAvocado"] = 50,
-	["OrangeDunDun"] = 50,
+	["TimCheese"] = 8581,
+	["GiraffeWatermelon"] = 9057,
+	["MonkeyPineapple"] = 9533,
+	["OwlAvocado"] = 10010,
+	["OrangeDunDun"] = 10486,
 
-	["CowPlanet"] = 60,
-	["OctopusBlueberry"] = 60,
-	["SaltCombined"] = 60,
-	["GorillaWatermelon"] = 60,
-	["MilkShake"] = 60,
-	["GrapeSquid"] = 60,
+	["CowPlanet"] = 10962,
+	["OctopusBlueberry"] = 11438,
+	["SaltCombined"] = 11914,
+	["GorillaWatermelon"] = 12390,
+	["MilkShake"] = 12867,
+	["GrapeSquid"] = 10000,
 }
 
 PetBalanceInfo["unlockCostMap"] = {

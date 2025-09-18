@@ -106,7 +106,7 @@ function TweenManager:tickModelMod(modelMod, timeRatio)
 	local goalMods = modelMod["goalMods"]
 
 	local newTime = currTime + timeRatio / 60
-	if newTime > totalTime then
+	if newTime > totalTime or not model or not model.Parent then
 		self:removeModelMod(modelMod)
 		return
 	end

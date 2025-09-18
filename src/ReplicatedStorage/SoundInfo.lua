@@ -52,6 +52,11 @@ SoundInfo["sounds"] = {
 		volume = 0.5,
 	},
 
+	["Bullet1"] = {
+		id = 1489924400,
+		volume = 0.4,
+	},
+
 	-- PUNCHES
 	["Punch1"] = {
 		id = 7468131335,
@@ -100,6 +105,18 @@ SoundInfo["sounds"] = {
 	["EvilLaugh"] = {
 		id = 99037509129849,
 		volume = 0.1, -- 0.15
+	},
+	["ClashLaugh"] = {
+		id = 7669135835,
+		volume = 0.1, -- 0.15
+	},
+	["JokerLaugh"] = {
+		id = 130293923612339,
+		volume = 0.3, -- 0.15
+	},
+	["FrogLaugh"] = {
+		id = 97355232764910,
+		volume = 0.2, -- 0.15
 	},
 
 	["ItemPlacement"] = {
@@ -249,6 +266,14 @@ SoundInfo["sounds"] = {
 	["CoinCollect2"] = {
 		id = 115520671198314,
 		volume = 0.1,
+	},
+	["CoinCollect3"] = {
+		id = 7437419566,
+		volume = 0.2,
+	},
+	["SuccessBlip5"] = {
+		id = 1293433423,
+		volume = 0.2,
 	},
 }
 
@@ -407,9 +432,12 @@ function SoundInfo:preloadSounds()
 
 		ContentProvider:PreloadAsync(sounds)
 
-		for _, sound in sounds do
-			sound:Destroy()
-		end
+		routine(function()
+			wait(10)
+			for _, sound in sounds do
+				sound:Destroy()
+			end
+		end)
 	end)
 end
 

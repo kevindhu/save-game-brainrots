@@ -84,7 +84,9 @@ function UnitManager:getUnitStartFrame()
 	local plotManager = self.user.home.plotManager
 	local unitStartPart = plotManager.unitStartPart
 
-	local unitStartFrame = unitStartPart.CFrame * CFrame.new(0, 0, Common.randomBetween(-30, 30))
+	local unitStartFrame = unitStartPart.CFrame
+		* CFrame.new(0, 0, Common.randomBetween(-30, 30))
+		* CFrame.Angles(0, math.rad(-270), 0)
 
 	return unitStartFrame
 end

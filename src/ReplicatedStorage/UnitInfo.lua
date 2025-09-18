@@ -21,13 +21,20 @@ UnitInfo["units"] = {
 	["Unit2"] = {
 		alias = "Big Noob",
 		health = 50,
-		moveSpeed = 0.8,
+		moveSpeed = 0.1,
 
 		attackRange = 2,
 	},
 	["Unit3"] = {
 		alias = "Gigantic Noob",
 		health = 10000,
+		moveSpeed = 0.4,
+
+		attackRange = 2,
+	},
+	["Unit4"] = {
+		alias = "Mutated king",
+		health = 1,
 		moveSpeed = 0.4,
 
 		attackRange = 2,

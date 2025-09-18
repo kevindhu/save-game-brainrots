@@ -17,7 +17,7 @@ function PetManager.new(owner, data)
 	u.data = data
 
 	u.petSpots = {}
-	u.fullPetData = {}
+	u.fullPetSpotData = {}
 
 	u.unlockedPetSpotIndex = 1
 
@@ -33,22 +33,140 @@ function PetManager:init()
 		self[k] = v
 	end
 
+	self:addAllPetSpots()
+
 	routine(function()
 		wait(1)
-		self:addAllPetSpots()
-
 		if self.isNew then
 			local plotName = self.user.home.plotManager.plotName
 			local firstIndex = 1
 			self:tryUnlockPetSpot({
 				petSpotName = plotName .. "_PetSpot" .. firstIndex,
 			})
+		else
+			self:loadState()
 		end
 
-		self:refreshUnlockedPetSpots()
+		self:refreshBuyModels()
+
+		wait(1)
+		if not self.isNew then
+			self:sendOfflineCoinsData()
+		end
 
 		self.initialized = true
 	end)
+end
+
+function PetManager:loadState()
+	local fullPetSpotData = self.fullPetSpotData
+
+	for _, petSpotData in pairs(fullPetSpotData) do
+		local petData = petSpotData.petData
+		local chosenPetSpot = nil
+		for _, petSpot in pairs(self.petSpots) do
+			if petSpot.index == petSpotData.index then
+				chosenPetSpot = petSpot
+				break
+			end
+		end
+		if not chosenPetSpot then
+			warn("!!! NO PET SPOT TO LOAD STATE FOR: ", petSpotData.index)
+			continue
+		end
+
+		print("GOT PET SPOT DATA: ", petSpotData.index, petSpotData.unlocked, petData)
+
+		if petSpotData.unlocked then
+			chosenPetSpot:unlock()
+		end
+
+		if petData then
+			chosenPetSpot:occupyWithPet(petData)
+			chosenPetSpot:refreshTotalOfflineCoins(petSpotData.leaveTimestamp)
+		end
+	end
+end
+
+function PetManager:sendOfflineCoinsData()
+	local totalOfflineCoins = 0
+
+	local totalSeconds = 0
+	for _, petSpot in pairs(self.petSpots) do
+		if not petSpot.petData then
+			continue
+		end
+
+		totalOfflineCoins += petSpot.petData.totalOfflineCoins
+		totalSeconds = math.max(totalSeconds, os.time() - petSpot.leaveTimestamp)
+	end
+
+	-- less than 30 minutes
+	if totalSeconds < 60 * 30 then
+		-- immediately just claim without boost
+		print("CLAIMING WITHOUT BOOST")
+		self:claimOfflineCoins({
+			boost = false,
+		})
+		return
+	end
+
+	ServerMod:FireClient(self.user.player, "updateCoinsOfflineData", {
+		totalOfflineCoins = totalOfflineCoins,
+	})
+end
+
+function PetManager:tryClaimOfflineCoins(data)
+	local boost = data["boost"]
+	if self.claimedOfflineCoins then
+		return
+	end
+
+	if boost then
+		self.user.home.shopManager:tryBuyProduct({
+			productClass = "OfflineCoinsClaimBoost",
+		})
+		return
+	end
+
+	self:claimOfflineCoins({
+		boost = false,
+	})
+end
+
+function PetManager:claimOfflineCoins(data)
+	local boost = data["boost"]
+
+	self.claimedOfflineCoins = true
+
+	local totalOfflineCoins = 0
+	for _, petSpot in pairs(self.petSpots) do
+		if not petSpot.petData then
+			continue
+		end
+		totalOfflineCoins += petSpot.petData.totalOfflineCoins
+	end
+
+	if boost then
+		totalOfflineCoins = totalOfflineCoins * 10
+	end
+
+	self.user.home.itemStash:updateItemCount({
+		itemName = "Coins",
+		count = totalOfflineCoins,
+	})
+
+	-- clear all offline coins
+	for _, petSpot in pairs(self.petSpots) do
+		if not petSpot.petData then
+			continue
+		end
+		petSpot.petData.totalOfflineCoins = 0
+	end
+
+	ServerMod:FireClient(self.user.player, "claimedOfflineCoins", {
+		totalOfflineCoins = totalOfflineCoins,
+	})
 end
 
 function PetManager:addAllPetSpots()
@@ -100,16 +218,14 @@ function PetManager:tryUnlockPetSpot(data)
 		count = -unlockCost,
 	})
 
-	self:refreshUnlockedPetSpots()
+	self:refreshBuyModels()
 end
 
-function PetManager:refreshUnlockedPetSpots()
+function PetManager:refreshBuyModels()
 	for index = 1, PET_SPOT_COUNT do
 		local plotName = self.user.home.plotManager.plotName
 		local currPetSpotName = plotName .. "_PetSpot" .. index
 		local currPetSpot = self.petSpots[currPetSpotName]
-
-		-- print("SHOWING BUY MODEL FOR: ", currPetSpot.petSpotName)
 
 		if currPetSpot.unlocked then
 			continue
@@ -130,16 +246,6 @@ function PetManager:addPetSpot(index)
 	})
 	petSpot:init()
 	self.petSpots[petSpotName] = petSpot
-end
-
-function PetManager:loadState()
-	local fullPetData = self.fullPetData
-
-	for petName, petData in pairs(fullPetData) do
-		local currPetData = Common.deepCopy(petData)
-
-		self:occupyPetSpot(self.petSpots[petName], currPetData)
-	end
 end
 
 function PetManager:tick(timeRatio)
@@ -167,6 +273,7 @@ end
 
 function PetManager:generateRandomBaseWeight()
 	local baseWeight = Common.randomBetween(1, 1.3)
+	-- local baseWeight = Common.randomBetween(3, 10)
 
 	-- if math.random() * 100 < 100 then
 	-- 	baseWeight *= 100
@@ -244,7 +351,7 @@ function PetManager:tryLevelUpPet(data)
 end
 
 function PetManager:storePet(petSpot)
-	local itemData = petSpot:getSaveData()
+	local itemData = Common.deepCopy(petSpot.petData)
 
 	local petClass = itemData["petClass"]
 	local petStats = PetInfo:getMeta(petClass)
@@ -282,14 +389,15 @@ function PetManager:destroy()
 end
 
 function PetManager:saveState()
-	local fullPetData = {}
+	local fullPetSpotData = {}
 
-	-- for _, petSpot in pairs(self.petSpots) do
-	-- 	fullPetData[petSpot.petSpotName] = petSpot:getSaveData()
-	-- end
+	for _, petSpot in pairs(self.petSpots) do
+		local petSpotData = petSpot:getSaveData()
+		fullPetSpotData[petSpot.petSpotName] = petSpotData
+	end
 
 	local managerData = {
-		fullPetData = fullPetData,
+		fullPetSpotData = fullPetSpotData,
 	}
 
 	self.user.store:set(self.moduleAlias .. "Info", managerData)

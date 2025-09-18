@@ -114,6 +114,7 @@ function LoadAllModules()
 
 		{ "RagdollManager", "ragdollManager" },
 		{ "SaveManager", "saveManager" },
+		{ "OrbManager", "orbManager" },
 	}
 
 	local startTime = os.clock()
@@ -160,6 +161,7 @@ RunService.Heartbeat:Connect(function(deltaTime)
 		"tradeManager",
 
 		"petManager",
+		"orbManager",
 	}
 	for _, moduleName in ipairs(moduleList) do
 		if ClientMod[moduleName] then

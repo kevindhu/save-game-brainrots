@@ -88,7 +88,6 @@ function WeldPetManager:addWeldPetRig(data)
 	mutationManager:addMutationToRig(entity, rig, mutationClass)
 
 	local baseScale = rig:GetScale()
-
 	local finalScale = baseScale * PetInfo:getRealScale(baseWeight, level)
 
 	rig:ScaleTo(finalScale)

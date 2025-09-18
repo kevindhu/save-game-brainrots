@@ -194,7 +194,19 @@ function Unit:getGoalFrame()
 
 	if actionClass == "WalkToSavePart" then
 		local plotMod = ClientMod.plotManager.plotMods[self.plotName]
-		return plotMod.saveModel.BasePart.CFrame * CFrame.Angles(0, math.rad(180), 0)
+
+		local currFrame = self.currFrame
+		local currPos = currFrame.Position
+
+		local savePart = plotMod.saveModel.BasePart
+		local savePos = Vector3.new(savePart.Position.X, currPos.Y, savePart.Position.Z)
+
+		local goalAngle = Common.getCAngle(self.currFrame)
+		if (currPos - savePos).Magnitude > 0.1 then
+			goalAngle = Common.getCAngle(CFrame.new(currPos, savePos))
+		end
+
+		return CFrame.new(savePos) * goalAngle
 	elseif actionClass == "WalkToRunawayPart" then
 		return actionMod["goalFrame"]
 	end
@@ -442,9 +454,7 @@ function Unit:addCapturedPetRig(petData)
 
 	local fakeRig = game.ReplicatedStorage.Assets[petClass]:Clone()
 
-	local toolScaleRatio = 1 -- PetInfo:getRealScale(petData["baseWeight"], petData["level"])
-	local finalScale = fakeRig:GetScale() * toolScaleRatio
-	fakeRig:ScaleTo(finalScale)
+	PetInfo:refreshPetScale(fakeRig, petData)
 
 	local modelFrame, extentsSize = fakeRig:GetBoundingBox()
 	local centerOffset = modelFrame:inverse() * fakeRig.PrimaryPart.CFrame
@@ -520,9 +530,18 @@ function Unit:captureSavePet(data)
 
 	-- print("!! CAPTURED SAVED PET: ", self.unitName, petData)
 
-	if not Common.isStudio then
+	local laughProbMap = {
+		["EvilLaugh"] = 5,
+		["ClashLaugh"] = 3,
+		["JokerLaugh"] = 2,
+		["FrogLaugh"] = 2,
+	}
+
+	local laughClass = Common.rollFromProbMap(laughProbMap)
+
+	if not Common.isStudio or true then
 		ClientMod.soundManager:newSoundMod({
-			soundClass = "EvilLaugh",
+			soundClass = laughClass,
 			pos = self.currFrame.Position,
 			playbackSpeed = Common.randomBetween(0.8, 1),
 		})

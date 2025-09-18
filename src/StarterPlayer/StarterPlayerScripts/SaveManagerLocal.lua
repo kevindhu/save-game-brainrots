@@ -92,6 +92,76 @@ function SaveManager:removeWaveMod(plotName)
 	self.waveMods[waveMod.plotName] = nil
 end
 
+function SaveManager:animateHatch(plotName)
+	local waveMod = self.waveMods[plotName]
+	if not waveMod then
+		return
+	end
+
+	local petEntity = waveMod["petEntity"]
+	if not petEntity then
+		warn("!!! NO PET ENTITY FOUND TO ANIMATE HATCH: ", plotName)
+		return
+	end
+
+	local rig = petEntity.rig
+
+	local pos = rig.PrimaryPart.Position
+	local startPos = pos + Vector3.new(0, 1, 0)
+
+	for i = 1, 1 do
+		local direction = Common.getRandomFlatDir()
+
+		ClientMod.orbManager:newOrbMod({
+			name = "ORB_" .. Common.getGUID(),
+			startPos = startPos,
+			direction = direction,
+			value = 1,
+			itemClass = "Coins",
+			petClass = petEntity.petClass,
+			mutationClass = petEntity.mutationClass,
+		})
+	end
+
+	if rig then
+		rig:Destroy()
+	end
+
+	-- ClientMod.tweenManager:createTween({
+	-- 	target = rig,
+	-- 	timer = 3,
+	-- 	easingStyle = "Quad",
+	-- 	easingDirection = "Out",
+	-- 	goal = {
+	-- 		CFrame = rig.PrimaryPart.CFrame * CFrame.new(0, 10, 0),
+	-- 	},
+	-- })
+
+	-- for _, child in pairs(rig:GetDescendants()) do
+	-- 	if child:IsA("BasePart") then
+	-- 		ClientMod.tweenManager:createTween({
+	-- 			target = child,
+	-- 			timer = 0.5,
+	-- 			easingStyle = "Linear",
+	-- 			easingDirection = "Out",
+	-- 			goal = {
+	-- 				Transparency = 1,
+	-- 			},
+	-- 		})
+	-- 	elseif child:IsA("Decal") then
+	-- 		ClientMod.tweenManager:createTween({
+	-- 			target = child,
+	-- 			timer = 0.5,
+	-- 			easingStyle = "Linear",
+	-- 			easingDirection = "Out",
+	-- 			goal = {
+	-- 				Transparency = 1,
+	-- 			},
+	-- 		})
+	-- 	end
+	-- end
+end
+
 function SaveManager:initPetRig(plotName, waveMod, saveBaseFrame)
 	if self.bb then
 		self.bb:Destroy()
@@ -132,6 +202,8 @@ function SaveManager:initPetRig(plotName, waveMod, saveBaseFrame)
 	Common.weldPartsToRig(rig)
 
 	rig:SetAttribute("petName", self.petName)
+
+	PetInfo:refreshPetScale(rig, petData)
 
 	local rootPart = rig:WaitForChild("HumanoidRootPart", 2)
 	if not rootPart then

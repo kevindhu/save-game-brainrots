@@ -68,6 +68,10 @@ end
 function Unit:updateHealth(delta, attacker, totalDelay)
 	self.health += delta
 
+	if self.capturedSavedPet then
+		return
+	end
+
 	-- print("!! UNIT HEALTH: ", self.unitName, self.health)
 
 	if self.health <= 0 then

@@ -18,7 +18,6 @@ function HintManager:init()
 end
 
 function HintManager:addCons()
-	print("ADDING CONS")
 	hintFrame.Visible = true
 end
 

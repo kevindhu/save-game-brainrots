@@ -276,6 +276,10 @@ function ToolManager:tryPlacePetAtPetSpot(data)
 		warn("NO PET SPOT TO PLACE PET AT: ", petSpotName)
 		return
 	end
+	if not petSpot.unlocked then
+		self.user:notifyError("This pet spot is not unlocked")
+		return
+	end
 
 	local toolMod = self.stashToolMods[toolName]
 	if not toolMod then

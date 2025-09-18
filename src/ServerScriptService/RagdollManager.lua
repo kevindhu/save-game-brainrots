@@ -42,7 +42,16 @@ end
 function RagdollManager:ragdollRig(rig, newBool)
 	if newBool then
 		-- Enable ragdoll physics
+		local badMotor6Ds = {
+			"RigWeldMotor123",
+		}
+
+		-- Enable ragdoll physics
 		for _, child in pairs(rig:GetDescendants()) do
+			if Common.listContains(badMotor6Ds, child.Name) then
+				continue
+			end
+
 			if child:IsA("Motor6D") and isValidJoint(child.Name) then
 				child.Enabled = false
 			elseif child:IsA("BallSocketConstraint") then

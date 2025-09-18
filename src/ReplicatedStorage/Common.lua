@@ -671,8 +671,10 @@ function Common.weldPartToBasePart(currPart, basePart)
 	weld.Part1 = basePart
 	weld.C0 = currPart.CFrame:inverse() * basePart.CFrame
 	weld.C1 = CFrame.new(0, 0, 0)
-	weld.Name = "WeldMotor123"
+	weld.Name = "RigWeldMotor123"
 	weld.Parent = currPart
+
+	currPart:SetAttribute("IsWeldPart", true)
 
 	currPart.Anchored = false
 end

@@ -58,6 +58,7 @@ function PetManager:updatePetSpot(data)
 	local petSpotName = data["petSpotName"]
 	local petSpot = ClientMod.petSpots[petSpotName]
 	if not petSpot then
+		warn("!!! NO PET SPOT TO UPDATE: ", petSpotName)
 		return
 	end
 
@@ -147,7 +148,7 @@ function PetManager:showPetSpotBuyModel(data)
 	if not petSpot then
 		return
 	end
-	petSpot:showBuyModel()
+	petSpot:toggleBuyModel(true)
 end
 
 function PetManager:unlockPetSpot(data)

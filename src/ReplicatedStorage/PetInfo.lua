@@ -447,14 +447,17 @@ PetInfo.weightMultiplierMap = {
 }
 
 function PetInfo:getRealScale(baseWeight, level)
-	if true then
-		return 1
-	end
-
 	local levelMultiplier = 1 + (level - 1) * 0.01
 	local finalScale = baseWeight * levelMultiplier
 
 	return finalScale
+end
+
+function PetInfo:refreshPetScale(rig, petData)
+	local baseRig = game.ReplicatedStorage.Assets[petData["petClass"]]
+	local baseScale = baseRig:GetScale()
+	local finalScale = baseScale * self:getRealScale(petData["baseWeight"], petData["level"])
+	rig:ScaleTo(finalScale)
 end
 
 function PetInfo:getRealWeight(petClass, baseWeight, level)

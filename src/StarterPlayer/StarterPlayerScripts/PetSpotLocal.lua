@@ -32,10 +32,12 @@ function PetSpot:init()
 		self[k] = v
 	end
 
-	self:initBuyModel()
 	self:initAllEvents()
 
 	routine(function()
+		self:initBuyModel()
+		self:initRealModel()
+
 		wait(1)
 		if self.unlocked then
 			self:unlock()
@@ -102,43 +104,63 @@ function PetSpot:initBuyModel()
 	self:toggleBuyModel(false)
 end
 
-function PetSpot:showBuyModel()
-	self:toggleBuyModel(true)
-end
-
 function PetSpot:toggleBuyModel(newBool)
 	self.buyBB.Enabled = newBool
 end
 
 function PetSpot:unlock()
+	if self.unlockedModel then
+		return
+	end
+	self.unlockedModel = true
+
 	self.unlocked = true
 
 	self:toggleBuyModel(false)
-	self:initRealModel()
+
+	ClientMod.placeManager:refreshAllPrompts()
 end
 
 function PetSpot:initRealModel()
-	local model = game.Workspace.BoughtPetSpots:WaitForChild(self.petSpotName, 2)
-	if not model then
+	local realModel = game.Workspace.BoughtPetSpots:WaitForChild(self.petSpotName, 2)
+	if not realModel then
 		warn("!! REAL PET SPOT MODEL NOT FOUND: ", self.petSpotName)
 		return
 	end
 
-	self.standPart = model:WaitForChild("StandPart")
+	self.realModel = realModel
+	self.standPart = realModel:WaitForChild("StandPart")
 
-	self.baseFrame = self.standPart.CFrame
-		* CFrame.new(0, self.standPart.Size.Y * 0.5, 0)
-		* CFrame.Angles(0, math.rad(180), 0)
-	self.currFrame = self.baseFrame
+	self:initLevelBB()
+	self:initCollectBB()
+end
 
+function PetSpot:initLevelBB()
+	local model = self.realModel
 	local levelBBPart = model:WaitForChild("LevelBBPart")
 	levelBBPart.Transparency = 1
 
-	local baseLevelBB = levelBBPart.BB
-	baseLevelBB.Enabled = false
-	self.baseLevelBB = baseLevelBB
+	local levelBB = model:WaitForChild("LevelBBPart").BB
+	local levelUpButton = levelBB.MainFrame.Button
+	ClientMod.buttonManager:addActivateCons(levelUpButton, function()
+		ClientMod:FireServer("tryLevelUpPet", {
+			petSpotName = self.petSpotName,
+		})
 
-	local collectPart = model:WaitForChild("CollectButton").Collect
+		ClientMod.soundManager:newSoundMod({
+			soundClass = "CashBuy",
+			volume = 0.2,
+		})
+	end)
+	ClientMod.buttonManager:addBasicButtonCons(levelUpButton)
+	self.levelBB = levelBB
+
+	self:refreshLevelBB()
+end
+
+function PetSpot:initCollectBB()
+	local model = self.realModel
+	local collectPart = model:WaitForChild("CollectButton"):WaitForChild("Collect")
 	self.collectPart = collectPart
 
 	if player.Name == self.userName then
@@ -156,7 +178,10 @@ function PetSpot:initRealModel()
 	end
 
 	self.collectBB = collectPart.BB
+	self.collectBB.Name = "CollectBB" .. self.petSpotName
 	self.collectBB.Enabled = false
+
+	self:refreshCollectBB()
 end
 
 function PetSpot:tryCollectCoins()
@@ -194,29 +219,6 @@ function PetSpot:animateCoinsCollection()
 		emitterModel = emitterModel,
 		scale = scale,
 	})
-end
-
-function PetSpot:addLevelBB()
-	local levelBB = self.baseLevelBB:Clone()
-
-	levelBB.Adornee = self.baseLevelBB.Parent
-	levelBB.Enabled = true
-	levelBB.Parent = playerGui
-
-	self.levelBB = levelBB
-
-	local levelUpButton = levelBB.MainFrame.Button
-	ClientMod.buttonManager:addActivateCons(levelUpButton, function()
-		ClientMod:FireServer("tryLevelUpPet", {
-			petSpotName = self.petSpotName,
-		})
-
-		ClientMod.soundManager:newSoundMod({
-			soundClass = "CashBuy",
-			volume = 0.2,
-		})
-	end)
-	ClientMod.buttonManager:addBasicButtonCons(levelUpButton)
 end
 
 function PetSpot:initPrompts()
@@ -261,42 +263,54 @@ function PetSpot:updateData(data)
 	self.petData = petData
 
 	local oldPetName = self.petName
-
-	if not self.petData then
-		self:destroyRig()
-		if self.userName == player.Name then
-			ClientMod.placeManager:refreshAllPrompts()
+	if self.petData then
+		for k, v in pairs(self.petData) do
+			self[k] = v
 		end
+		self.petStats = PetInfo:getMeta(self.petClass)
 
-		self.collectBB.Enabled = false
-
-		self:destroyLevelBB()
-
-		return
+		if oldPetName ~= self.petName then
+			self:refreshRig()
+		end
+		PetInfo:refreshPetScale(self.rig, self.petData)
 	end
 
-	self.collectBB.Enabled = true
-
-	if not self.levelBB then
-		self:addLevelBB()
-	end
-
-	for k, v in pairs(self.petData) do
-		self[k] = v
-	end
-
-	self.petStats = PetInfo:getMeta(self.petClass)
-
-	if oldPetName ~= self.petName then
-		-- print("REFRESHING RIG FOR PET SPOT: ", self.petSpotName)
-		self:refreshRig()
-	end
+	self:refreshLevelBB()
+	self:refreshCollectBB()
+	self:refreshPetBB()
 
 	if self.userName == player.Name then
 		ClientMod.placeManager:refreshAllPrompts()
 	end
 
-	self:refreshLevelBB()
+	if not self.petData then
+		self:destroyRig()
+		return
+	end
+end
+
+function PetSpot:refreshCollectBB()
+	if not self.collectBB then
+		return
+	end
+
+	if player.Name ~= self.userName then
+		self.collectBB.Enabled = false
+		return
+	end
+
+	if self.petData then
+		self.collectBB.Enabled = true
+	else
+		self.collectBB.Enabled = false
+	end
+end
+
+function PetSpot:toggleLevelBB(newBool)
+	if not self.levelBB then
+		return
+	end
+	self.levelBB.Enabled = newBool
 end
 
 function PetSpot:updateCoins(data)
@@ -304,6 +318,9 @@ function PetSpot:updateCoins(data)
 	local totalOfflineCoins = data["totalOfflineCoins"]
 
 	local collectBB = self.collectBB
+	if not collectBB then
+		return
+	end
 
 	local collectButton = collectBB.MainFrame.Button
 
@@ -311,7 +328,7 @@ function PetSpot:updateCoins(data)
 	local coinsTitle = collectButton.CoinsTitle
 
 	if totalOfflineCoins > 0 then
-		offlineTitle.Text = "$" .. Common.abbreviateNumber(totalOfflineCoins, 1)
+		offlineTitle.Text = "OFFLINE: $" .. Common.abbreviateNumber(totalOfflineCoins, 1)
 		offlineTitle.Visible = true
 	else
 		offlineTitle.Visible = false
@@ -326,9 +343,19 @@ function PetSpot:refreshLevelBB()
 		return
 	end
 
+	if player.Name ~= self.userName then
+		levelBB.Enabled = false
+		return
+	end
+	if not self.petData then
+		levelBB.Enabled = false
+		return
+	end
+
+	levelBB.Enabled = true
+
 	local levelUpButton = levelBB.MainFrame.Button
 
-	-- TODO: calculate level up price
 	local levelUpPrice = PetInfo:calculateLevelUpPrice(self.petData)
 	levelUpButton.PriceTitle.Text = "$" .. Common.abbreviateNumber(levelUpPrice)
 
@@ -336,7 +363,9 @@ function PetSpot:refreshLevelBB()
 end
 
 function PetSpot:addAttack(data)
-	-- print("ADDING ATTACK FOR PET SPOT: ", self.petSpotName)
+	if not self.petData then
+		return
+	end
 
 	local unitName = data["unitName"]
 	local newUnitHealth = data["newUnitHealth"]
@@ -361,7 +390,7 @@ function PetSpot:addAttack(data)
 		wait(totalDelay)
 		local unit = ClientMod.units[unitName]
 		if not unit or not unit.rig or not unit.rig.Parent then
-			warn("NO UNIT FOUND: ", unitName)
+			-- warn("NO UNIT FOUND TO ATTACK: ", unitName)
 			return
 		end
 
@@ -445,7 +474,7 @@ function PetSpot:refreshRig()
 end
 
 function PetSpot:initRig()
-	print("INIT RIG FOR PET SPOT: ", self.petSpotName)
+	-- print("INIT RIG FOR PET SPOT: ", self.petSpotName)
 
 	local baseRig = game.ReplicatedStorage.Assets[self.petClass]
 	if not baseRig.PrimaryPart then
@@ -472,6 +501,8 @@ function PetSpot:initRig()
 	end
 
 	self.rig = rig
+
+	PetInfo:refreshPetScale(rig, self.petData)
 
 	if self.mutationClass then
 		ClientMod.mutationManager:addMutationToRig(self, rig, self.mutationClass)
@@ -535,7 +566,39 @@ function PetSpot:initRig()
 		animationId = PetInfo.idleAnimationMap[self.petClass],
 	})
 
-	-- self:initBB()
+	self:initPetBB()
+end
+
+function PetSpot:initPetBB()
+	local petBB = game.ReplicatedStorage.Assets.PetBBPart.BB:Clone()
+
+	local fakeRootPart = self.rig:FindFirstChild("RootPart")
+	petBB.Adornee = fakeRootPart:FindFirstChild("BBAttachment")
+
+	petBB.Parent = playerGui
+
+	petBB.Name = "PetBB" .. self.petSpotName
+
+	petBB.MainFrame.NameTitle.Text = self.petStats["alias"]
+
+	petBB.MainFrame.CoinsPerSecondTitle.Text =
+		string.format("$%s/s", Common.abbreviateNumber(self.petStats["coinsPerSecond"]))
+
+	local mutationTitle = petBB.MainFrame.MutationTitle
+	ClientMod.mutationManager:applyMutationColor(mutationTitle, self.mutationClass)
+
+	self.petBB = petBB
+
+	self:refreshPetBB()
+end
+
+function PetSpot:refreshPetBB()
+	local petBB = self.petBB
+	if not petBB then
+		return
+	end
+
+	petBB.MainFrame.LevelTitle.Text = string.format("Level %s", self.level)
 end
 
 function PetSpot:updateRigFrame(newCurrFrame)
@@ -559,6 +622,11 @@ function PetSpot:destroyRig()
 	end
 	if self.outerShell then
 		self.outerShell:Destroy()
+	end
+
+	if self.petBB then
+		self.petBB:Destroy()
+		self.petBB = nil
 	end
 end
 

@@ -201,6 +201,11 @@ function PlaceManager:doFullPromptRefresh()
 			continue
 		end
 
+		if not petSpot.unlocked then
+			interactPrompt.Enabled = false
+			continue
+		end
+
 		if petSpot.petData then
 			-- print("PET DATA: ", petSpot.petData)
 			interactPrompt.Enabled = true

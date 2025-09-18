@@ -36,7 +36,7 @@ ShopInfo["products"] = {
 	["OfflineCoinsClaimBoost"] = {
 		alias = "Offline Coins Boost",
 		description = "Claim 10x more coins when you come back!",
-		id = 3379340754,
+		id = 3407093721,
 
 		rewards = {
 			offlineCoinsBoost = true,

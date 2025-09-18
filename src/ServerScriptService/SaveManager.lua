@@ -73,7 +73,7 @@ function SaveManager:initWaveMod(petData)
 
 	local totalWaveData = WaveInfo["ratingWaveMap"][rating]
 
-	print("!! TOTAL WAVE DATA: ", rating, totalWaveData)
+	-- print("!! TOTAL WAVE DATA: ", rating, totalWaveData)
 
 	local totalUnitCount = 0
 	for _, waveData in pairs(totalWaveData) do
@@ -144,19 +144,22 @@ function SaveManager:completeWaveMod(waveMod)
 	end
 	waveMod["destroyed"] = true
 
-	print("COMPLETED WAVE MOD: ", waveMod)
+	-- print("COMPLETED WAVE MOD: ", waveMod)
 
 	local petData = waveMod["petData"]
 	self.user.home.indexManager:unlockPet(petData["petClass"], petData["mutationClass"])
 
-	-- ServerMod:FireClient(self.user.player, "doHatch", {
-	-- 	petClass = petData["petClass"],
-	-- 	mutationClass = petData["mutationClass"],
-	-- })
-
 	-- ServerMod:FireClient(self.user.player, "shootFireworks", {
 	-- 	launchCFrame = self.user.currFrame,
 	-- })
+
+	ServerMod:FireClient(self.user.player, "doHatch", {
+		petClass = petData["petClass"],
+		mutationClass = petData["mutationClass"],
+
+		pos = self.saveBaseFrame.Position,
+		plotName = waveMod["plotName"],
+	})
 
 	petData["forceBottom"] = false
 	petData["noClick"] = true

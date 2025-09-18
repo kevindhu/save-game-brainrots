@@ -11,6 +11,7 @@ local hatchFrame = hatchGUI.HatchFrame
 local barFrame = hatchFrame.BarFrame
 
 local PetInfo = require(game.ReplicatedStorage.PetInfo)
+local RatingInfo = require(game.ReplicatedStorage.RatingInfo)
 
 local Common = require(game.ReplicatedStorage.Common)
 local len, routine, wait = Common.len, Common.routine, Common.wait
@@ -54,6 +55,35 @@ function HatchManager:toggleHatchFrame(newBool)
 end
 
 function HatchManager:doHatch(data)
+	local pos = data["pos"]
+	local plotName = data["plotName"]
+	local petClass = data["petClass"]
+
+	routine(function()
+		wait(0.5)
+		ClientMod.soundManager:newSoundMod({
+			soundClass = "Pop1",
+			volume = 0.2,
+			pos = pos,
+		})
+
+		local petStats = PetInfo:getMeta(petClass)
+		local ratingColor = RatingInfo["ratingColorMap"][petStats["rating"]]
+
+		ClientMod.spellManager:addExplosion({
+			spellClass = "WhiteExplosion",
+			pos = pos + Vector3.new(0, 3, 0),
+			baseColor = ratingColor,
+			scale = 0.5, -- 1.5
+		})
+
+		ClientMod.saveManager:animateHatch(plotName)
+	end)
+
+	-- self:doHatch2(data)
+end
+
+function HatchManager:doHatch2(data)
 	local hatchStep = ClientMod.step
 	self.hatchStep = hatchStep
 
