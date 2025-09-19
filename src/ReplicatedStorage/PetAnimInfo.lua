@@ -25,6 +25,7 @@ PetAnimInfo["attack"] = {
 	["BrrBrrPatapim"] = 137376496131073,
 	["ElephantCoconut"] = 130339294507406,
 	["TimCheese"] = 87593436991240,
+	["Bombardino"] = 0,
 	["GiraffeWatermelon"] = 73391323342941,
 
 	["MonkeyPineapple"] = 117913332407420,
@@ -34,8 +35,8 @@ PetAnimInfo["attack"] = {
 	["OctopusBlueberry"] = 110091389926317,
 	["SaltCombined"] = 102660911157825,
 	["GorillaWatermelon"] = 119971831538473,
-	["MilkShake"] = 0,
-	["GrapeSquid"] = 0,
+	["MilkShake"] = 134957806815730,
+	["GrapeSquid"] = 118893081404768,
 }
 
 PetAnimInfo["idle"] = {
@@ -58,6 +59,7 @@ PetAnimInfo["idle"] = {
 	["BrrBrrPatapim"] = 100695145014557, -- bad
 	["ElephantCoconut"] = 81491657073708,
 	["TimCheese"] = 92935710957935,
+	["Bombardino"] = 78738424968689,
 	["GiraffeWatermelon"] = 129319326323852,
 	["MonkeyPineapple"] = 76936232777638,
 	["OwlAvocado"] = 103466877891848,
@@ -66,8 +68,8 @@ PetAnimInfo["idle"] = {
 	["OctopusBlueberry"] = 87961185193866,
 	["SaltCombined"] = 124113804483622, -- 84113127788715,
 	["GorillaWatermelon"] = 128010056318634,
-	["MilkShake"] = 0,
-	["GrapeSquid"] = 0,
+	["MilkShake"] = 107420219800883,
+	["GrapeSquid"] = 139404874140590,
 }
 
 PetAnimInfo["running"] = {
@@ -90,6 +92,7 @@ PetAnimInfo["running"] = {
 	["BrrBrrPatapim"] = 133788569219043,
 	["ElephantCoconut"] = 73600214374480,
 	["TimCheese"] = 124968142730672,
+	["Bombardino"] = 109418698203956,
 	["GiraffeWatermelon"] = 120263240089603,
 	["MonkeyPineapple"] = 109111908557374,
 	["OwlAvocado"] = 80648685514829,
@@ -98,8 +101,8 @@ PetAnimInfo["running"] = {
 	["OctopusBlueberry"] = 81235521122233,
 	["SaltCombined"] = 109976574571139,
 	["GorillaWatermelon"] = 130419014386420,
-	["MilkShake"] = 0,
-	["GrapeSquid"] = 0,
+	["MilkShake"] = 83100101980804,
+	["GrapeSquid"] = 99319204524767,
 }
 
 function PetAnimInfo:init()

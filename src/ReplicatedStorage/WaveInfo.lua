@@ -17,7 +17,7 @@ WaveInfo["ratingWaveMap"] = {
 	},
 	["Legendary"] = {
 		{
-			unitClass = "Unit4",
+			unitClass = "Unit1",
 			count = 5,
 			spawnTimer = 0.5,
 		},

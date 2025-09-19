@@ -76,41 +76,45 @@ function ItemStash:addTestPetTools()
 		"Boneca",
 		"LiriLira",
 		"Ballerina",
-		-- "FrigoCamelo",
-		-- "ChimpBanana",
-		-- "TaTaTaSahur",
-		-- "CapybaraCoconut",
-		-- "DolphinBanana",
-		-- "FishCatLegs",
-		-- "GooseBomber",
-		-- "TralaleloTralala",
-		-- "GlorboFruttoDrillo",
-		-- "RhinoToast",
-		-- "BrrBrrPatapim",
-		-- "ElephantCoconut",
-		-- "TimCheese",
-		-- "GiraffeWatermelon",
-		-- "MonkeyPineapple",
-		-- "OwlAvocado",
-		-- "OrangeDunDun",
-		-- "CowPlanet",
+		"FrigoCamelo",
+		"ChimpBanana",
+		"TaTaTaSahur",
+		"CapybaraCoconut",
+		"DolphinBanana",
+		"FishCatLegs",
+		"GooseBomber",
+		"TralaleloTralala",
+		"GlorboFruttoDrillo",
+		"RhinoToast",
+		"BrrBrrPatapim",
+		"ElephantCoconut",
+		"TimCheese",
 
-		-- "OctopusBlueberry",
-		-- "SaltCombined",
-		-- "GorillaWatermelon",
+		"Bombardino",
 
-		-- "MilkShake",
-		-- "GrapeSquid",
+		"GiraffeWatermelon",
+		"MonkeyPineapple",
+		"OwlAvocado",
+		"OrangeDunDun",
+		"CowPlanet",
+
+		"OctopusBlueberry",
+		"SaltCombined",
+		"GorillaWatermelon",
+
+		"MilkShake",
+		"GrapeSquid",
 	}
+
 	local mutationList = {
 		"None",
-		-- "Gold",
-		-- "Diamond",
-		-- "Bubblegum",
+		"Gold",
+		"Diamond",
+		"Bubblegum",
 	}
 	for _, petClass in ipairs(petList) do
 		for _, mutationClass in ipairs(mutationList) do
-			local count = 3
+			local count = 1
 			for i = 1, count do
 				if mutationClass == "None" then
 					mutationClass = nil

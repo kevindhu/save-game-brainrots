@@ -326,9 +326,47 @@ function Unit:getFloorPos(topPos)
 	return true, hitPosition
 end
 
-function Unit:animateHit(newUnitHealth)
+function Unit:addDamageFromServer(data)
+	local damage = data["damage"]
+	local newHealth = data["newHealth"]
+
+	self:animateHit({
+		damage = damage,
+		damagePos = self.currFrame.Position,
+		hitPos = self.currFrame.Position,
+		newHealth = newHealth,
+	})
+end
+
+function Unit:animateHit(data)
+	local damagePos = data["damagePos"]
+	local hitPos = data["hitPos"]
+	local newHealth = data["newHealth"]
+	local damage = data["damage"]
+
+	if self.userName == player.Name then
+		ClientMod.damageManager:addDamageHit({
+			pos = damagePos + Vector3.new(0, 3, 0),
+			damage = damage,
+		})
+	end
+
+	ClientMod.soundManager:newSoundMod({
+		soundClass = "PetHit" .. math.random(1, 5),
+		pos = damagePos,
+		volume = 0.025, -- 0.1
+	})
+
+	ClientMod.spellManager:addExplosion({
+		spellClass = "RockHit",
+		pos = hitPos,
+		scale = 2.2, -- 1.5
+	})
+
 	local humanoid = self.humanoid
-	humanoid.Health = newUnitHealth
+	humanoid.Health = newHealth
+
+	print("ANIMATE HIT: ", newHealth, humanoid.MaxHealth)
 end
 
 -- Check if unit is stationary and update animation state

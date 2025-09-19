@@ -175,4 +175,80 @@ function BaseTool:destroy()
 	self.user.home.toolManager.toolMods[self.toolName] = nil
 end
 
+local SWING_COOLDOWN = 0.2
+
+function BaseTool:doBatHit()
+	if self.flingExpiree > ServerMod.step then
+		return
+	end
+	self.flingExpiree = ServerMod.step + 60 * SWING_COOLDOWN
+
+	local rig = self.user.rig
+	if not rig or not rig.Parent then
+		return
+	end
+
+	-- add sound
+	ServerMod:FireAllClients("newSoundMod", {
+		soundClass = "Whoosh1",
+		volume = 1,
+		pos = rig.HumanoidRootPart.Position,
+	})
+
+	self.track:Play()
+
+	local currFrame = self.user.rig.HumanoidRootPart.CFrame
+
+	local hitFrame = currFrame * CFrame.new(0, 0, -5)
+
+	-- get humanoid move direction
+	local moveDirection = self.user.humanoid.MoveDirection
+	hitFrame = hitFrame + moveDirection * self.user.humanoid.WalkSpeed / 3
+
+	local hitPart = self:createHitPart(hitFrame, 12) -- 9
+	hitPart.Size = Vector3.new(12, 12, 16)
+	hitPart.Transparency = 1 -- 0.5
+
+	print("CREATE HIT PART: ", hitPart)
+
+	local hitUnits = self:getHitUnits(hitPart)
+
+	local damage = 10
+	local bulkDamageMods = {}
+	for _, unit in pairs(hitUnits) do
+		unit:updateHealth(-damage, self, 0)
+
+		bulkDamageMods[unit.unitName] = {
+			damage,
+			unit.health,
+		}
+	end
+
+	ServerMod:FireAllClients("bulkUpdateUnitDamage", {
+		bulkDamageMods = bulkDamageMods,
+	})
+end
+
+function isPointInVolume(point: Vector3, volumeCenter: CFrame, volumeSize: Vector3): boolean
+	local volumeSpacePoint = volumeCenter:PointToObjectSpace(point)
+	return volumeSpacePoint.X >= -volumeSize.X / 2
+		and volumeSpacePoint.X <= volumeSize.X / 2
+		and volumeSpacePoint.Y >= -volumeSize.Y / 2
+		and volumeSpacePoint.Y <= volumeSize.Y / 2
+		and volumeSpacePoint.Z >= -volumeSize.Z / 2
+		and volumeSpacePoint.Z <= volumeSize.Z / 2
+end
+
+function BaseTool:getHitUnits(hitPart)
+	local hitUnits = {}
+	for _, unit in pairs(self.user.home.unitManager.units) do
+		local unitFrame = unit.currFrame
+		if isPointInVolume(unitFrame.Position, hitPart.CFrame, hitPart.Size) then
+			hitUnits[unit.unitName] = unit
+		end
+	end
+
+	return hitUnits
+end
+
 return BaseTool

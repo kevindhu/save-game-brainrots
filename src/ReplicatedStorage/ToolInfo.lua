@@ -5,6 +5,12 @@ local ToolInfo = {}
 ToolInfo["vendorBasicToolList"] = {}
 
 ToolInfo["tools"] = {
+	["Bat1"] = {
+		alias = "Bat",
+		description = "A bat for hitting",
+		price = 0,
+		image = "rbxassetid://125427347841808",
+	},
 	["Hammer"] = {
 		alias = "Pick Up",
 		description = "A hammer for building",

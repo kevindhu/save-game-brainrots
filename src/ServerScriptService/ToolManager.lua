@@ -68,10 +68,14 @@ end
 function ToolManager:tryEquipBottomMod(data)
 	local itemName = data["itemName"]
 
-	if itemName == "Hammer" then
+	local toolClasses = {
+		"Hammer",
+		"Bat1",
+	}
+	if Common.listContains(toolClasses, itemName) then
 		local chosenToolMod
 		for _, toolMod in pairs(self.toolMods) do
-			if toolMod.toolClass == "Hammer" then
+			if Common.listContains(toolClasses, toolMod.toolClass) then
 				chosenToolMod = toolMod
 				break
 			end

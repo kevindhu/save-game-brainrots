@@ -35,6 +35,11 @@ local ItemStash = {
 	bottomModsList = {},
 
 	tabMods = {},
+
+	toolClasses = {
+		"Bat1",
+		"Hammer",
+	},
 }
 
 function ItemStash:init()
@@ -93,8 +98,8 @@ function ItemStash:init()
 	routine(function()
 		wait(1)
 		self:newBottomMod({
-			itemName = "Hammer",
-			itemClass = "Hammer",
+			itemName = "Bat1",
+			itemClass = "Bat1",
 			mutationClass = nil,
 			index = -1,
 		})
@@ -335,7 +340,7 @@ function ItemStash:newBottomMod(itemData)
 	local favoriteIcon = frame.FavoriteIcon
 	favoriteIcon.Visible = false
 
-	if itemClass ~= "Hammer" then
+	if itemClass ~= "Bat1" then
 		-- add close button
 		frame.MouseEnter:Connect(function()
 			newBottomMod.enterStep = ClientMod.step
@@ -427,7 +432,7 @@ function ItemStash:clickBottomItem(bottomMod)
 	end
 
 	local itemMod = self.itemMods[bottomMod["itemName"]]
-	if itemMod or bottomMod["itemName"] == "Hammer" then
+	if itemMod or Common.listContains(self.toolClasses, bottomMod["itemName"]) then
 		-- print("CLICKING BOTTOM ITEM: ", bottomMod["itemName"])
 		ClientMod:FireServer("tryEquipBottomMod", {
 			itemName = bottomMod["itemName"],
@@ -470,9 +475,9 @@ function ItemStash:removeBottomMod(itemData)
 		return
 	end
 
-	if itemName == "Hammer" then
+	if Common.listContains(self.toolClasses, itemName) then
 		warn(debug.traceback())
-		warn("REMOVING HAMMER BOTTOM MOD")
+		warn("REMOVING BASIC TOOL BOTTOM MOD")
 		return
 	end
 

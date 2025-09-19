@@ -68,6 +68,22 @@ function UnitManager:removeUnit(data)
 	unit:destroy(data)
 end
 
+function UnitManager:bulkUpdateUnitDamage(data)
+	local bulkDamageMods = data["bulkDamageMods"]
+	for unitName, damageList in pairs(bulkDamageMods) do
+		local unit = ClientMod.units[unitName]
+		if not unit then
+			continue
+		end
+
+		local damageMod = {
+			damage = damageList[1],
+			newHealth = damageList[2],
+		}
+		unit:addDamageFromServer(damageMod)
+	end
+end
+
 function UnitManager:updateUnitFrames(unitParts, unitCFrames)
 	workspace:BulkMoveTo(unitParts, unitCFrames, Enum.BulkMoveMode.FireCFrameChanged)
 end

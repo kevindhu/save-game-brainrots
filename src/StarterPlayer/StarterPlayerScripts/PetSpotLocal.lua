@@ -404,28 +404,15 @@ function PetSpot:addAttack(data)
 		local attackDist = (unitPos - petPos).Magnitude
 		local damagePos = unitPos - attackDir * Common.randomBetween(0.7, 1.15)
 
-		if self.userName == player.Name then
-			ClientMod.damageManager:addDamageHit({
-				pos = damagePos + Vector3.new(0, 3, 0),
-				damage = damage,
-			})
-		end
-
-		ClientMod.soundManager:newSoundMod({
-			soundClass = "PetHit" .. math.random(1, 5),
-			pos = damagePos,
-			volume = 0.025, -- 0.1
-		})
-
 		local hitPos = unitPos - attackDir
 
-		ClientMod.spellManager:addExplosion({
-			spellClass = "RockHit",
-			pos = hitPos,
-			scale = 2.2, -- 1.5
-		})
+		unit:animateHit({
+			newHealth = newUnitHealth,
+			hitPos = hitPos,
+			damagePos = damagePos,
 
-		unit:animateHit(newUnitHealth)
+			damage = damage,
+		})
 	end)
 end
 
@@ -440,6 +427,7 @@ function PetSpot:addLaser(petFrame, unitFrame)
 	line.Anchored = true
 	line.CanCollide = false
 	line.Parent = workspace
+	line.Material = Enum.Material.Neon
 
 	-- line.Color = Color3.fromRGB(255, 0, 0)
 	-- line.Color = Color3.fromRGB(82, 229, 255)
@@ -579,15 +567,31 @@ function PetSpot:initPetBB()
 
 	petBB.Name = "PetBB" .. self.petSpotName
 
-	petBB.MainFrame.NameTitle.Text = self.petStats["alias"]
+	-- ClientMod.ratingManager:applyRatingColor(nameTitle, self.petStats["rating"])
 
 	petBB.MainFrame.CoinsPerSecondTitle.Text =
 		string.format("$%s/s", Common.abbreviateNumber(self.petStats["coinsPerSecond"]))
 
-	local mutationTitle = petBB.MainFrame.MutationTitle
-	ClientMod.mutationManager:applyMutationColor(mutationTitle, self.mutationClass)
+	local ratingTitle = petBB.MainFrame.RatingTitle
+	ratingTitle.Text = self.petStats["rating"]
+	ClientMod.ratingManager:applyRatingColor(ratingTitle, self.petStats["rating"])
+
+	local nameTitle = petBB.MainFrame.NameTitle
+
+	local mutationPrefix = ""
+	if self.mutationClass and self.mutationClass ~= "None" then
+		mutationPrefix = self.mutationClass .. " "
+	end
+
+	nameTitle.Text = mutationPrefix .. self.petStats["alias"]
 
 	self.petBB = petBB
+
+	ClientMod.uiScaleManager:addDistStrokeModsFromBB({
+		bb = petBB,
+		adornee = fakeRootPart,
+		baseDistance = 35,
+	})
 
 	self:refreshPetBB()
 end

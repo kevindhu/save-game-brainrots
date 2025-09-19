@@ -356,7 +356,8 @@ function PetManager:storePet(petSpot)
 	local petClass = itemData["petClass"]
 	local petStats = PetInfo:getMeta(petClass)
 
-	self.user:notifySuccess(string.format("%s stored", petStats["alias"]))
+	-- self.user:notifySuccess(string.format("%s stored", petStats["alias"]))
+
 	ServerMod:FireClient(self.user.player, "newSoundMod", {
 		soundClass = "HammerHit",
 		-- volume = 0.5,

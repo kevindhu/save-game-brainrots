@@ -1,6 +1,9 @@
 local MusicInfo = {}
 
 MusicInfo["songs"] = {
+	-- { 1837845027, 0.15 }, -- underworld
+	{ 138118304933431, 0.15 }, -- tralalelo phonk
+
 	{ 9045766377, 0.15 },
 	{ 1836009208, 0.09 }, -- gag classic easter song
 	{ 89535139236133, 0.09 },

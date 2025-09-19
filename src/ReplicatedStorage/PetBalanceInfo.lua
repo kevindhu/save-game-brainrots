@@ -20,6 +20,7 @@ PetBalanceInfo["coinsPerSecondMap"] = {
 	["BrrBrrPatapim"] = 18,
 	["ElephantCoconut"] = 19,
 	["TimCheese"] = 20,
+	["Bombardino"] = 21,
 	["GiraffeWatermelon"] = 21,
 	["MonkeyPineapple"] = 22,
 	["OwlAvocado"] = 23,
@@ -60,6 +61,7 @@ PetBalanceInfo["attackDamageMap"] = {
 	["ElephantCoconut"] = 8105,
 
 	["TimCheese"] = 8581,
+	["Bombardino"] = 9057,
 	["GiraffeWatermelon"] = 9057,
 	["MonkeyPineapple"] = 9533,
 	["OwlAvocado"] = 10010,

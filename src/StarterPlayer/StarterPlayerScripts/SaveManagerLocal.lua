@@ -217,8 +217,6 @@ function SaveManager:initPetRig(plotName, waveMod, saveBaseFrame)
 		end
 	end
 
-	local baseRigScale = baseRig:GetScale()
-
 	local partTextureMap = {}
 
 	for _, child in pairs(rig:GetDescendants()) do
@@ -277,6 +275,17 @@ function SaveManager:initPetRig(plotName, waveMod, saveBaseFrame)
 
 	self:initBB(newPetEntity)
 	self:refreshBB(waveMod)
+
+	local finalScale = baseRig:GetScale()
+
+	rig:ScaleTo(finalScale * 0.1)
+	ClientMod.tweenManager:createTween({
+		target = rig,
+		timer = 1,
+		easingStyle = "Elastic",
+		easingDirection = "Out",
+		goal = { Scale = finalScale },
+	})
 end
 
 function SaveManager:initBB(petEntity)
@@ -293,14 +302,18 @@ function SaveManager:initBB(petEntity)
 	bb.Adornee = fakeRootPart:FindFirstChild("BBAttachment")
 	bb.Parent = playerGui
 
-	local mutationTitle = bb.MainFrame.MutationTitle
-	ClientMod.mutationManager:applyMutationColor(mutationTitle, mutationClass)
-
 	local rating = petStats["rating"]
 	local nameTitle = bb.MainFrame.NameTitle
 
-	nameTitle.Text = petStats["alias"]
-	ClientMod.ratingManager:applyRatingColor(nameTitle, rating)
+	local mutationPrefix = ""
+	if mutationClass and mutationClass ~= "None" then
+		mutationPrefix = mutationClass .. " "
+	end
+	nameTitle.Text = mutationPrefix .. petStats["alias"]
+
+	local ratingTitle = bb.MainFrame.RatingTitle
+	ratingTitle.Text = rating
+	ClientMod.ratingManager:applyRatingColor(ratingTitle, rating)
 
 	ClientMod.uiScaleManager:addDistStrokeModsFromBB({
 		bb = bb,

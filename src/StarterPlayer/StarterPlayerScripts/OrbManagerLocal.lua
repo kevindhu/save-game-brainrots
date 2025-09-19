@@ -162,6 +162,11 @@ function OrbManager:animateBB(decorPart, petClass, mutationClass)
 
 	wait(1.35)
 
+	ClientMod.soundManager:newSoundMod({
+		soundClass = "CoinCollect3",
+		volume = 0.2,
+	})
+
 	-- TURN EMITTERS OFF FIRST
 	for _, thing in pairs(decorPart:GetDescendants()) do
 		if thing:IsA("ParticleEmitter") then

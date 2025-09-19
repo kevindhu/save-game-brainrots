@@ -141,7 +141,7 @@ function User:respawn(rig)
 
 	local toolManager = self.home.toolManager
 	local starterToolClasses = {
-		"Hammer",
+		"Bat1",
 	}
 	for _, toolClass in pairs(starterToolClasses) do
 		toolManager:newTool({

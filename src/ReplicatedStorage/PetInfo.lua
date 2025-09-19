@@ -37,6 +37,7 @@ PetInfo["petOrderList"] = {
 	"BrrBrrPatapim",
 	"ElephantCoconut",
 	"TimCheese",
+	"Bombardino",
 	"GiraffeWatermelon",
 	"MonkeyPineapple",
 	"OwlAvocado",
@@ -81,6 +82,7 @@ PetInfo["ratingMap"] = {
 	["BrrBrrPatapim"] = "Legendary",
 	["ElephantCoconut"] = "Legendary",
 	["TimCheese"] = "Legendary",
+	["Bombardino"] = "Legendary",
 	["GiraffeWatermelon"] = "Legendary",
 	["MonkeyPineapple"] = "Legendary",
 	["OwlAvocado"] = "Legendary",
@@ -129,6 +131,7 @@ PetInfo["giantScaleRatios"] = {
 	["BrrBrrPatapim"] = 1.75,
 	["ElephantCoconut"] = 1.8,
 	["TimCheese"] = 1.82,
+	["Bombardino"] = 1.81,
 	["GiraffeWatermelon"] = 1.82,
 	["MonkeyPineapple"] = 1.85,
 	["OwlAvocado"] = 1.85,
@@ -162,6 +165,7 @@ PetInfo["aliasMap"] = {
 	["BrrBrrPatapim"] = "Brr Brr Patapim",
 	["ElephantCoconut"] = "Cocofanto Elefanto",
 	["TimCheese"] = "Tim Cheese",
+	["Bombardino"] = "Bombardino Crocodilo",
 	["GiraffeWatermelon"] = "Girafa Celestre",
 
 	["MonkeyPineapple"] = "Orangutini Ananasini",
@@ -178,9 +182,9 @@ PetInfo["aliasMap"] = {
 
 PetInfo["mutationImageMap"] = {
 	["CappuccinoAssassino"] = {
-		["Gold"] = "rbxassetid://75639043383472",
-		["Diamond"] = "rbxassetid://75706808722088",
-		["Bubblegum"] = "rbxassetid://93841892457943",
+		["Gold"] = "rbxassetid://109667066379119",
+		["Diamond"] = "rbxassetid://80784325188772",
+		["Bubblegum"] = "rbxassetid://106947706747500",
 		["Volcanic"] = "rbxassetid://0",
 	},
 	["TungTungSahur"] = {
@@ -232,9 +236,9 @@ PetInfo["mutationImageMap"] = {
 		["Volcanic"] = "rbxassetid://0",
 	},
 	["CapybaraCoconut"] = {
-		["Gold"] = "rbxassetid://73597892180004",
-		["Diamond"] = "rbxassetid://118151833205823",
-		["Bubblegum"] = "rbxassetid://76053913837438",
+		["Gold"] = "rbxassetid://106931430917794",
+		["Diamond"] = "rbxassetid://94538135575929",
+		["Bubblegum"] = "rbxassetid://90431790503006",
 		["Volcanic"] = "rbxassetid://0",
 	},
 	["DolphinBanana"] = {
@@ -244,9 +248,9 @@ PetInfo["mutationImageMap"] = {
 		["Volcanic"] = "rbxassetid://0",
 	},
 	["FishCatLegs"] = {
-		["Gold"] = "rbxassetid://79458833314698",
-		["Diamond"] = "rbxassetid://137943022081961",
-		["Bubblegum"] = "rbxassetid://93085434248253",
+		["Gold"] = "rbxassetid://91105334166770",
+		["Diamond"] = "rbxassetid://93086434085583",
+		["Bubblegum"] = "rbxassetid://100375668850469",
 		["Volcanic"] = "rbxassetid://0",
 	},
 	["GooseBomber"] = {
@@ -289,6 +293,12 @@ PetInfo["mutationImageMap"] = {
 		["Gold"] = "rbxassetid://136202746932730",
 		["Diamond"] = "rbxassetid://108500760261447",
 		["Bubblegum"] = "rbxassetid://89411517211223",
+		["Volcanic"] = "rbxassetid://0",
+	},
+	["Bombardino"] = {
+		["Gold"] = "rbxassetid://109282893882558",
+		["Diamond"] = "rbxassetid://89441292566570",
+		["Bubblegum"] = "rbxassetid://99547066900529",
 		["Volcanic"] = "rbxassetid://0",
 	},
 	["GiraffeWatermelon"] = {
@@ -339,6 +349,12 @@ PetInfo["mutationImageMap"] = {
 		["Bubblegum"] = "rbxassetid://138508963545763",
 		["Volcanic"] = "rbxassetid://0",
 	},
+	["MilkShake"] = {
+		["Gold"] = "rbxassetid://109428616204581",
+		["Diamond"] = "rbxassetid://96902895146837",
+		["Bubblegum"] = "rbxassetid://107914900078537",
+		["Volcanic"] = "rbxassetid://0",
+	},
 	["GrapeSquid"] = {
 		["Gold"] = "rbxassetid://89393777364963",
 		["Diamond"] = "rbxassetid://100975650537723",
@@ -348,7 +364,7 @@ PetInfo["mutationImageMap"] = {
 }
 
 PetInfo["imageMap"] = {
-	["CappuccinoAssassino"] = "rbxassetid://139700818652900",
+	["CappuccinoAssassino"] = "rbxassetid://101310774768299",
 	["TungTungSahur"] = "rbxassetid://97377640975338",
 	["Boneca"] = "rbxassetid://84822321337725",
 	["TrippiTroppi"] = "rbxassetid://117805314983035",
@@ -357,9 +373,9 @@ PetInfo["imageMap"] = {
 	["FrigoCamelo"] = "rbxassetid://81304947639096",
 	["ChimpBanana"] = "rbxassetid://115144607447163",
 	["TaTaTaSahur"] = "rbxassetid://115669545079726",
-	["CapybaraCoconut"] = "rbxassetid://89247142343755",
+	["CapybaraCoconut"] = "rbxassetid://134962059936697",
 	["DolphinBanana"] = "rbxassetid://125646734028183",
-	["FishCatLegs"] = "rbxassetid://70777748290549",
+	["FishCatLegs"] = "rbxassetid://139387788524763",
 	["GooseBomber"] = "rbxassetid://137304183045715",
 	["TralaleloTralala"] = "rbxassetid://92228079842241",
 	["GlorboFruttoDrillo"] = "rbxassetid://130586234745004",
@@ -367,6 +383,7 @@ PetInfo["imageMap"] = {
 	["BrrBrrPatapim"] = "rbxassetid://137549562017395",
 	["ElephantCoconut"] = "rbxassetid://99305163220468",
 	["TimCheese"] = "rbxassetid://130510088858325",
+	["Bombardino"] = "rbxassetid://109970404191330",
 	["GiraffeWatermelon"] = "rbxassetid://116021689375128",
 	["MonkeyPineapple"] = "rbxassetid://76927325067882",
 	["OwlAvocado"] = "rbxassetid://105088408802061",
@@ -376,7 +393,7 @@ PetInfo["imageMap"] = {
 	["OctopusBlueberry"] = "rbxassetid://107771232706312",
 	["SaltCombined"] = "rbxassetid://112926897275871",
 	["GorillaWatermelon"] = "rbxassetid://70891205809915",
-	["MilkShake"] = "rbxassetid://0",
+	["MilkShake"] = "rbxassetid://100921899959556",
 	["GrapeSquid"] = "rbxassetid://131692296995197",
 }
 
@@ -433,6 +450,7 @@ PetInfo.weightMultiplierMap = {
 	["BrrBrrPatapim"] = 1.923,
 	["ElephantCoconut"] = 1.981,
 	["TimCheese"] = 2.038,
+	["Bombardino"] = 2.096,
 	["GiraffeWatermelon"] = 2.096,
 	["MonkeyPineapple"] = 2.154,
 	["OwlAvocado"] = 2.212,

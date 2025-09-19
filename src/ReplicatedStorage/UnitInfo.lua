@@ -14,14 +14,14 @@ UnitInfo["units"] = {
 	["Unit1"] = {
 		alias = "Noob",
 		health = 10,
-		moveSpeed = 0.2,
+		moveSpeed = 1.1,
 
 		attackRange = 2,
 	},
 	["Unit2"] = {
 		alias = "Big Noob",
 		health = 50,
-		moveSpeed = 0.1,
+		moveSpeed = 0.3,
 
 		attackRange = 2,
 	},

@@ -118,6 +118,10 @@ function handleRequest(req, data)
 	elseif req == "unitCapturedSavedPet" then
 		ClientMod.unitManager:unitCapturedSavedPet(data)
 
+	-- UNITMANAGER
+	elseif req == "bulkUpdateUnitDamage" then
+		ClientMod.unitManager:bulkUpdateUnitDamage(data)
+
 	-- ALERTMANAGER
 	elseif req == "updateModuleAlert" then
 		ClientMod.alertManager:updateModuleAlert(data)

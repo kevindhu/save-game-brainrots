@@ -9,7 +9,7 @@ local Bat = {}
 Bat.__index = Bat
 setmetatable(Bat, { __index = BaseTool })
 
-local SWING_ID = 109319432298408
+local SWING_ID = 90567855405019
 
 function Bat.new(user, tool, data)
 	local self = BaseTool.new(user, tool, data)
