@@ -69,6 +69,8 @@ function Home:initAllModules()
 		{ "FavoriteManager", "favoriteManager" },
 
 		{ "SaveManager", "saveManager" },
+
+		{ "SpeedManager", "speedManager" },
 	}
 	for _, moduleInfo in ipairs(moduleList) do
 		self:loadModule(moduleInfo[1], moduleInfo[2])
@@ -109,6 +111,8 @@ function Home:tick(timeRatio)
 		"petManager",
 		"unitManager",
 		"saveManager",
+
+		"toolManager",
 	}
 	for _, managerClass in pairs(managerList) do
 		local manager = self[managerClass]

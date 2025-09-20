@@ -115,6 +115,9 @@ function LoadAllModules()
 		{ "RagdollManager", "ragdollManager" },
 		{ "SaveManager", "saveManager" },
 		{ "OrbManager", "orbManager" },
+
+		-- speed manager
+		{ "SpeedManager", "speedManager" },
 	}
 
 	local startTime = os.clock()

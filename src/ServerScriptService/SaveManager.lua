@@ -62,6 +62,20 @@ function SaveManager:startNewWaveMod()
 	}
 	self.user.home.petManager:fillPetDataWithDefaults(petData)
 
+	local petStats = PetInfo:getMeta(petClass)
+	local musicRating = petStats["rating"]
+
+	if not Common.listContains({
+		"Secret",
+		"Mythic",
+	}, musicRating) then
+		musicRating = "Default"
+	end
+
+	ServerMod:FireClient(self.user.player, "setMusicRating", {
+		rating = musicRating,
+	})
+
 	self:initWaveMod(petData)
 end
 
@@ -114,7 +128,7 @@ function SaveManager:initWaveMod(petData)
 				end
 
 				self:addWaveUnit(waveMod, unitClass)
-				wait(spawnTimer)
+				wait(spawnTimer / self.user.home.speedManager:getSpeed())
 			end
 		end
 	end)
@@ -170,6 +184,7 @@ function SaveManager:completeWaveMod(waveMod)
 	self.user.home.unitManager:clearAllWaveUnits(waveMod)
 
 	local successTimer = 1.5 --3 -- 0.5
+	successTimer = successTimer / self.user.home.speedManager:getSpeed()
 	self.startNewWaveExpiree = ServerMod.step + 60 * successTimer
 
 	self.waveMods[waveMod["waveName"]] = nil

@@ -7,6 +7,7 @@ local UnitInfo = require(game.ReplicatedStorage.UnitInfo)
 local MapInfo = require(game.ReplicatedStorage.MapInfo)
 
 local TOGGLE_TEST_TORSO = false
+
 local TICK_DELAY_COUNT = 6
 
 local Unit = {}
@@ -145,7 +146,7 @@ function Unit:captureSavedPet()
 	self.user.home.saveManager:failWaveMod(waveMod, self)
 
 	routine(function()
-		wait(5)
+		wait(5 / self.user.home.speedManager:getSpeed())
 		self:destroyImmediately()
 	end)
 end
@@ -224,6 +225,8 @@ function Unit:tickCurrFrame(timeRatio)
 	self:checkSafeZone()
 
 	local changeDist = Common.getHorizontalDist(currFrame.Position, goalFrame.Position)
+	-- print(changeDist)
+
 	local isStationary = changeDist <= 0.8
 	self.isStationary = isStationary
 
@@ -272,7 +275,7 @@ function Unit:calculateNewPos(currFrame, goalFrame, timeRatio)
 		return currPos
 	end
 
-	local travelSpeed = self.baseMoveSpeed * timeRatio
+	local travelSpeed = self.baseMoveSpeed * timeRatio * self.user.home.speedManager:getSpeed()
 	travelSpeed = math.min(travelSpeed, goalDist)
 
 	local newPos = currPos + (goalPos - currPos).Unit * travelSpeed

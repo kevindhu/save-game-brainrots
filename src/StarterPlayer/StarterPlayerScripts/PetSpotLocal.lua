@@ -378,14 +378,16 @@ function PetSpot:addAttack(data)
 		animationId = animationId,
 	})
 
+	local attackSpeedRatio = self.attackSpeedRatio * ClientMod.speedManager:getSpeed()
+
 	if trackMod then
 		local track = trackMod["track"]
-		track:AdjustSpeed(self.attackSpeedRatio)
+		track:AdjustSpeed(attackSpeedRatio)
 	end
 
 	routine(function()
 		local totalDelay = 0.3 + (self.petStats["attackDelay"] or 0)
-		totalDelay = totalDelay / self.attackSpeedRatio
+		totalDelay = totalDelay / attackSpeedRatio
 
 		wait(totalDelay)
 		local unit = ClientMod.units[unitName]
@@ -446,7 +448,8 @@ function PetSpot:addLaser(petFrame, unitFrame)
 	line.Parent = game.Workspace.HitBoxes
 
 	routine(function()
-		wait(0.1)
+		local timer = 0.1 -- / ClientMod.speedManager:getSpeed()
+		wait(timer)
 		line:Destroy()
 	end)
 
@@ -665,7 +668,7 @@ function PetSpot:tickCurrFrame(timeRatio)
 	end
 
 	local lerpRatio = 0.05
-	local newFrame = self.currFrame:Lerp(goalFrame, lerpRatio * timeRatio)
+	local newFrame = self.currFrame:Lerp(goalFrame, lerpRatio * timeRatio * ClientMod.speedManager:getSpeed())
 
 	self.currFrame = newFrame
 	self:updateRigFrame(newFrame)

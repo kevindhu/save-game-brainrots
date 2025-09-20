@@ -115,6 +115,14 @@ function ToolManager:tick()
 		-- print(toolMod.toolClass)
 		toolMod:tick()
 	end
+
+	for _, toolMod in pairs(self.toolMods) do
+		if not toolMod.isTickable then
+			continue
+		end
+		-- print(toolMod.toolClass)
+		toolMod:tick()
+	end
 end
 
 function ToolManager:addPermanentTool(toolClass)
@@ -165,13 +173,28 @@ function ToolManager:editToolModel(tool)
 	handle.Massless = true
 	handle.CanCollide = false
 
+	handle.Transparency = 1
+	for _, child in pairs(handle:GetDescendants()) do
+		if child:IsA("Decal") then
+			child:Destroy()
+		end
+	end
+
 	tool.PrimaryPart = handle
 
-	for _, child in pairs(tool:GetDescendants()) do
-		if child:IsA("BasePart") then
-			child.Anchored = false
-			child.Massless = true
-			child.CanCollide = false
+	local decorModel = tool:FindFirstChild("DecorModel")
+	if decorModel then
+		for _, child in pairs(decorModel:GetDescendants()) do
+			if child:IsA("BasePart") then
+				local weld = Instance.new("WeldConstraint")
+				weld.Part0 = child
+				weld.Part1 = handle
+				weld.Name = "ToolWeld1"
+				weld.Parent = child
+				child.Anchored = false
+				child.Massless = true
+				child.CanCollide = false
+			end
 		end
 	end
 

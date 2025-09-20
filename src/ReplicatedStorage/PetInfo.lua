@@ -297,7 +297,7 @@ PetInfo["mutationImageMap"] = {
 	},
 	["Bombardino"] = {
 		["Gold"] = "rbxassetid://109282893882558",
-		["Diamond"] = "rbxassetid://89441292566570",
+		["Diamond"] = "rbxassetid://120440778555930",
 		["Bubblegum"] = "rbxassetid://99547066900529",
 		["Volcanic"] = "rbxassetid://0",
 	},

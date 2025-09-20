@@ -15,7 +15,7 @@ local MusicManager = {
 	musicMods = {},
 	setRatio = 1,
 
-	recentSongList = {},
+	currRating = "Default",
 }
 
 function MusicManager:init()
@@ -62,6 +62,9 @@ function MusicManager:tickMusic()
 	if not self.toggled then
 		return
 	end
+	if not self.initialized then
+		return
+	end
 
 	local songMod = self.songMod
 	if songMod then
@@ -80,38 +83,43 @@ function MusicManager:tickMusic()
 	self:playNewSong()
 end
 
+function MusicManager:setRating(data)
+	local rating = data["rating"]
+
+	if self.currRating == rating then
+		return
+	end
+	self.currRating = rating
+
+	self:playNewSong()
+end
+
 function MusicManager:getNewSongData()
+	local rating = self.currRating
 	local songDataList = {}
-
-	if not self.firstSong then
-		self.firstSong = true
-		return MusicInfo["songs"][1]
+	if rating == "Default" then
+		songDataList = MusicInfo["Default"]
+	else
+		songDataList = MusicInfo[rating .. "Spawn"]
 	end
 
-	local recentSongList = self.recentSongList
-	for _, songData in ipairs(MusicInfo["songs"]) do
-		if Common.listContains(recentSongList, songData) then
-			continue
-		end
-		table.insert(songDataList, songData)
-	end
 	return songDataList[math.random(1, #songDataList)]
 end
 
 local VOLUME_BUFF = 1 -- 1.5
 
 function MusicManager:playNewSong()
-	local newSongData = self:getNewSongData()
-
-	table.insert(self.recentSongList, newSongData)
-
-	-- keep recent song list to 4
-	if len(self.recentSongList) > 4 then
-		table.remove(self.recentSongList, 1)
+	if not self.toggled then
+		return
 	end
 
-	local soundId = newSongData[1]
-	local finalVolume = newSongData[2]
+	local newSongData = self:getNewSongData()
+	self:playSong(newSongData)
+end
+
+function MusicManager:playSong(songData)
+	local soundId = songData[1]
+	local finalVolume = songData[2]
 
 	finalVolume = finalVolume * VOLUME_BUFF
 
@@ -128,7 +136,7 @@ function MusicManager:playNewSong()
 		song = sound,
 	}
 
-	local fadeTimer = 2
+	local fadeTimer = 1 -- 2
 
 	ClientMod.tweenManager:createTween({
 		target = sound,

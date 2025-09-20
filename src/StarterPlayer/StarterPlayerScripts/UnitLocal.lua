@@ -264,7 +264,7 @@ function Unit:calculateNewPos(currFrame, goalFrame, timeRatio)
 		return currPos
 	end
 
-	local travelSpeed = self.baseMoveSpeed * timeRatio
+	local travelSpeed = self.baseMoveSpeed * timeRatio * ClientMod.speedManager:getSpeed()
 	travelSpeed = math.min(travelSpeed, goalDist)
 
 	local newPos = currPos + (goalPos - currPos).Unit * travelSpeed
@@ -354,7 +354,7 @@ function Unit:animateHit(data)
 	ClientMod.soundManager:newSoundMod({
 		soundClass = "PetHit" .. math.random(1, 5),
 		pos = damagePos,
-		volume = 0.025, -- 0.1
+		volume = 0.1, -- 0.025
 	})
 
 	ClientMod.spellManager:addExplosion({
@@ -366,7 +366,7 @@ function Unit:animateHit(data)
 	local humanoid = self.humanoid
 	humanoid.Health = newHealth
 
-	print("ANIMATE HIT: ", newHealth, humanoid.MaxHealth)
+	-- print("ANIMATE HIT: ", newHealth, humanoid.MaxHealth)
 end
 
 -- Check if unit is stationary and update animation state
@@ -381,10 +381,13 @@ function Unit:setStationary(newBool)
 
 	if newBool then
 		local animationId = UnitInfo.animationMap["idle"]
-		ClientMod.animUtils:animate(self, {
+		local trackMod = ClientMod.animUtils:animate(self, {
 			race = "Movement",
 			animationId = animationId,
 		})
+		if trackMod then
+			trackMod["track"]:AdjustSpeed(ClientMod.speedManager:getSpeed())
+		end
 		self.moveTrackMod = nil
 	else
 		local user = ClientMod.users[self.userName]
@@ -402,6 +405,9 @@ function Unit:setStationary(newBool)
 			animationId = animationId,
 			speedRatio = speedRatio, --user.humanoid.WalkSpeed / 20,
 		})
+		if moveTrackMod then
+			moveTrackMod["track"]:AdjustSpeed(ClientMod.speedManager:getSpeed())
+		end
 		self.moveTrackMod = moveTrackMod
 	end
 end
@@ -577,7 +583,7 @@ function Unit:captureSavePet(data)
 
 	local laughClass = Common.rollFromProbMap(laughProbMap)
 
-	if not Common.isStudio or true then
+	if not Common.isStudio then
 		ClientMod.soundManager:newSoundMod({
 			soundClass = laughClass,
 			pos = self.currFrame.Position,

@@ -175,13 +175,12 @@ function BaseTool:destroy()
 	self.user.home.toolManager.toolMods[self.toolName] = nil
 end
 
-local SWING_COOLDOWN = 0.2
-
 function BaseTool:doBatHit()
-	if self.flingExpiree > ServerMod.step then
+	if self.batHitExpiree and self.batHitExpiree > ServerMod.step then
 		return
 	end
-	self.flingExpiree = ServerMod.step + 60 * SWING_COOLDOWN
+	local batSwingCooldown = self.batSwingCooldown / self.user.home.speedManager:getSpeed()
+	self.batHitExpiree = ServerMod.step + 60 * batSwingCooldown
 
 	local rig = self.user.rig
 	if not rig or not rig.Parent then
@@ -191,29 +190,30 @@ function BaseTool:doBatHit()
 	-- add sound
 	ServerMod:FireAllClients("newSoundMod", {
 		soundClass = "Whoosh1",
-		volume = 1,
+		volume = 0.4,
 		pos = rig.HumanoidRootPart.Position,
 	})
 
-	self.track:Play()
-
 	local currFrame = self.user.rig.HumanoidRootPart.CFrame
 
-	local hitFrame = currFrame * CFrame.new(0, 0, -5)
+	-- local hitFrame = currFrame * CFrame.new(0, 0, -5)
+	-- -- get humanoid move direction
+	-- local moveDirection = self.user.humanoid.MoveDirection
+	-- hitFrame = hitFrame + moveDirection * self.user.humanoid.WalkSpeed / 3
 
-	-- get humanoid move direction
-	local moveDirection = self.user.humanoid.MoveDirection
-	hitFrame = hitFrame + moveDirection * self.user.humanoid.WalkSpeed / 3
+	-- for testing
+	local hitFrame = currFrame
 
 	local hitPart = self:createHitPart(hitFrame, 12) -- 9
-	hitPart.Size = Vector3.new(12, 12, 16)
-	hitPart.Transparency = 1 -- 0.5
 
-	print("CREATE HIT PART: ", hitPart)
+	local size = 24 -- 20
+	hitPart.Size = Vector3.new(size, size, size)
+
+	hitPart.Transparency = 1 -- 0.5
 
 	local hitUnits = self:getHitUnits(hitPart)
 
-	local damage = 10
+	local damage = self.batDamage
 	local bulkDamageMods = {}
 	for _, unit in pairs(hitUnits) do
 		unit:updateHealth(-damage, self, 0)
@@ -222,11 +222,16 @@ function BaseTool:doBatHit()
 			damage,
 			unit.health,
 		}
+
+		self.user.home.damageManager:addDamage(damage)
 	end
 
 	ServerMod:FireAllClients("bulkUpdateUnitDamage", {
 		bulkDamageMods = bulkDamageMods,
 	})
+
+	self.track:Play()
+	self.track:AdjustSpeed(self.user.home.speedManager:getSpeed())
 end
 
 function isPointInVolume(point: Vector3, volumeCenter: CFrame, volumeSize: Vector3): boolean

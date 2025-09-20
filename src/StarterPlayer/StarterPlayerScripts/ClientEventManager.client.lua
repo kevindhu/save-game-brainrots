@@ -118,6 +118,14 @@ function handleRequest(req, data)
 	elseif req == "unitCapturedSavedPet" then
 		ClientMod.unitManager:unitCapturedSavedPet(data)
 
+	-- MUSICMANAGER
+	elseif req == "setMusicRating" then
+		ClientMod.musicManager:setRating(data)
+
+	-- SPEEDMANAGER
+	elseif req == "updateGameSpeed" then
+		ClientMod.speedManager:updateGameSpeed(data)
+
 	-- UNITMANAGER
 	elseif req == "bulkUpdateUnitDamage" then
 		ClientMod.unitManager:bulkUpdateUnitDamage(data)

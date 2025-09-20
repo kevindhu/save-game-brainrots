@@ -72,6 +72,9 @@ function SaveManager:addWaveMod(data)
 	self:removeWaveMod(plotName)
 
 	self:initPetRig(plotName, waveMod, saveBaseFrame)
+
+	waveMod["saveBaseFrame"] = saveBaseFrame
+
 	self.waveMods[plotName] = waveMod
 end
 
@@ -94,9 +97,11 @@ end
 
 function SaveManager:animateHatch(plotName)
 	local waveMod = self.waveMods[plotName]
-	if not waveMod then
+	if not waveMod or waveMod["hatched"] then
 		return
 	end
+
+	waveMod["hatched"] = true
 
 	local petEntity = waveMod["petEntity"]
 	if not petEntity then
@@ -105,6 +110,19 @@ function SaveManager:animateHatch(plotName)
 	end
 
 	local rig = petEntity.rig
+	if not rig or not rig.Parent then
+		warn("!!! NO RIG FOUND TO ANIMATE HATCH: ", plotName)
+		return
+	end
+
+	if not rig.PrimaryPart then
+		rig.PrimaryPart = rig:FindFirstChild("HumanoidRootPart")
+
+		if not rig.PrimaryPart then
+			warn("!!! NO PRIMARY PART FOUND TO ANIMATE HATCH: ", rig, petEntity["petClass"])
+			return
+		end
+	end
 
 	local pos = rig.PrimaryPart.Position
 	local startPos = pos + Vector3.new(0, 1, 0)

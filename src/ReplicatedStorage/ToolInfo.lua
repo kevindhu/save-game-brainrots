@@ -9,7 +9,7 @@ ToolInfo["tools"] = {
 		alias = "Bat",
 		description = "A bat for hitting",
 		price = 0,
-		image = "rbxassetid://125427347841808",
+		image = "rbxassetid://70735417680990",
 	},
 	["Hammer"] = {
 		alias = "Pick Up",

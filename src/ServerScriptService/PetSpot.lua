@@ -233,10 +233,12 @@ function PetSpot:tickAttack(timeRatio)
 		return
 	end
 
+	local attackSpeedRatio = self.attackSpeedRatio * self.user.home.speedManager:getSpeed()
+
 	if self.attackExpiree and self.attackExpiree > ServerMod.step then
 		return
 	end
-	self.attackExpiree = ServerMod.step + 60 * 1 / self.attackSpeedRatio
+	self.attackExpiree = ServerMod.step + 60 * 1 / attackSpeedRatio
 
 	local damage = self.petStats["attackDamage"]
 
@@ -248,7 +250,7 @@ function PetSpot:tickAttack(timeRatio)
 	damage = damage * levelMultiplier
 
 	local totalDelay = 0.3 + (self.petStats["attackDelay"] or 0)
-	totalDelay = totalDelay / self.attackSpeedRatio
+	totalDelay = totalDelay / attackSpeedRatio
 
 	routine(function()
 		targetUnit:updateHealth(-damage, self, totalDelay)
