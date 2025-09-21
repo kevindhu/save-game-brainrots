@@ -148,8 +148,6 @@ function PlaceManager:refreshStashTool()
 
 	ClientMod.sellManager:refreshEquippedItem()
 
-	-- print("GOT CHOSEN TOOL MOD: ", chosenToolMod)
-
 	local user = ClientMod:getLocalUser()
 
 	if not chosenToolMod then

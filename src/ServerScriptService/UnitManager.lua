@@ -29,19 +29,6 @@ function UnitManager:init()
 		wait(1)
 		self.initialized = true
 	end)
-
-	-- routine(function()
-	-- 	self:addTestUnits()
-	-- end)
-end
-
-function UnitManager:addTestUnits()
-	while true do
-		self:addUnit({
-			unitClass = "Unit1",
-		})
-		wait(0.2)
-	end
 end
 
 function UnitManager:getClosestUnit(petPos)
@@ -123,10 +110,7 @@ end
 
 function UnitManager:destroy()
 	for _, unit in pairs(self.units) do
-		unit:destroy({
-			waitTimer = 0,
-			noRagdoll = true,
-		})
+		unit:destroyImmediately()
 	end
 	self.units = {}
 end

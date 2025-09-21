@@ -1,6 +1,6 @@
 local Common = require(game.ReplicatedStorage.Common)
 
-local PLOT_COUNT = 1
+local PLOT_COUNT = 2
 
 local MapInfo = {
 	PLOT_COUNT = PLOT_COUNT,

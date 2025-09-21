@@ -83,7 +83,9 @@ function VendorManager:newVendorMod(shopClass)
 		end
 	end)
 
+	local vendorName = shopClass .. "Vendor"
 	local newVendorMod = {
+		vendorName = vendorName,
 		vendorModel = vendorModel,
 		prompt = prompt,
 		torso = torso,
@@ -91,7 +93,11 @@ function VendorManager:newVendorMod(shopClass)
 		decorRig = decorRig,
 		decorRigBaseScale = decorRig:GetScale(),
 	}
-	self.vendorMods[shopClass] = newVendorMod
+	self:addVendorMod(newVendorMod)
+end
+
+function VendorManager:addVendorMod(vendorMod)
+	self.vendorMods[vendorMod.vendorName] = vendorMod
 end
 
 function VendorManager:tick()
@@ -116,12 +122,6 @@ function VendorManager:tick()
 		end
 	end
 
-	if not chosenVendorMod then
-		self.chooseHighlight.Adornee = nil
-		self.chosenVendorMod = nil
-		return
-	end
-
 	self:chooseVendorMod(chosenVendorMod)
 end
 
@@ -131,10 +131,17 @@ function VendorManager:chooseVendorMod(vendorMod)
 	end
 	self.chosenVendorMod = vendorMod
 
+	if not vendorMod then
+		self.chooseHighlight.Adornee = nil
+		self.chosenVendorMod = nil
+		return
+	end
+
 	local decorRig = vendorMod["decorRig"]
+	local startScale = vendorMod["decorRigBaseScale"]
+
 	self.chooseHighlight.Adornee = decorRig
 
-	local startScale = vendorMod["decorRigBaseScale"]
 	local endScale = startScale * 1.035
 
 	routine(function()

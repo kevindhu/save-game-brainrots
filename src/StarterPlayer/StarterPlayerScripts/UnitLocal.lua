@@ -264,7 +264,7 @@ function Unit:calculateNewPos(currFrame, goalFrame, timeRatio)
 		return currPos
 	end
 
-	local travelSpeed = self.baseMoveSpeed * timeRatio * ClientMod.speedManager:getSpeed()
+	local travelSpeed = self.baseMoveSpeed * timeRatio * ClientMod.speedManager:getSpeed(self.userName)
 	travelSpeed = math.min(travelSpeed, goalDist)
 
 	local newPos = currPos + (goalPos - currPos).Unit * travelSpeed
@@ -386,7 +386,7 @@ function Unit:setStationary(newBool)
 			animationId = animationId,
 		})
 		if trackMod then
-			trackMod["track"]:AdjustSpeed(ClientMod.speedManager:getSpeed())
+			trackMod["track"]:AdjustSpeed(ClientMod.speedManager:getSpeed(self.userName))
 		end
 		self.moveTrackMod = nil
 	else
@@ -406,7 +406,7 @@ function Unit:setStationary(newBool)
 			speedRatio = speedRatio, --user.humanoid.WalkSpeed / 20,
 		})
 		if moveTrackMod then
-			moveTrackMod["track"]:AdjustSpeed(ClientMod.speedManager:getSpeed())
+			moveTrackMod["track"]:AdjustSpeed(ClientMod.speedManager:getSpeed(self.userName))
 		end
 		self.moveTrackMod = moveTrackMod
 	end
@@ -567,7 +567,7 @@ function Unit:animatePetRig(petRig, petClass)
 end
 
 function Unit:captureSavePet(data)
-	ClientMod.saveManager:removeWaveMod(self.plotName)
+	ClientMod.saveManager:removeWaveMod(self.userName)
 
 	local petData = data["petData"]
 	self.capturedSavedPet = true

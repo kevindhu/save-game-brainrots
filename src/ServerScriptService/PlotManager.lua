@@ -110,7 +110,7 @@ function PlotManager:tryAddLike(data)
 	end
 
 	otherPlotManager:addLike(self.user.userId)
-	self.user:notifySuccess("You have liked " .. userName .. "'s Mine")
+	self.user:notifySuccess("You have liked " .. userName .. "'s Plot")
 end
 
 function PlotManager:initModel()
@@ -164,7 +164,7 @@ function PlotManager:initPlotOverhead()
 	routine(function()
 		mainFrame.ProfileIcon.Image = Common.getProfileImageFromUserId(self.user.userId)
 	end)
-	mainFrame.Title.Text = string.format("%s's Mine", self.user.name)
+	mainFrame.Title.Text = string.format("%s's Plot", self.user.name)
 
 	self.plotOverheadPart = plotOverheadPart
 end
@@ -197,7 +197,7 @@ function PlotManager:destroy()
 
 	ServerMod.map:cleanPlotModel(self.plotName)
 
-	ServerMod:FireAllClients("clearPlotSignMod", {
+	ServerMod:FireAllClients("clearPlotMod", {
 		plotName = self.plotName,
 	})
 end

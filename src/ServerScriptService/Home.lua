@@ -132,6 +132,8 @@ function Home:destroy()
 	local managerList = {
 		"plotManager",
 		"petManager",
+		"unitManager",
+		"saveManager",
 	}
 	for _, managerClass in pairs(managerList) do
 		local manager = self[managerClass]
@@ -146,6 +148,7 @@ function Home:sync(otherUser)
 	local modules = {
 		"petManager",
 		"unitManager",
+		"speedManager",
 	}
 	for _, moduleName in ipairs(modules) do
 		local module = self[moduleName]
@@ -177,6 +180,8 @@ function Home:saveState()
 
 		"rewardManager",
 		"testManager",
+
+		"speedManager",
 
 		"itemStash",
 	}

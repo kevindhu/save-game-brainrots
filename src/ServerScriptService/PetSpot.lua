@@ -4,6 +4,7 @@ local Common = require(game.ReplicatedStorage.Common)
 local len, routine, wait = Common.len, Common.routine, Common.wait
 
 local PetInfo = require(game.ReplicatedStorage.PetInfo)
+local MutationInfo = require(game.ReplicatedStorage.MutationInfo)
 
 local PetSpot = {}
 PetSpot.__index = PetSpot
@@ -33,6 +34,9 @@ function PetSpot:init()
 	self:initAllEvents()
 
 	for _, otherUser in pairs(ServerMod.users) do
+		if not otherUser.initialized then
+			continue
+		end
 		self:sync(otherUser)
 	end
 end
@@ -101,7 +105,17 @@ function PetSpot:refreshAttackSpeedRatio()
 
 	local levelIncrement = 0.003
 	local levelMultiplier = 1 + (level - 1) * levelIncrement
-	self.attackSpeedRatio = 1 * levelMultiplier
+	local attackSpeedRatio = 1 * levelMultiplier
+
+	-- add mutation multiplier
+	local mutationMultiplier = 1
+	local mutationClass = self.petData["mutationClass"]
+	if mutationClass and mutationClass ~= "None" then
+		mutationMultiplier = MutationInfo["attackSpeedMultiplierMap"][mutationClass]
+	end
+	attackSpeedRatio = attackSpeedRatio * mutationMultiplier
+
+	self.attackSpeedRatio = attackSpeedRatio
 
 	-- print("ATTACK SPEED RATIO: ", self.attackSpeedRatio)
 end
@@ -245,9 +259,15 @@ function PetSpot:tickAttack(timeRatio)
 	local level = self.petData["level"]
 	local levelMultiplier = 1 + (level - 1) * 0.01
 
-	-- print("LEVEL MULTIPLIER: ", levelMultiplier)
-
 	damage = damage * levelMultiplier
+
+	-- add mutation multiplier
+	local mutationMultiplier = 1
+	local mutationClass = self.petData["mutationClass"]
+	if mutationClass and mutationClass ~= "None" then
+		mutationMultiplier = MutationInfo["damageMultiplierMap"][mutationClass]
+	end
+	damage = damage * mutationMultiplier
 
 	local totalDelay = 0.3 + (self.petStats["attackDelay"] or 0)
 	totalDelay = totalDelay / attackSpeedRatio
@@ -304,6 +324,8 @@ function PetSpot:sync(otherUser)
 		userName = self.user.name,
 		unlocked = self.unlocked,
 
+		plotName = self.user.home.plotManager.plotName,
+
 		baseFrame = self.baseFrame,
 		currFrame = self.currFrame,
 	})
@@ -338,7 +360,7 @@ function PetSpot:tryCollectCoins()
 end
 
 function PetSpot:sendCoinsData()
-	ServerMod:FireClient(self.user.player, "updatePetSpotCoins", {
+	ServerMod:FireAllClients("updatePetSpotCoins", {
 		petSpotName = self.petSpotName,
 
 		totalCoins = self.petData["totalCoins"],
@@ -347,7 +369,7 @@ function PetSpot:sendCoinsData()
 end
 
 function PetSpot:sendData()
-	ServerMod:FireClient(self.user.player, "updatePetSpot", {
+	ServerMod:FireAllClients("updatePetSpot", {
 		petSpotName = self.petSpotName,
 		petData = self.petData,
 
@@ -383,12 +405,14 @@ function PetSpot:destroy()
 	end
 	self.eventsList = {}
 
+	print("DESTROYING PET SPOT: ", self.petSpotName)
+
+	self:showBuyModel()
+
 	if self.realModel then
 		self.realModel:Destroy()
 		self.realModel = nil
 	end
-
-	self:showBuyModel()
 
 	self.petData = nil
 

@@ -123,8 +123,8 @@ function handleRequest(req, data)
 		ClientMod.musicManager:setRating(data)
 
 	-- SPEEDMANAGER
-	elseif req == "updateGameSpeed" then
-		ClientMod.speedManager:updateGameSpeed(data)
+	elseif req == "updateAllSpeedMods" then
+		ClientMod.speedManager:updateAllSpeedMods(data)
 
 	-- UNITMANAGER
 	elseif req == "bulkUpdateUnitDamage" then
@@ -187,8 +187,8 @@ function handleRequest(req, data)
 	-- PLOTMANAGER
 	elseif req == "updateGlobalPlot" then
 		ClientMod.plotManager:updateGlobalPlot(data)
-	elseif req == "clearPlotSignMod" then
-		ClientMod.plotManager:clearPlotSignMod(data)
+	elseif req == "clearPlotMod" then
+		ClientMod.plotManager:clearPlotMod(data)
 
 	-- CURRENCYMANAGER
 	elseif req == "addCoinsNotify" then

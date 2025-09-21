@@ -4,21 +4,21 @@ WaveInfo["ratingWaveMap"] = {
 	["Secret"] = {
 		{
 			unitClass = "Unit4",
-			count = 5,
+			count = 20,
 			spawnTimer = 0.02,
 		},
 	},
 	["Mythic"] = {
 		{
 			unitClass = "Unit4",
-			count = 5,
+			count = 20,
 			spawnTimer = 0.5,
 		},
 	},
 	["Legendary"] = {
 		{
 			unitClass = "Unit1",
-			count = 5,
+			count = 20,
 			spawnTimer = 0.5,
 		},
 	},
@@ -32,7 +32,7 @@ WaveInfo["ratingWaveMap"] = {
 	["Rare"] = {
 		{
 			unitClass = "Unit4",
-			count = 5,
+			count = 205,
 			spawnTimer = 0.1,
 		},
 		{
@@ -44,7 +44,7 @@ WaveInfo["ratingWaveMap"] = {
 	["Uncommon"] = {
 		{
 			unitClass = "Unit4",
-			count = 5,
+			count = 20,
 			spawnTimer = 0.1,
 		},
 		{

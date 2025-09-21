@@ -117,6 +117,7 @@ function RewardManager:tryClaimGroupReward()
 	self.user.home.petManager:fillPetDataWithDefaults(itemData)
 
 	ServerMod:FireClient(self.user.player, "doHatch", {
+		userName = self.user.name,
 		petClass = petClass,
 		mutationClass = mutationClass,
 	})

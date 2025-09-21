@@ -25,7 +25,7 @@ function PetManager.new(owner, data)
 	return u
 end
 
-local PET_SPOT_COUNT = 5
+local PET_SPOT_COUNT = 10 -- 5
 
 function PetManager:init()
 	self.user = self.owner.user

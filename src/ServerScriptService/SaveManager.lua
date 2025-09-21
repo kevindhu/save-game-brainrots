@@ -100,6 +100,7 @@ function SaveManager:initWaveMod(petData)
 		waveName = waveName,
 
 		plotName = self.user.home.plotManager.plotName,
+		userName = self.user.name,
 
 		rating = rating,
 		totalWaveData = totalWaveData,
@@ -110,6 +111,8 @@ function SaveManager:initWaveMod(petData)
 	}
 	self.waveMods[waveName] = waveMod
 
+	self.currWaveMod = waveMod
+
 	self:sendWaveMod(waveMod)
 
 	routine(function()
@@ -118,12 +121,12 @@ function SaveManager:initWaveMod(petData)
 			local count = waveData["count"]
 			local spawnTimer = waveData["spawnTimer"]
 
-			if waveMod["destroyed"] then
+			if waveMod["destroyed"] or self.user.destroyed then
 				return
 			end
 
 			for i = 1, count do
-				if waveMod["destroyed"] then
+				if waveMod["destroyed"] or self.user.destroyed then
 					return
 				end
 
@@ -171,8 +174,10 @@ function SaveManager:completeWaveMod(waveMod)
 		petClass = petData["petClass"],
 		mutationClass = petData["mutationClass"],
 
+		waveName = waveMod["waveName"],
+		userName = self.user.name,
+
 		pos = self.saveBaseFrame.Position,
-		plotName = waveMod["plotName"],
 	})
 
 	petData["forceBottom"] = false
@@ -198,11 +203,13 @@ function SaveManager:failWaveMod(waveMod, unit)
 
 	self.user.home.unitManager:clearAllWaveUnits(waveMod)
 
-	local petData = waveMod["petData"]
-	ServerMod:FireAllClients("unitCapturedSavedPet", {
-		unitName = unit.unitName,
-		petData = petData,
-	})
+	if unit then
+		local petData = waveMod["petData"]
+		ServerMod:FireAllClients("unitCapturedSavedPet", {
+			unitName = unit.unitName,
+			petData = petData,
+		})
+	end
 
 	local failTimer = 1.5
 	self.startNewWaveExpiree = ServerMod.step + 60 * failTimer
@@ -214,10 +221,14 @@ function SaveManager:tick()
 	if not self.initialized then
 		return
 	end
+	if self.user.destroyed then
+		return
+	end
 
 	if len(self.waveMods) > 0 then
 		return
 	end
+
 	if self.startNewWaveExpiree and self.startNewWaveExpiree > ServerMod.step then
 		return
 	end
@@ -233,6 +244,7 @@ end
 
 function SaveManager:updateWaveModData(waveMod)
 	ServerMod:FireAllClients("updateWaveModData", {
+		userName = self.user.name,
 		waveName = waveMod["waveName"],
 
 		killedUnitCount = waveMod["killedUnitCount"],
@@ -241,10 +253,15 @@ function SaveManager:updateWaveModData(waveMod)
 end
 
 function SaveManager:saveState()
-	local managerData = {
-		currPetData = self.currPetData,
-	}
+	local managerData = {}
 	self.user.store:set(self.moduleAlias .. "Info", managerData)
+end
+
+function SaveManager:destroy()
+	local currWaveMod = self.currWaveMod
+	if currWaveMod then
+		self:failWaveMod(currWaveMod, nil)
+	end
 end
 
 return SaveManager

@@ -69,7 +69,8 @@ function PetSpot:initEventReceiver(key, alias, callback)
 end
 
 function PetSpot:initBuyModel()
-	local plotModel = ClientMod.plotManager.model
+	local plotModel = game.Workspace:WaitForChild(self.plotName)
+
 	local buyModel = plotModel:FindFirstChild("PetSpot" .. self.index)
 	if not buyModel then
 		warn("!! PET SPOT MODEL NOT FOUND: ", self.petSpotName, self.index)
@@ -138,6 +139,7 @@ end
 function PetSpot:initLevelBB()
 	local model = self.realModel
 	local levelBBPart = model:WaitForChild("LevelBBPart")
+	levelBBPart.CanCollide = false
 	levelBBPart.Transparency = 1
 
 	local levelBB = model:WaitForChild("LevelBBPart").BB
@@ -262,6 +264,8 @@ function PetSpot:updateData(data)
 	self.attackSpeedRatio = attackSpeedRatio
 	self.petData = petData
 
+	print("UPDATING PET SPOT DATA: ", self.petSpotName, petData)
+
 	local oldPetName = self.petName
 	if self.petData then
 		for k, v in pairs(self.petData) do
@@ -378,7 +382,7 @@ function PetSpot:addAttack(data)
 		animationId = animationId,
 	})
 
-	local attackSpeedRatio = self.attackSpeedRatio * ClientMod.speedManager:getSpeed()
+	local attackSpeedRatio = self.attackSpeedRatio * ClientMod.speedManager:getSpeed(self.userName)
 
 	if trackMod then
 		local track = trackMod["track"]
@@ -448,7 +452,7 @@ function PetSpot:addLaser(petFrame, unitFrame)
 	line.Parent = game.Workspace.HitBoxes
 
 	routine(function()
-		local timer = 0.1 -- / ClientMod.speedManager:getSpeed()
+		local timer = 0.1 -- / ClientMod.speedManager:getSpeed(self.userName)
 		wait(timer)
 		line:Destroy()
 	end)
@@ -668,7 +672,8 @@ function PetSpot:tickCurrFrame(timeRatio)
 	end
 
 	local lerpRatio = 0.05
-	local newFrame = self.currFrame:Lerp(goalFrame, lerpRatio * timeRatio * ClientMod.speedManager:getSpeed())
+	local newFrame =
+		self.currFrame:Lerp(goalFrame, lerpRatio * timeRatio * ClientMod.speedManager:getSpeed(self.userName))
 
 	self.currFrame = newFrame
 	self:updateRigFrame(newFrame)

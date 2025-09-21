@@ -75,6 +75,48 @@ PetBalanceInfo["attackDamageMap"] = {
 	["GrapeSquid"] = 10000,
 }
 
+PetBalanceInfo["unitHealthMultiplierMap"] = {
+	["CappuccinoAssassino"] = 1,
+	["TungTungSahur"] = 1.31,
+	["TrippiTroppi"] = 1.62,
+
+	["Boneca"] = 1.93,
+	["LiriLira"] = 2.24,
+	["Ballerina"] = 2.55,
+
+	["FrigoCamelo"] = 2.86,
+	["ChimpBanana"] = 3.17,
+	["TaTaTaSahur"] = 3.48,
+
+	["CapybaraCoconut"] = 3.79,
+	["DolphinBanana"] = 4.10,
+
+	["FishCatLegs"] = 4.41,
+
+	["GooseBomber"] = 4.72,
+	["TralaleloTralala"] = 5.03,
+
+	["GlorboFruttoDrillo"] = 5.34,
+	["RhinoToast"] = 5.65,
+
+	["BrrBrrPatapim"] = 5.96,
+	["ElephantCoconut"] = 6.27,
+
+	["TimCheese"] = 6.58,
+	["Bombardino"] = 6.89,
+	["GiraffeWatermelon"] = 7.20,
+	["MonkeyPineapple"] = 7.51,
+	["OwlAvocado"] = 7.82,
+	["OrangeDunDun"] = 8.13,
+
+	["CowPlanet"] = 8.44,
+	["OctopusBlueberry"] = 8.75,
+	["SaltCombined"] = 9.06,
+	["GorillaWatermelon"] = 9.37,
+	["MilkShake"] = 9.68,
+	["GrapeSquid"] = 10,
+}
+
 PetBalanceInfo["unlockCostMap"] = {
 	["1"] = 0,
 	["2"] = 100,
@@ -84,6 +126,8 @@ PetBalanceInfo["unlockCostMap"] = {
 	["6"] = 500,
 	["7"] = 600,
 	["8"] = 700,
+	["9"] = 800,
+	["10"] = 900,
 }
 
 return PetBalanceInfo

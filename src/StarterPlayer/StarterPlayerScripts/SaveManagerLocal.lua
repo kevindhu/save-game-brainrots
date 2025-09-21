@@ -9,7 +9,8 @@ local ClientMod = require(playerScripts.ClientMod)
 local Common = require(game.ReplicatedStorage.Common)
 local len, routine, wait = Common.len, Common.routine, Common.wait
 
-local buttonGUI = playerGui:WaitForChild("ButtonGUI")
+local saveGUI = playerGui:WaitForChild("SaveGUI")
+local saveFrame = saveGUI.SaveFrame
 
 local PetInfo = require(game.ReplicatedStorage.PetInfo)
 
@@ -22,12 +23,25 @@ SaveManager.__index = SaveManager
 
 function SaveManager:init()
 	self:addCons()
+
+	self:toggleSaveFrame(false)
 end
 
-function SaveManager:addCons() end
+function SaveManager:addCons()
+	self.templateMainRatingTitle = saveFrame.RatingTitle
+	self.templateMainRatingTitle.Visible = false
+
+	local speedButton = saveFrame.SpeedButton
+	ClientMod.buttonManager:addActivateCons(speedButton, function()
+		ClientMod.speedManager:chooseNextSpeedMod()
+	end)
+	ClientMod.buttonManager:addBasicButtonCons(speedButton)
+end
 
 function SaveManager:updateWaveModData(data)
 	local waveName = data["waveName"]
+	local userName = data["userName"]
+
 	local chosenWaveMod = nil
 	for _, waveMod in pairs(self.waveMods) do
 		if waveMod["waveName"] == waveName then
@@ -36,7 +50,7 @@ function SaveManager:updateWaveModData(data)
 		end
 	end
 	if not chosenWaveMod then
-		warn("!!! NO WAVE MOD FOUND TO UPDATE DATA: ", waveName)
+		-- warn("!!! NO WAVE MOD FOUND TO UPDATE DATA: ", waveName)
 		return
 	end
 
@@ -46,6 +60,18 @@ function SaveManager:updateWaveModData(data)
 	self:refreshBB(chosenWaveMod)
 
 	-- print("UPDATED WAVE MOD DATA: ", waveName, chosenWaveMod["killedUnitCount"], chosenWaveMod["totalUnitCount"])
+end
+
+function SaveManager:waveModSuccess(userName)
+	local waveMod = self.waveMods[userName]
+	if not waveMod then
+		-- warn("!!! NO WAVE MOD FOUND TO SUCCESS: ", userName)
+		return
+	end
+
+	-- local mainSaveTitle = saveFrame.SaveTitle
+	-- mainSaveTitle.Text = "SAVED"
+	-- mainSaveTitle.TextColor3 = Color3.fromRGB(85, 255, 190)
 end
 
 function SaveManager:refreshBB(waveMod)
@@ -61,43 +87,116 @@ function SaveManager:refreshBB(waveMod)
 
 	unitBar.CurrProgress.Size = UDim2.fromScale(progressRatio, 1)
 	unitBar.Title.Text = string.format("%s/%s", waveMod["killedUnitCount"], waveMod["totalUnitCount"])
+
+	if waveMod["userName"] == player.Name then
+		local mainUnitBar = saveFrame.UnitBar
+		mainUnitBar.CurrProgress.Size = UDim2.fromScale(progressRatio, 1)
+		mainUnitBar.Title.Text = string.format("%s/%s", waveMod["killedUnitCount"], waveMod["totalUnitCount"])
+	end
 end
 
 function SaveManager:addWaveMod(data)
 	local waveMod = data["waveMod"]
 	local saveBaseFrame = data["saveBaseFrame"]
 
-	local plotName = waveMod["plotName"]
+	local userName = waveMod["userName"]
 
-	self:removeWaveMod(plotName)
+	self:removeWaveMod(userName)
 
-	self:initPetRig(plotName, waveMod, saveBaseFrame)
+	self:initPetRig(userName, waveMod, saveBaseFrame)
+
+	if userName == player.Name then
+		local mainUnitBar = saveFrame.UnitBar
+		mainUnitBar.CurrProgress.Size = UDim2.fromScale(0, 1)
+		mainUnitBar.Title.Text = string.format("%s/%s", waveMod["killedUnitCount"], waveMod["totalUnitCount"])
+
+		local petData = waveMod["petData"]
+
+		local petClass = petData["petClass"]
+		local mutationClass = petData["mutationClass"]
+
+		local petStats = PetInfo:getMeta(petClass)
+
+		local mutationPrefix = ""
+		if mutationClass and mutationClass ~= "None" then
+			mutationPrefix = mutationClass .. " "
+		end
+
+		saveFrame.NameTitle.Text = mutationPrefix .. petStats["alias"]
+
+		saveFrame.Icon.Image = PetInfo:getPetImage(petClass, mutationClass)
+
+		local ratingTitle = self.templateMainRatingTitle:Clone()
+		ratingTitle.Visible = true
+		ratingTitle.Parent = self.templateMainRatingTitle.Parent
+
+		-- local mainSaveTitle = saveFrame.SaveTitle
+		-- mainSaveTitle.Text = "SAVE"
+		-- mainSaveTitle.TextColor3 = Color3.fromRGB(255, 32, 36)
+
+		ratingTitle.Text = petStats["rating"]
+		ClientMod.ratingManager:applyRatingColor(ratingTitle, petStats["rating"])
+
+		waveMod["ratingTitle"] = ratingTitle
+
+		self:toggleSaveFrame(true)
+	end
 
 	waveMod["saveBaseFrame"] = saveBaseFrame
 
-	self.waveMods[plotName] = waveMod
+	self.waveMods[userName] = waveMod
+
+	self:refreshSpeedFrame()
 end
 
-function SaveManager:removeWaveMod(plotName)
-	local waveMod = self.waveMods[plotName]
+function SaveManager:removeWaveMod(userName)
+	local waveMod = self.waveMods[userName]
 	if not waveMod then
-		-- warn("!!! NO WAVE MOD FOUND TO REMOVE: ", plotName)
+		-- warn("!!! NO WAVE MOD FOUND TO REMOVE: ", userName)
 		return
+	end
+
+	local ratingTitle = waveMod["ratingTitle"]
+	if ratingTitle then
+		ratingTitle:Destroy()
+		waveMod["ratingTitle"] = nil
 	end
 
 	local petEntity = waveMod["petEntity"]
 	if petEntity then
 		petEntity.rig:Destroy()
+		-- print("DESTROYING PET RIG: ", petEntity.rig)
 		petEntity.outerShell:Destroy()
 		waveMod.petEntity = nil
 	end
 
-	self.waveMods[waveMod.plotName] = nil
+	if userName == player.Name then
+		self:toggleSaveFrame(false)
+	end
+
+	self.waveMods[waveMod.userName] = nil
+
+	self:refreshSpeedFrame()
 end
 
-function SaveManager:animateHatch(plotName)
-	local waveMod = self.waveMods[plotName]
-	if not waveMod or waveMod["hatched"] then
+function SaveManager:refreshSpeedFrame()
+	local speed = ClientMod.speedManager:getSpeed(player.Name)
+	local speedButton = saveFrame.SpeedButton
+
+	speedButton.SpeedTitle.Text = speed .. "x"
+end
+
+function SaveManager:toggleSaveFrame(newBool)
+	saveFrame.Visible = newBool
+end
+
+function SaveManager:getWaveMod(userName)
+	return self.waveMods[userName]
+end
+
+function SaveManager:animateHatch(userName, waveName)
+	local waveMod = self.waveMods[userName]
+	if not waveMod or waveMod["hatched"] or waveMod["waveName"] ~= waveName then
 		return
 	end
 
@@ -105,13 +204,13 @@ function SaveManager:animateHatch(plotName)
 
 	local petEntity = waveMod["petEntity"]
 	if not petEntity then
-		warn("!!! NO PET ENTITY FOUND TO ANIMATE HATCH: ", plotName)
+		warn("!!! NO PET ENTITY FOUND TO ANIMATE HATCH: ", userName)
 		return
 	end
 
 	local rig = petEntity.rig
 	if not rig or not rig.Parent then
-		warn("!!! NO RIG FOUND TO ANIMATE HATCH: ", plotName)
+		warn("!!! NO RIG FOUND TO ANIMATE HATCH: ", userName)
 		return
 	end
 
@@ -143,6 +242,7 @@ function SaveManager:animateHatch(plotName)
 
 	if rig then
 		rig:Destroy()
+		-- print("DESTROYING PET RIG 2: ", rig)
 	end
 
 	-- ClientMod.tweenManager:createTween({
@@ -180,7 +280,7 @@ function SaveManager:animateHatch(plotName)
 	-- end
 end
 
-function SaveManager:initPetRig(plotName, waveMod, saveBaseFrame)
+function SaveManager:initPetRig(userName, waveMod, saveBaseFrame)
 	if self.bb then
 		self.bb:Destroy()
 		self.bb = nil
@@ -270,7 +370,7 @@ function SaveManager:initPetRig(plotName, waveMod, saveBaseFrame)
 	rig:SetPrimaryPartCFrame(rigFrame)
 
 	local newPetEntity = {
-		name = plotName .. "_WAVE",
+		name = userName .. "_WAVE",
 		rig = rig,
 		outerShell = outerShell,
 		partTextureMap = partTextureMap,
@@ -350,6 +450,11 @@ function SaveManager:tickRender(timeRatio)
 
 	local saveTitle = self.bb.MainFrame.SaveTitle
 	saveTitle.UIScale.Scale = 1 + math.sin(self.saveSizeOffset * 0.1) * 0.1
+
+	-- local mainSaveTitle = saveFrame.SaveTitle
+	-- mainSaveTitle.UIScale.Scale = 1 + math.sin(self.saveSizeOffset * 0.1) * 0.1
+
+	saveFrame.Icon.UIScale.Scale = 1 + math.sin(self.saveSizeOffset * 0.1) * 0.02 -- 0.05
 end
 
 SaveManager:init()

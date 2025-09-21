@@ -110,6 +110,10 @@ function PlotManager:updateGlobalPlot(data)
 		self.floorPart = plotMod.floorPart
 		self.saveModel = plotMod.saveModel
 		self.unitStartPart = plotMod.unitStartPart
+
+		routine(function()
+			ClientMod.speedManager:initModel(self.model)
+		end)
 	end
 
 	self:refreshPlotMod(plotMod)
@@ -192,15 +196,24 @@ function PlotManager:addCons()
 	ClientMod.buttonManager:addActivateCons(myPlotButton, function()
 		self:tryTeleportTo("MyPlot")
 	end)
+
+	local sellButton = topFrame.Sell
+	ClientMod.buttonManager:addBasicButtonCons(sellButton)
+	ClientMod.buttonManager:addActivateCons(sellButton, function()
+		self:tryTeleportTo("SellPets")
+	end)
 end
 
 function PlotManager:tryTeleportTo(teleportClass)
 	local user = ClientMod:getLocalUser()
 	if teleportClass == "MyPlot" then
 		local floorPart = self.floorPart
-		local xOffset = -110 -- 10
+		local xOffset = -100 -- 10
 		local spawnFrame = floorPart.CFrame * CFrame.new(xOffset, 10, 0) * CFrame.Angles(0, math.rad(-90), 0)
 
+		user.rig:PivotTo(spawnFrame)
+	elseif teleportClass == "SellPets" then
+		local spawnFrame = game.Workspace.SellPetsModel.TeleportPart.CFrame
 		user.rig:PivotTo(spawnFrame)
 	end
 end

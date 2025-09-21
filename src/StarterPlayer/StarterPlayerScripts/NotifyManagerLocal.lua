@@ -45,11 +45,6 @@ function NotifyManager:removeNotifyMod(notifyMod)
 	self.notifyMods[notifyName] = nil
 end
 
-local iconMap = {
-	check = "✅",
-	error = "❌",
-}
-
 function NotifyManager:notifySuccess(txt)
 	local data = {
 		txt = txt,
@@ -70,7 +65,7 @@ function NotifyManager:newNotifyMod(data)
 	if data["notifyClass"] == "Error" then
 		data["icon"] = "error"
 		data["soundClass"] = "SoftError5" -- SoftError3
-		data["soundVolume"] = 0.5
+		data["soundVolume"] = 0.3
 		data["color"] = Color3.fromRGB(255, 19, 23)
 	elseif data["notifyClass"] == "Success" then
 		data["color"] = Color3.fromRGB(7, 255, 86)
@@ -110,7 +105,9 @@ function NotifyManager:newNotifyMod(data)
 	local innerFrame = frame.InnerFrame
 
 	-- innerFrame.UIStroke.Color = color
-	innerFrame.Title.TextColor3 = color
+	if color then
+		innerFrame.Title.TextColor3 = color
+	end
 
 	innerFrame.Title.Text = txt
 	frame.Size = UDim2.fromScale(0, 0)

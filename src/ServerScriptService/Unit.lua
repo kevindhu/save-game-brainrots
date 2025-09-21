@@ -5,6 +5,7 @@ local len, routine, wait = Common.len, Common.routine, Common.wait
 
 local UnitInfo = require(game.ReplicatedStorage.UnitInfo)
 local MapInfo = require(game.ReplicatedStorage.MapInfo)
+local PetBalanceInfo = require(game.ReplicatedStorage.PetBalanceInfo)
 
 local TOGGLE_TEST_TORSO = false
 
@@ -38,8 +39,16 @@ function Unit:init()
 
 	self.baseRig = game.ReplicatedStorage.Assets[self.unitClass]
 
-	self.health = self.unitStats["health"]
-	self.maxHealth = self.unitStats["health"]
+	local baseHealth = self.unitStats["health"]
+
+	local petData = self.user.home.saveManager.currWaveMod["petData"]
+	local petClass = petData["petClass"]
+	local unitHealthMultiplier = PetBalanceInfo["unitHealthMultiplierMap"][petClass]
+
+	local finalHealth = baseHealth * unitHealthMultiplier
+
+	self.health = finalHealth
+	self.maxHealth = finalHealth
 
 	if TOGGLE_TEST_TORSO then
 		local torso = Instance.new("Part")

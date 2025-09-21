@@ -61,6 +61,7 @@ function ServerEventManager:handleRequest(player, req, data)
 	local afkManager = home.afkManager
 	local favoriteManager = home.favoriteManager
 	local alertManager = home.alertManager
+	local speedManager = home.speedManager
 
 	-- USER
 	if req == "userDied" then
@@ -131,6 +132,12 @@ function ServerEventManager:handleRequest(player, req, data)
 		toolManager:tryPlacePetAtPetSpot(data)
 	elseif req == "tryEquipBottomMod" then
 		toolManager:tryEquipBottomMod(data)
+
+	-- SPEEDMANAGER
+	elseif req == "tryToggleSpeedMod" then
+		speedManager:tryToggleSpeedMod(data)
+	elseif req == "tryUnlockSpeedMod" then
+		speedManager:tryUnlockSpeedMod(data)
 
 	-- TRADEMANAGER
 	elseif req == "tryAcceptGift" then

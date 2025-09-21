@@ -29,28 +29,27 @@ MutationInfo["mutations"] = {
 		colorGradient = ColorSequence.new(Color3.fromRGB(255, 94, 0)),
 	},
 
-	["Bloodrot"] = {
-		alias = "Volcanic",
-		color = Color3.fromRGB(145, 0, 27),
-		colorGradient = ColorSequence.new(Color3.fromRGB(145, 0, 27)),
-
-		partColorIndexes = {
-			Color3.fromRGB(145, 0, 27),
-			Color3.fromRGB(154, 94, 100),
-			Color3.fromRGB(75, 0, 7),
-			Color3.fromRGB(72, 0, 2),
-			Color3.fromRGB(195, 98, 100),
-			Color3.fromRGB(195, 98, 100),
-			Color3.fromRGB(145, 0, 27),
-			Color3.fromRGB(75, 0, 7),
-		},
-	},
-
 	["Rainbow"] = {
 		alias = "Rainbow",
 		color = Color3.fromRGB(255, 86, 86),
 		colorGradient = ColorSequence.new(Color3.fromRGB(173, 79, 255)),
 	},
+}
+
+MutationInfo["damageMultiplierMap"] = {
+	["None"] = 1,
+	["Gold"] = 1,
+	["Diamond"] = 1,
+	["Bubblegum"] = 1.5,
+	["Volcanic"] = 1,
+}
+
+MutationInfo["attackSpeedMultiplierMap"] = {
+	["None"] = 1,
+	["Gold"] = 1.05,
+	["Diamond"] = 1.11,
+	["Bubblegum"] = 1.13,
+	["Volcanic"] = 1.15,
 }
 
 MutationInfo["mutationProbMap"] = {
