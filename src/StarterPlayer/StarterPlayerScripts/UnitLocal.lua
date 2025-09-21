@@ -567,8 +567,6 @@ function Unit:animatePetRig(petRig, petClass)
 end
 
 function Unit:captureSavePet(data)
-	ClientMod.saveManager:removeWaveMod(self.userName)
-
 	local petData = data["petData"]
 	self.capturedSavedPet = true
 

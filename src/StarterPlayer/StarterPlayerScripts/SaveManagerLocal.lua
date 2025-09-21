@@ -75,7 +75,7 @@ function SaveManager:waveModSuccess(userName)
 end
 
 function SaveManager:refreshBB(waveMod)
-	local bb = self.bb
+	local bb = waveMod["bb"]
 	if not bb then
 		warn("!!! NO BB FOUND TO REFRESH: ", waveMod)
 		return
@@ -149,6 +149,22 @@ function SaveManager:addWaveMod(data)
 	self:refreshSpeedFrame()
 end
 
+function SaveManager:failWaveMod(data)
+	local userName = data["userName"]
+	local unitName = data["unitName"]
+
+	-- print("FAILING WAVE MOD: ", userName, unitName)
+
+	if unitName then
+		local unit = ClientMod.units[unitName]
+		if unit then
+			unit:captureSavePet(data)
+		end
+	end
+
+	self:removeWaveMod(userName)
+end
+
 function SaveManager:removeWaveMod(userName)
 	local waveMod = self.waveMods[userName]
 	if not waveMod then
@@ -156,27 +172,36 @@ function SaveManager:removeWaveMod(userName)
 		return
 	end
 
-	local ratingTitle = waveMod["ratingTitle"]
-	if ratingTitle then
-		ratingTitle:Destroy()
-		waveMod["ratingTitle"] = nil
-	end
-
 	local petEntity = waveMod["petEntity"]
+
+	-- print("DESTROYING PET ENTITY: ", userName, petEntity)
+
 	if petEntity then
 		petEntity.rig:Destroy()
-		-- print("DESTROYING PET RIG: ", petEntity.rig)
 		petEntity.outerShell:Destroy()
-		waveMod.petEntity = nil
+
+		waveMod["petEntity"] = nil
+	end
+
+	local bb = waveMod["bb"]
+	if bb then
+		bb:Destroy()
+		waveMod["bb"] = nil
 	end
 
 	if userName == player.Name then
 		self:toggleSaveFrame(false)
+
+		local ratingTitle = waveMod["ratingTitle"]
+		if ratingTitle then
+			ratingTitle:Destroy()
+			waveMod["ratingTitle"] = nil
+		end
+
+		self:refreshSpeedFrame()
 	end
 
-	self.waveMods[waveMod.userName] = nil
-
-	self:refreshSpeedFrame()
+	self.waveMods[userName] = nil
 end
 
 function SaveManager:refreshSpeedFrame()
@@ -281,11 +306,6 @@ function SaveManager:animateHatch(userName, waveName)
 end
 
 function SaveManager:initPetRig(userName, waveMod, saveBaseFrame)
-	if self.bb then
-		self.bb:Destroy()
-		self.bb = nil
-	end
-
 	local petData = waveMod["petData"]
 
 	local petClass = petData["petClass"]
@@ -391,7 +411,7 @@ function SaveManager:initPetRig(userName, waveMod, saveBaseFrame)
 
 	waveMod["petEntity"] = newPetEntity
 
-	self:initBB(newPetEntity)
+	self:initBB(waveMod)
 	self:refreshBB(waveMod)
 
 	local finalScale = baseRig:GetScale()
@@ -406,7 +426,9 @@ function SaveManager:initPetRig(userName, waveMod, saveBaseFrame)
 	})
 end
 
-function SaveManager:initBB(petEntity)
+function SaveManager:initBB(waveMod)
+	local petEntity = waveMod["petEntity"]
+
 	local rig = petEntity.rig
 	local mutationClass = petEntity.mutationClass
 	local petClass = petEntity.petClass
@@ -439,20 +461,24 @@ function SaveManager:initBB(petEntity)
 		baseDistance = 40,
 	})
 
-	self.bb = bb
+	waveMod["bb"] = bb
 end
 
 function SaveManager:tickRender(timeRatio)
-	if not self.bb then
-		return
-	end
 	self.saveSizeOffset = self.saveSizeOffset + timeRatio
 
-	local saveTitle = self.bb.MainFrame.SaveTitle
-	saveTitle.UIScale.Scale = 1 + math.sin(self.saveSizeOffset * 0.1) * 0.1
+	for _, waveMod in pairs(self.waveMods) do
+		local bb = waveMod["bb"]
+		if not bb then
+			return
+		end
 
-	-- local mainSaveTitle = saveFrame.SaveTitle
-	-- mainSaveTitle.UIScale.Scale = 1 + math.sin(self.saveSizeOffset * 0.1) * 0.1
+		local saveTitle = bb.MainFrame.SaveTitle
+		saveTitle.UIScale.Scale = 1 + math.sin(self.saveSizeOffset * 0.1) * 0.1
+
+		-- local mainSaveTitle = saveFrame.SaveTitle
+		-- mainSaveTitle.UIScale.Scale = 1 + math.sin(self.saveSizeOffset * 0.1) * 0.1
+	end
 
 	saveFrame.Icon.UIScale.Scale = 1 + math.sin(self.saveSizeOffset * 0.1) * 0.02 -- 0.05
 end

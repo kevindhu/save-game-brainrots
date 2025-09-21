@@ -73,9 +73,10 @@ function BaseTool:addCons()
 	end)
 
 	local destroyConnection = tool.Destroying:Connect(function()
-		print("DESTROYING BASE TOOL: ", self.toolName)
+		-- print("DESTROYING BASE TOOL: ", self.toolName)
 		self:destroy()
 	end)
+
 	table.insert(self.connections, destroyConnection)
 end
 

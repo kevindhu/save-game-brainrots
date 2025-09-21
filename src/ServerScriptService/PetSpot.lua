@@ -405,7 +405,7 @@ function PetSpot:destroy()
 	end
 	self.eventsList = {}
 
-	print("DESTROYING PET SPOT: ", self.petSpotName)
+	-- print("DESTROYING PET SPOT: ", self.petSpotName)
 
 	self:showBuyModel()
 

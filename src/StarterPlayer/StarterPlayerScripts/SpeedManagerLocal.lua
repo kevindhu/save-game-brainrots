@@ -218,7 +218,7 @@ function SpeedManager:updateAllSpeedMods(data)
 
 	self.globalSpeedMods[userName] = Common.deepCopy(fullSpeedModData)
 
-	print("UPDATING ALL SPEED MODS: ", userName, fullSpeedModData)
+	-- print("UPDATING ALL SPEED MODS: ", userName, fullSpeedModData)
 
 	if player.Name == userName then
 		for _, speedModData in pairs(fullSpeedModData) do

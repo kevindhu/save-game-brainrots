@@ -105,6 +105,8 @@ function handleRequest(req, data)
 	-- SAVEMANAGER
 	elseif req == "addWaveMod" then
 		ClientMod.saveManager:addWaveMod(data)
+	elseif req == "failWaveMod" then
+		ClientMod.saveManager:failWaveMod(data)
 	elseif req == "updateWaveModData" then
 		ClientMod.saveManager:updateWaveModData(data)
 
@@ -115,8 +117,6 @@ function handleRequest(req, data)
 		ClientMod.unitManager:removeUnit(data)
 	elseif req == "updateUnitAction" then
 		ClientMod.unitManager:updateUnitAction(data)
-	elseif req == "unitCapturedSavedPet" then
-		ClientMod.unitManager:unitCapturedSavedPet(data)
 
 	-- MUSICMANAGER
 	elseif req == "setMusicRating" then

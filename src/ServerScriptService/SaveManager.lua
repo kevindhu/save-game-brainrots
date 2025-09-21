@@ -201,15 +201,22 @@ function SaveManager:failWaveMod(waveMod, unit)
 	end
 	waveMod["destroyed"] = true
 
+	-- print("FAILING WAVE MOD: ", waveMod["userName"])
+
 	self.user.home.unitManager:clearAllWaveUnits(waveMod)
 
+	local petData = waveMod["petData"]
+
+	local unitName = nil
 	if unit then
-		local petData = waveMod["petData"]
-		ServerMod:FireAllClients("unitCapturedSavedPet", {
-			unitName = unit.unitName,
-			petData = petData,
-		})
+		unitName = unit.unitName
 	end
+
+	ServerMod:FireAllClients("failWaveMod", {
+		unitName = unitName,
+		userName = waveMod["userName"],
+		petData = petData,
+	})
 
 	local failTimer = 1.5
 	self.startNewWaveExpiree = ServerMod.step + 60 * failTimer
