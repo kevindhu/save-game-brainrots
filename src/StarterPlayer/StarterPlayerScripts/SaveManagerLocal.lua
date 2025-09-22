@@ -48,12 +48,15 @@ end
 
 function SaveManager:updatePlaying(data)
 	local playing = data["playing"]
+	local playButton = playFrame.PlayButton
 	if playing then
-		playFrame.PlayButton.Title.Text = "STOP"
-		playFrame.PlayButton.BackgroundColor3 = Color3.fromRGB(211, 70, 70)
+		playButton.Title.Text = "STOP"
+		playButton.BackgroundColor3 = Color3.fromRGB(211, 70, 70)
+		playButton.Icon.Image = "rbxassetid://14219414360"
 	else
-		playFrame.PlayButton.Title.Text = "PLAY"
-		playFrame.PlayButton.BackgroundColor3 = Color3.fromRGB(43, 226, 88)
+		playButton.Title.Text = "PLAY"
+		playButton.BackgroundColor3 = Color3.fromRGB(43, 226, 88)
+		playButton.Icon.Image = "rbxassetid://12099513379"
 	end
 end
 

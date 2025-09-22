@@ -163,7 +163,7 @@ function SaveManager:tryTogglePlay(data)
 		self.user:notifyError("Clicking too fast")
 		return
 	end
-	self.tryTogglePlayExpiree = ServerMod.step + 60 * 1
+	self.tryTogglePlayExpiree = ServerMod.step + 60 * 0.5
 
 	self.playing = not self.playing
 
