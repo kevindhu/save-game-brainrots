@@ -19,6 +19,8 @@ function SaveManager.new(owner, data)
 
 	u.waveMods = {}
 
+	u.playing = false
+
 	setmetatable(u, SaveManager)
 	return u
 end
@@ -31,7 +33,8 @@ function SaveManager:init()
 
 	routine(function()
 		wait(1.5)
-		self:startNewWaveMod()
+		-- self:startNewWaveMod()
+		self:sendPlaying()
 
 		self.initialized = true
 	end)
@@ -155,6 +158,34 @@ function SaveManager:killUnitFromWave(waveMod, unit)
 	end
 end
 
+function SaveManager:tryTogglePlay(data)
+	if self.tryTogglePlayExpiree and self.tryTogglePlayExpiree > ServerMod.step then
+		self.user:notifyError("Clicking too fast")
+		return
+	end
+	self.tryTogglePlayExpiree = ServerMod.step + 60 * 1
+
+	self.playing = not self.playing
+
+	-- print("TOGGLE PLAY: ", self.playing)
+
+	if self.playing then
+		self.startNewWaveExpiree = ServerMod.step + 60 * 0.5
+	else
+		if self.currWaveMod then
+			self:failWaveMod(self.currWaveMod, nil)
+		end
+	end
+
+	self:sendPlaying()
+end
+
+function SaveManager:sendPlaying()
+	ServerMod:FireClient(self.user.player, "updatePlaying", {
+		playing = self.playing,
+	})
+end
+
 function SaveManager:completeWaveMod(waveMod)
 	if waveMod["destroyed"] then
 		return
@@ -170,12 +201,12 @@ function SaveManager:completeWaveMod(waveMod)
 	-- 	launchCFrame = self.user.currFrame,
 	-- })
 
-	ServerMod:FireClient(self.user.player, "doHatch", {
-		petClass = petData["petClass"],
-		mutationClass = petData["mutationClass"],
-
+	ServerMod:FireAllClients("completeWaveMod", {
 		waveName = waveMod["waveName"],
 		userName = self.user.name,
+
+		petClass = petData["petClass"],
+		mutationClass = petData["mutationClass"],
 
 		pos = self.saveBaseFrame.Position,
 	})
@@ -229,6 +260,10 @@ function SaveManager:tick()
 		return
 	end
 	if self.user.destroyed then
+		return
+	end
+
+	if not self.playing then
 		return
 	end
 

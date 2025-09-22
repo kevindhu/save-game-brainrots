@@ -107,8 +107,12 @@ function handleRequest(req, data)
 		ClientMod.saveManager:addWaveMod(data)
 	elseif req == "failWaveMod" then
 		ClientMod.saveManager:failWaveMod(data)
+	elseif req == "completeWaveMod" then
+		ClientMod.saveManager:completeWaveMod(data)
 	elseif req == "updateWaveModData" then
 		ClientMod.saveManager:updateWaveModData(data)
+	elseif req == "updatePlaying" then
+		ClientMod.saveManager:updatePlaying(data)
 
 	-- UNITMANAGER
 	elseif req == "newUnit" then
@@ -143,10 +147,6 @@ function handleRequest(req, data)
 		ClientMod.claimOfflineManager:updateOfflineData(data)
 	elseif req == "claimedOfflineCoins" then
 		ClientMod.claimOfflineManager:claimedOfflineCoins(data)
-
-	-- HATCHMANAGER
-	elseif req == "doHatch" then
-		ClientMod.hatchManager:doHatch(data)
 
 	-- BOOSTMANAGER
 	elseif req == "updateBoostMods" then

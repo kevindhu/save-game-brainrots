@@ -11,8 +11,10 @@ local len, routine, wait = Common.len, Common.routine, Common.wait
 
 local saveGUI = playerGui:WaitForChild("SaveGUI")
 local saveFrame = saveGUI.SaveFrame
+local playFrame = saveGUI.PlayFrame
 
 local PetInfo = require(game.ReplicatedStorage.PetInfo)
+local RatingInfo = require(game.ReplicatedStorage.RatingInfo)
 
 local SaveManager = {
 	waveMods = {},
@@ -31,11 +33,28 @@ function SaveManager:addCons()
 	self.templateMainRatingTitle = saveFrame.RatingTitle
 	self.templateMainRatingTitle.Visible = false
 
-	local speedButton = saveFrame.SpeedButton
+	local speedButton = playFrame.SpeedButton
 	ClientMod.buttonManager:addActivateCons(speedButton, function()
 		ClientMod.speedManager:chooseNextSpeedMod()
 	end)
 	ClientMod.buttonManager:addBasicButtonCons(speedButton)
+
+	local playButton = playFrame.PlayButton
+	ClientMod.buttonManager:addActivateCons(playButton, function()
+		ClientMod:FireServer("tryTogglePlay", {})
+	end)
+	ClientMod.buttonManager:addBasicButtonCons(playButton)
+end
+
+function SaveManager:updatePlaying(data)
+	local playing = data["playing"]
+	if playing then
+		playFrame.PlayButton.Title.Text = "STOP"
+		playFrame.PlayButton.BackgroundColor3 = Color3.fromRGB(211, 70, 70)
+	else
+		playFrame.PlayButton.Title.Text = "PLAY"
+		playFrame.PlayButton.BackgroundColor3 = Color3.fromRGB(43, 226, 88)
+	end
 end
 
 function SaveManager:updateWaveModData(data)
@@ -60,18 +79,6 @@ function SaveManager:updateWaveModData(data)
 	self:refreshBB(chosenWaveMod)
 
 	-- print("UPDATED WAVE MOD DATA: ", waveName, chosenWaveMod["killedUnitCount"], chosenWaveMod["totalUnitCount"])
-end
-
-function SaveManager:waveModSuccess(userName)
-	local waveMod = self.waveMods[userName]
-	if not waveMod then
-		-- warn("!!! NO WAVE MOD FOUND TO SUCCESS: ", userName)
-		return
-	end
-
-	-- local mainSaveTitle = saveFrame.SaveTitle
-	-- mainSaveTitle.Text = "SAVED"
-	-- mainSaveTitle.TextColor3 = Color3.fromRGB(85, 255, 190)
 end
 
 function SaveManager:refreshBB(waveMod)
@@ -206,7 +213,7 @@ end
 
 function SaveManager:refreshSpeedFrame()
 	local speed = ClientMod.speedManager:getSpeed(player.Name)
-	local speedButton = saveFrame.SpeedButton
+	local speedButton = playFrame.SpeedButton
 
 	speedButton.SpeedTitle.Text = speed .. "x"
 end
@@ -219,7 +226,30 @@ function SaveManager:getWaveMod(userName)
 	return self.waveMods[userName]
 end
 
-function SaveManager:animateHatch(userName, waveName)
+function SaveManager:completeWaveMod(data)
+	local pos = data["pos"]
+	local petClass = data["petClass"]
+	local userName = data["userName"]
+	local waveName = data["waveName"]
+
+	local playbackSpeed = Common.randomBetween(0.8, 1)
+	ClientMod.soundManager:newSoundMod({
+		soundClass = "Pop1",
+		volume = 0.2,
+		pos = pos,
+		playbackSpeed = playbackSpeed,
+	})
+
+	local petStats = PetInfo:getMeta(petClass)
+	local ratingColor = RatingInfo["ratingColorMap"][petStats["rating"]]
+
+	ClientMod.spellManager:addExplosion({
+		spellClass = "WhiteExplosion",
+		pos = pos + Vector3.new(0, 3, 0),
+		baseColor = ratingColor,
+		scale = 0.5, -- 1.5
+	})
+
 	local waveMod = self.waveMods[userName]
 	if not waveMod or waveMod["hatched"] or waveMod["waveName"] ~= waveName then
 		return
@@ -255,6 +285,7 @@ function SaveManager:animateHatch(userName, waveName)
 		local direction = Common.getRandomFlatDir()
 
 		ClientMod.orbManager:newOrbMod({
+			userName = userName,
 			name = "ORB_" .. Common.getGUID(),
 			startPos = startPos,
 			direction = direction,
@@ -265,44 +296,7 @@ function SaveManager:animateHatch(userName, waveName)
 		})
 	end
 
-	if rig then
-		rig:Destroy()
-		-- print("DESTROYING PET RIG 2: ", rig)
-	end
-
-	-- ClientMod.tweenManager:createTween({
-	-- 	target = rig,
-	-- 	timer = 3,
-	-- 	easingStyle = "Quad",
-	-- 	easingDirection = "Out",
-	-- 	goal = {
-	-- 		CFrame = rig.PrimaryPart.CFrame * CFrame.new(0, 10, 0),
-	-- 	},
-	-- })
-
-	-- for _, child in pairs(rig:GetDescendants()) do
-	-- 	if child:IsA("BasePart") then
-	-- 		ClientMod.tweenManager:createTween({
-	-- 			target = child,
-	-- 			timer = 0.5,
-	-- 			easingStyle = "Linear",
-	-- 			easingDirection = "Out",
-	-- 			goal = {
-	-- 				Transparency = 1,
-	-- 			},
-	-- 		})
-	-- 	elseif child:IsA("Decal") then
-	-- 		ClientMod.tweenManager:createTween({
-	-- 			target = child,
-	-- 			timer = 0.5,
-	-- 			easingStyle = "Linear",
-	-- 			easingDirection = "Out",
-	-- 			goal = {
-	-- 				Transparency = 1,
-	-- 			},
-	-- 		})
-	-- 	end
-	-- end
+	rig:Destroy()
 end
 
 function SaveManager:initPetRig(userName, waveMod, saveBaseFrame)

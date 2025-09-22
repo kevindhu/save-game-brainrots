@@ -85,6 +85,7 @@ function OrbManager:newOrbMod(data)
 	local itemClass = data["itemClass"]
 	local petClass = data["petClass"]
 	local mutationClass = data["mutationClass"]
+	local userName = data["userName"]
 
 	if not velMagnitude then
 		velMagnitude = math.random(100, 150) * 0.01 -- 100
@@ -116,7 +117,7 @@ function OrbManager:newOrbMod(data)
 	basePart.AssemblyLinearVelocity = direction * dist * velMagnitude
 
 	routine(function()
-		self:animateBB(model.DecorPart, petClass, mutationClass)
+		self:animateBB(model.DecorPart, petClass, mutationClass, userName)
 	end)
 
 	local newOrbMod = {
@@ -131,7 +132,7 @@ function OrbManager:newOrbMod(data)
 	self.orbMods[orbName] = newOrbMod
 end
 
-function OrbManager:animateBB(decorPart, petClass, mutationClass)
+function OrbManager:animateBB(decorPart, petClass, mutationClass, userName)
 	local bb = decorPart.BB
 	local icon = bb.MainFrame.Icon
 	local uiScale = icon.UIScale
@@ -190,7 +191,9 @@ function OrbManager:animateBB(decorPart, petClass, mutationClass)
 	local shrinkTween = ts:Create(uiScale, info, goal)
 	shrinkTween:Play()
 
-	self:newScreenOrb(decorPart, petClass, mutationClass)
+	if player.Name == userName then
+		self:newScreenOrb(decorPart, petClass, mutationClass)
+	end
 end
 
 -- turn the orb position into on screen coordinate and tween to the cash position

@@ -301,7 +301,7 @@ end
 
 function Unit:applyTerrainFollowing(newPos, timeRatio)
 	local mainFloorPart = game.Workspace:WaitForChild("Map1"):WaitForChild("MainFloorPart")
-	local yValue = mainFloorPart.Position.Y
+	local yValue = mainFloorPart.Position.Y + mainFloorPart.Size.Y * 0.5
 	local yStartPos = Vector3.new(newPos.X, yValue, newPos.Z)
 
 	local hasFloor, goalYPos = self:getFloorPos(yStartPos)

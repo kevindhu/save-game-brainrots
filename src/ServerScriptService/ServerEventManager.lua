@@ -62,6 +62,7 @@ function ServerEventManager:handleRequest(player, req, data)
 	local favoriteManager = home.favoriteManager
 	local alertManager = home.alertManager
 	local speedManager = home.speedManager
+	local saveManager = home.saveManager
 
 	-- USER
 	if req == "userDied" then
@@ -108,6 +109,10 @@ function ServerEventManager:handleRequest(player, req, data)
 		petManager:tryCollectCoins(data)
 	elseif req == "tryUnlockPetSpot" then
 		petManager:tryUnlockPetSpot(data)
+
+	-- SAVEMANAGER
+	elseif req == "tryTogglePlay" then
+		saveManager:tryTogglePlay(data)
 
 	-- CLAIM OFFLINE
 	elseif req == "tryClaimOfflineCoins" then

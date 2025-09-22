@@ -10,7 +10,7 @@ local len, routine, wait = Common.len, Common.routine, Common.wait
 local MapInfo = require(game.ReplicatedStorage.MapInfo)
 
 function Map:init()
-	self:testClonePlots()
+	-- self:testClonePlots()
 
 	self:initSpawns()
 	self:initFolders()
@@ -102,6 +102,9 @@ function Map:initPlots()
 			warn("!! PLOT MODEL NOT FOUND: ", plotName)
 			continue
 		end
+
+		model.RunawayPart.Transparency = 1
+		model.UnitStartPart.Transparency = 1
 	end
 end
 

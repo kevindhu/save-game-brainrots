@@ -109,7 +109,6 @@ function LoadAllModules()
 		{ "LeaveManager", "leaveManager" },
 		{ "FavoriteManager", "favoriteManager" },
 		{ "FireworksManager", "fireworksManager" },
-		{ "HatchManager", "hatchManager" },
 		{ "AlertManager", "alertManager" },
 
 		{ "RagdollManager", "ragdollManager" },

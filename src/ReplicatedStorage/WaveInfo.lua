@@ -32,7 +32,7 @@ WaveInfo["ratingWaveMap"] = {
 	["Rare"] = {
 		{
 			unitClass = "Unit4",
-			count = 205,
+			count = 30,
 			spawnTimer = 0.1,
 		},
 		{

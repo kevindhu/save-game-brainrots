@@ -299,8 +299,11 @@ function Unit:calculateNewPos(currFrame, goalFrame, timeRatio)
 end
 
 function Unit:applyTerrainFollowing(newPos, timeRatio)
-	local yValue = game.Workspace.Map1.MainFloorPart.Position.Y
+	local mainFloorPart = game.Workspace.Map1.MainFloorPart
+
+	local yValue = mainFloorPart.Position.Y + mainFloorPart.Size.Y * 0.5
 	local yStartPos = Vector3.new(newPos.X, yValue, newPos.Z)
+
 	local hasFloor, goalYPos = self:getFloorPos(yStartPos)
 	self.hasFloor = hasFloor
 

@@ -1,6 +1,6 @@
 local Common = require(game.ReplicatedStorage.Common)
 
-local PLOT_COUNT = 3
+local PLOT_COUNT = 8
 
 local MapInfo = {
 	PLOT_COUNT = PLOT_COUNT,
@@ -19,6 +19,8 @@ function MapInfo:getLandWhiteList()
 		game.Workspace:FindFirstChild("Plot4"),
 		game.Workspace:FindFirstChild("Plot5"),
 		game.Workspace:FindFirstChild("Plot6"),
+		game.Workspace:FindFirstChild("Plot7"),
+		game.Workspace:FindFirstChild("Plot8"),
 	}
 end
 
