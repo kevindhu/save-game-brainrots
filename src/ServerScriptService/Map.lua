@@ -10,7 +10,7 @@ local len, routine, wait = Common.len, Common.routine, Common.wait
 local MapInfo = require(game.ReplicatedStorage.MapInfo)
 
 function Map:init()
-	-- self:testClonePlots()
+	self:testClonePlots()
 
 	self:initSpawns()
 	self:initFolders()

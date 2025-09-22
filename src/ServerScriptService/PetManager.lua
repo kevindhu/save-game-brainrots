@@ -75,7 +75,7 @@ function PetManager:loadState()
 			continue
 		end
 
-		print("GOT PET SPOT DATA: ", petSpotData.index, petSpotData.unlocked, petData)
+		-- print("GOT PET SPOT DATA: ", petSpotData.index, petSpotData.unlocked, petData)
 
 		if petSpotData.unlocked then
 			chosenPetSpot:unlock()

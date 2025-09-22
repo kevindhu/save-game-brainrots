@@ -264,7 +264,7 @@ function PetSpot:updateData(data)
 	self.attackSpeedRatio = attackSpeedRatio
 	self.petData = petData
 
-	print("UPDATING PET SPOT DATA: ", self.petSpotName, petData)
+	-- print("UPDATING PET SPOT DATA: ", self.petSpotName, petData)
 
 	local oldPetName = self.petName
 	if self.petData then
