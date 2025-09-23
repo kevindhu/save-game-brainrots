@@ -27,13 +27,35 @@ function TutManager:init()
 	end
 
 	self:sendCompletedMods()
+	self:sendTutMods()
 
 	routine(function()
 		wait(2)
 
-		if self.isNew then
+		if self.isNew or not self.completedTutMods["CompleteSecondWave"] then
 			self:initFirstTutMods()
+
+			-- clear all petspots
+			local petManager = self.user.home.petManager
+			for _, petSpot in pairs(petManager.petSpots) do
+				petSpot:clearPet()
+			end
 		end
+		if not self.completedTutMods["Choose2xSpeedCommon"] then
+			-- clear all the time wizard tutMods
+			local timeWizardTutMods = {
+				"GoToTimeWizard",
+				"Buy2xSpeedCommon",
+				"CloseTimeWizard",
+				"Choose2xSpeedCommon",
+			}
+			for _, tutClass in pairs(timeWizardTutMods) do
+				self.tutMods[tutClass] = nil
+				self.completedTutMods[tutClass] = nil
+			end
+		end
+
+		-- print("LOADING CHOSEN TUT MOD")
 
 		self:loadChosenTutMod()
 		self:tryChooseNewTutMod()
@@ -62,6 +84,8 @@ function TutManager:tryChooseNewTutMod()
 		return
 	end
 
+	-- print("TRYING TO CHOOSE NEW TUT MOD: ", self.tutMods)
+
 	for _, tutMod in pairs(self.tutMods) do
 		self:chooseTutMod(tutMod)
 		return
@@ -69,7 +93,14 @@ function TutManager:tryChooseNewTutMod()
 end
 
 function TutManager:initFirstTutMods()
-	if Common.checkDeveloper(self.user.userId) then
+	if Common.isStudio then
+		-- fake complete all tutMods
+		for _, tutName in pairs(TutInfo.funnelStepList) do
+			self.completedTutMods[tutName] = {
+				completionTime = os.time(),
+			}
+		end
+		self:sendCompletedMods()
 		return
 	end
 
@@ -80,6 +111,8 @@ function TutManager:initFirstTutMods()
 	self.chosenTutModName = nil
 
 	self.user.home.analyticsManager:logOnboardingFunnelEvent(1, "Tutorial Started", {})
+
+	self:newTutMod("EquipBat1")
 end
 
 function TutManager:newTutMod(tutName)
@@ -143,10 +176,18 @@ function TutManager:chooseTutMod(tutMod)
 		tutName = tutMod["tutName"]
 	end
 
+	-- print("CHOOSING TUT MOD: ", tutName)
+
 	local chosenData = {
 		tutName = tutName,
 	}
 	ServerMod:FireClient(self.user.player, "chooseTutMod", chosenData)
+
+	if tutName == "CompleteTutorial" then
+		self.user.home.badgeManager:addBadge("CompleteTutorial")
+	elseif tutName == "Buy2xSpeedCommon" then
+		self.user.home.badgeManager:addBadge("BoughtTimeFromTimeWizard")
+	end
 end
 
 function TutManager:tryUpdateTutMod(data)
@@ -214,7 +255,7 @@ function TutManager:completeTutMod(tutName)
 	self:chooseTutMod(nil)
 	self:sendCompletedMods()
 
-	local funnelStep = tutStats["funnelStep"] + 1
+	local funnelStep = tutStats["funnelIndex"] + 1
 	local funnelName = tutName .. " Completed"
 
 	self.user.home.analyticsManager:logOnboardingFunnelEvent(funnelStep, funnelName, {})

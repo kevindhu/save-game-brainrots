@@ -103,26 +103,17 @@ function RewardManager:tryClaimGroupReward()
 	local petClass = "TrippiTroppi"
 	local mutationClass = nil
 
-	local itemData = {
-		itemName = "STASHTOOL_" .. Common.getGUID(),
-		itemClass = petClass,
-		race = "pet",
-
-		-- unit metadata
-		creationTimestamp = os.time(),
+	self.user.home.itemStash:addPet({
+		petClass = petClass,
 		mutationClass = mutationClass,
-		totalStrength = 0,
-		variationScale = 1,
-	}
-	self.user.home.petManager:fillPetDataWithDefaults(itemData)
+	})
 
+	-- TODO: reintroduce hatching
 	ServerMod:FireClient(self.user.player, "doHatch", {
 		userName = self.user.name,
 		petClass = petClass,
 		mutationClass = mutationClass,
 	})
-
-	self.user.home.itemStash:addItemMod(itemData)
 end
 
 function RewardManager:saveState()

@@ -154,7 +154,7 @@ function PlotManager:initPlotOverhead()
 	plotOverheadPart.Transparency = 1
 	plotOverheadPart.Parent = game.Workspace.HitBoxes
 
-	local height = 75 -- 70
+	local height = 42 -- 75
 	plotOverheadPart.CFrame = self.floorPart.CFrame * CFrame.new(0, height, 0)
 
 	local bb = plotOverheadPart.BB
@@ -164,7 +164,7 @@ function PlotManager:initPlotOverhead()
 	routine(function()
 		mainFrame.ProfileIcon.Image = Common.getProfileImageFromUserId(self.user.userId)
 	end)
-	mainFrame.Title.Text = string.format("%s's Plot", self.user.name)
+	mainFrame.Title.Text = string.format("@%s", self.user.name)
 
 	self.plotOverheadPart = plotOverheadPart
 end

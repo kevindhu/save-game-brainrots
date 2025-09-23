@@ -1,113 +1,142 @@
 local TutInfo = {}
 
 TutInfo["enableMapping"] = {
-	["TeleportToEggShop1"] = { "BuyFirstEgg" },
-	["BuyFirstEgg"] = { "CloseEggShop1" },
-	["CloseEggShop1"] = { "PlaceFirstEgg" },
-	["PlaceFirstEgg"] = { "WaitForFirstEgg" },
-	["WaitForFirstEgg"] = { "HatchFirstEgg" },
-	["HatchFirstEgg"] = { "WaitForHatchingComplete" },
-	["WaitForHatchingComplete"] = { "TeleportToEggShop2" },
-	["TeleportToEggShop2"] = { "BuySecondEgg" },
-	["BuySecondEgg"] = { "CompleteTutorial" },
+	["EquipBat1"] = { "PressPlay" },
+	["PressPlay"] = { "CompleteFirstWave" },
+	["CompleteFirstWave"] = { "EquipFirstPet" },
+	["EquipFirstPet"] = { "PlaceFirstPet" },
+	["PlaceFirstPet"] = { "EquipBat2" },
+	["EquipBat2"] = { "CompleteSecondWave" },
+	["CompleteSecondWave"] = { "CompleteTutorial" },
+
+	-- second
+	["GoToTimeWizard"] = { "Buy2xSpeedCommon" },
+	["Buy2xSpeedCommon"] = { "CloseTimeWizard" },
+	-- ["CloseTimeWizard"] = { "Choose2xSpeedCommon" },
+}
+
+TutInfo["funnelStepList"] = {
+	"EquipBat1",
+	"PressPlay",
+	"CompleteFirstWave",
+	"EquipFirstPet",
+	"PlaceFirstPet",
+	"EquipBat2",
+	"CompleteSecondWave",
+	"CompleteTutorial",
+
+	"GoToTimeWizard",
+	"Buy2xSpeedCommon",
+	"CloseTimeWizard",
+	"Choose2xSpeedCommon",
 }
 
 TutInfo["tuts"] = {
-	["TeleportToEggShop1"] = {
-		targetClass = "TeleportToEggShop",
-		text = "Go to the Egg Shop!",
+	["EquipBat1"] = {
+		targetClass = "EquipBat1",
+		text = "Equip the bat!",
 
 		requireMod = {
 			count = 1,
 		},
-		funnelStep = 1,
 	},
-	["BuyFirstEgg"] = {
-		targetClass = "BuyEgg1",
-		text = "Buy the <b>Common Egg</b>!",
+	["PressPlay"] = {
+		targetClass = "PressPlay",
+		text = "Press play button!",
 
 		requireMod = {
 			count = 1,
 		},
-		funnelStep = 2,
 	},
-	["CloseEggShop1"] = {
-		targetClass = "CloseEggShop",
-		text = "Close the <b>Egg Shop</b>!",
+	["CompleteFirstWave"] = {
+		targetClass = "CompleteFirstWave",
+		text = "Save the Cappuccino Assassino!",
 
 		requireMod = {
 			count = 1,
 		},
-		funnelStep = 3,
 	},
-	["PlaceFirstEgg"] = {
-		targetClass = "PlaceFirstEgg",
-		text = "Place the Egg!",
+	["EquipFirstPet"] = {
+		targetClass = "EquipFirstPet",
+		text = "Equip the Cappuccino Assassino!",
 
 		requireMod = {
 			count = 1,
 		},
-		funnelStep = 4,
 	},
-	["WaitForFirstEgg"] = {
-		targetClass = "WaitForFirstEgg",
-		text = "Wait for the Egg to Hatch",
-		-- text = "",
+	["PlaceFirstPet"] = {
+		targetClass = "PlaceFirstPet",
+		text = "Place on the platform!",
 
 		requireMod = {
 			count = 1,
 		},
-		funnelStep = 5,
 	},
-	["HatchFirstEgg"] = {
-		targetClass = "HatchFirstEgg",
-		text = "Get close to the Egg to complete Hatching!",
+	["EquipBat2"] = {
+		targetClass = "EquipBat2",
+		text = "Equip the bat!",
 
 		requireMod = {
 			count = 1,
 		},
-		funnelStep = 6,
 	},
-	["WaitForHatchingComplete"] = {
-		targetClass = "Nothing",
-		text = "",
-
-		requireMod = {
-			timer = 8, -- 6.5
-		},
-		funnelStep = 7,
-	},
-	["TeleportToEggShop2"] = {
-		targetClass = "TeleportToEggShop",
-		text = "Buy more Eggs to get better Brainrots!",
+	["CompleteSecondWave"] = {
+		targetClass = "CompleteSecondWave",
+		text = "Save the Tung Tung Sahur!",
 
 		requireMod = {
 			count = 1,
 		},
-		funnelStep = 8,
-	},
-	["BuySecondEgg"] = {
-		targetClass = "BuyEgg1",
-		text = "Buy Another Egg!",
-
-		requireMod = {
-			count = 1,
-		},
-		funnelStep = 9,
 	},
 
 	["CompleteTutorial"] = {
 		targetClass = "Nothing",
-		text = "You have finished the Tutorial! Enter Code 'tutorial' for Rewards!",
+		text = "You have finished the tutorial!",
 
 		requireMod = {
-			timer = 10,
+			timer = 3,
 		},
-		funnelStep = 10,
+	},
+
+	["GoToTimeWizard"] = {
+		targetClass = "GoToTimeWizard",
+		text = "Go to the time wizard!",
+
+		requireMod = {
+			count = 1,
+		},
+	},
+	["Buy2xSpeedCommon"] = {
+		targetClass = "Buy2xSpeedCommon",
+		text = "Buy the 2x speed!",
+
+		requireMod = {
+			count = 1,
+		},
+	},
+	["CloseTimeWizard"] = {
+		targetClass = "CloseTimeWizard",
+		text = "Press the close button!",
+
+		requireMod = {
+			count = 1,
+		},
+	},
+	["Choose2xSpeedCommon"] = {
+		targetClass = "Choose2xSpeedCommon",
+		text = "Choose the 2x speed!",
+
+		requireMod = {
+			count = 1,
+		},
 	},
 }
 
-function TutInfo:init() end
+function TutInfo:init()
+	for index, tutName in pairs(self.funnelStepList) do
+		self.tuts[tutName]["funnelIndex"] = index
+	end
+end
 
 function TutInfo:getMeta(itemClass, noWarn)
 	self.categoryList = {

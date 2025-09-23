@@ -7,8 +7,6 @@ local ClientMod = require(playerScripts.ClientMod)
 local comebackGUI = playerGui:WaitForChild("ComebackGUI")
 local claimFrame = comebackGUI.ClaimFrame
 
--- local FoodInfo = require(game.ReplicatedStorage.FoodInfo)
-
 local EasyVisuals = require(game.ReplicatedStorage.EasyVisuals)
 
 local Common = require(game.ReplicatedStorage.Common)

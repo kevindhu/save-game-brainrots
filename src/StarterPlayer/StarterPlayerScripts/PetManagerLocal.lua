@@ -30,11 +30,13 @@ function PetManager:addConfirmModalCons()
 		ClientMod:FireServer("tryUnlockPetSpot", {
 			petSpotName = petSpot.petSpotName,
 		})
+		self.tryUnlockExpiree = ClientMod.step + 60 * 0.5
 		self:toggleConfirmUnlockModal(false)
 	end)
 
 	local cancelButton = confirmUnlockModal.Cancel
 	ClientMod.buttonManager:addActivateCons(cancelButton, function()
+		self.tryUnlockExpiree = ClientMod.step + 60 * 0.5
 		self:toggleConfirmUnlockModal(false)
 	end)
 end
@@ -134,6 +136,15 @@ end
 
 -- open the confirm modal
 function PetManager:tryUnlockPetSpot(petSpot, coinsCost)
+	if not ClientMod.tutManager.completedTutMods["CompleteTutorial"] then
+		return
+	end
+
+	if self.tryUnlockExpiree and self.tryUnlockExpiree > ClientMod.step then
+		return
+	end
+	self.tryUnlockExpiree = ClientMod.step + 60 * 0.5
+
 	confirmUnlockModal.DescriptionTitle.Text =
 		string.format("Buy this platform for $%s?", Common.abbreviateNumber(coinsCost))
 

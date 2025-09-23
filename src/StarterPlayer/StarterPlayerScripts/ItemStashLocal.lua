@@ -10,6 +10,7 @@ local ClientMod = require(playerScripts.ClientMod)
 local ItemInfo = require(game.ReplicatedStorage.ItemInfo)
 local ToolInfo = require(game.ReplicatedStorage.ToolInfo)
 local PetInfo = require(game.ReplicatedStorage.PetInfo)
+local RelicInfo = require(game.ReplicatedStorage.RelicInfo)
 
 local PetBalanceInfo = require(game.ReplicatedStorage.PetBalanceInfo)
 
@@ -148,6 +149,7 @@ function ItemStash:addTabCons()
 	local tabList = {
 		"All",
 		"Pets",
+		"Relics",
 	}
 
 	for _, tabClass in ipairs(tabList) do
@@ -398,6 +400,16 @@ function ItemStash:newBottomMod(itemData)
 
 	self:refreshAllBottomMods()
 
+	if itemName == "Bat1" then
+		ClientMod.tutManager:initBatHintIcon(frame)
+	end
+
+	-- print("NEW BOTTOM MOD: ", itemName, newBottomMod)
+
+	if newBottomMod["petClass"] == "CappuccinoAssassino" then
+		ClientMod.tutManager:initPetHintIcon(frame)
+	end
+
 	return newBottomMod
 end
 
@@ -426,6 +438,16 @@ end
 
 function ItemStash:clickBottomItem(bottomMod)
 	if self.chosenBottomMod == bottomMod then
+		local chosenTutMod = ClientMod.tutManager.chosenTutMod
+		if
+			chosenTutMod
+			and Common.listContains(
+				{ "CompleteFirstWave", "CompleteSecondWave", "PressPlay", "PlaceFirstPet" },
+				chosenTutMod["targetClass"]
+			)
+		then
+			return
+		end
 		self:chooseBottomMod(nil)
 	else
 		self:chooseBottomMod(bottomMod)
@@ -691,17 +713,40 @@ function ItemStash:newItemMod(itemData)
 	local icon = buttonFrame.Icon
 
 	local race = newItemMod["race"]
-	if race ~= "pet" then
-		icon.Image = itemStats["image"] or "rbxassetid://120444751052938"
-	else
+	if race == "pet" then
 		icon.Image = PetInfo:getPetImage(itemClass, newItemMod["mutationClass"])
+	elseif race == "relic" then
+		local relicStats = RelicInfo:getMeta(itemClass)
+		icon.Image = relicStats["image"]
 	end
 
+	-- add weight title
+	local weightTitle = buttonFrame.BottomFrame.WeightTitle
+	weightTitle.Visible = false
 	if race == "pet" then
 		local currWeight = PetInfo:getRealWeight(itemClass, newItemMod["baseWeight"], newItemMod["level"])
 		newItemMod["currWeight"] = currWeight
 
-		buttonFrame.BottomFrame.WeightTitle.Text = Common.abbreviateNumber(currWeight, 2) .. "kg"
+		weightTitle.Text = Common.abbreviateNumber(currWeight, 2) .. "kg"
+		weightTitle.Visible = true
+	end
+
+	-- add power title
+	local powerTitle = buttonFrame.BottomFrame.PowerTitle
+	powerTitle.Visible = false
+	if race == "relic" then
+		powerTitle.Text = math.random(100, 1000)
+		powerTitle.Visible = true
+	end
+
+	-- add mutation title
+	local mutationTitle = buttonFrame.MutationTitle
+	local mutationClass = newItemMod["mutationClass"]
+	if not mutationClass or mutationClass == "None" then
+		mutationTitle.Visible = false
+	else
+		ClientMod.mutationManager:applyMutationColor(mutationTitle, mutationClass)
+		mutationTitle.Visible = true
 	end
 
 	ClientMod.buttonManager:addActivateCons(buttonFrame, function()
@@ -744,15 +789,6 @@ function ItemStash:newItemMod(itemData)
 		end
 	end)
 
-	local mutationTitle = buttonFrame.MutationTitle
-	local mutationClass = newItemMod["mutationClass"]
-	ClientMod.mutationManager:applyMutationColor(mutationTitle, mutationClass)
-	if not mutationClass or mutationClass == "None" then
-		mutationTitle.Visible = false
-	else
-		mutationTitle.Visible = true
-	end
-
 	frame.Name = itemName
 
 	self.itemMods[itemName] = newItemMod
@@ -793,6 +829,7 @@ function ItemStash:getFullItemStats(itemClass)
 	local itemStats = ItemInfo:getMeta(itemClass, true)
 		or ToolInfo:getMeta(itemClass, true)
 		or PetInfo:getMeta(itemClass, true)
+		or RelicInfo:getMeta(itemClass, true)
 
 	if not itemStats then
 		warn("NO ITEM STATS FOUND FOR: ", itemClass)
@@ -829,6 +866,7 @@ function ItemStash:refreshGUI()
 
 	local raceMap = {
 		pet = 1,
+		relic = 2,
 	}
 
 	local mutationMap = {
@@ -898,6 +936,8 @@ function ItemStash:refreshGUI()
 			frame.Visible = true
 		elseif self.chosenTabClass == "Pets" then
 			frame.Visible = (race == "pet")
+		elseif self.chosenTabClass == "Relics" then
+			frame.Visible = (race == "relic")
 		end
 
 		if race == "pet" then
@@ -912,13 +952,6 @@ function ItemStash:refreshGUI()
 			buttonFrame.Equipped.Visible = true
 		else
 			buttonFrame.Equipped.Visible = false
-		end
-
-		local currBottomFrame = buttonFrame.BottomFrame
-		if itemMod["race"] == "pet" then
-			currBottomFrame.Visible = true
-		else
-			currBottomFrame.Visible = false
 		end
 
 		local favorited = itemMod["favorited"]

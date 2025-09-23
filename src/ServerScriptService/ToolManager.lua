@@ -103,6 +103,11 @@ function ToolManager:tryEquipBottomMod(data)
 			end
 
 			self:newStashTool(toolData)
+
+			self.user.home.tutManager:updateTutMod({
+				targetClass = "EquipFirstPet",
+				updateCount = 1,
+			})
 		end
 	end
 end
@@ -292,6 +297,37 @@ function ToolManager:removeStashTool(data)
 
 	toolMod:destroy()
 	self.stashToolMods[toolName] = nil
+end
+
+function ToolManager:tryPlaceRelicAtPetSpot(data)
+	local toolName = data["toolName"]
+	local petSpotName = data["petSpotName"]
+
+	local petSpot = self.user.home.petManager.petSpots[petSpotName]
+	if not petSpot then
+		warn("NO PET SPOT TO PLACE PET AT: ", petSpotName)
+		return
+	end
+	if not petSpot.unlocked then
+		self.user:notifyError("This platform is not unlocked")
+		return
+	end
+	if not petSpot.petData then
+		self.user:notifyError("This platform is not occupied")
+		return
+	end
+	if len(petSpot.petData["relicMods"]) >= 1 then
+		self.user:notifyError("Brainrot already has a relic")
+		return
+	end
+
+	local toolMod = self.stashToolMods[toolName]
+	if not toolMod then
+		warn("NO TOOL MOD TO PLACE: ", toolName)
+		return
+	end
+
+	toolMod:confirmPlacement(petSpot)
 end
 
 function ToolManager:tryPlacePetAtPetSpot(data)

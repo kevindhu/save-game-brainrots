@@ -6,8 +6,7 @@ local len, routine, wait = Common.len, Common.routine, Common.wait
 local BaseTool = require(game.ServerScriptService.Tools.BaseTool)
 
 local PetInfo = require(game.ReplicatedStorage.PetInfo)
-local ItemInfo = require(game.ReplicatedStorage.ItemInfo)
-local MutationInfo = require(game.ReplicatedStorage.MutationInfo)
+local RelicInfo = require(game.ReplicatedStorage.RelicInfo)
 
 local StashTool = {}
 StashTool.__index = StashTool
@@ -26,7 +25,7 @@ function StashTool:init()
 	self.tool:SetAttribute("race", self.race)
 
 	local itemClass = self.toolClass
-	local itemStats = ItemInfo:getMeta(itemClass, true) or PetInfo:getMeta(itemClass, true)
+	local itemStats = PetInfo:getMeta(itemClass, true) or RelicInfo:getMeta(itemClass, true)
 
 	if not itemStats then
 		warn("NO ITEM STATS FOR: ", itemClass)
@@ -42,13 +41,53 @@ function StashTool:init()
 	end
 end
 
+function StashTool:addRelicModel()
+	local race = self.race
+	if race ~= "relic" then
+		return
+	end
+
+	local relicClass = self.toolClass
+	local relicModel = game.Workspace.BaseRelicModel:Clone()
+
+	local anchorPart = self.user.rig.Torso
+
+	local anchorOffsetFrame = CFrame.new(0, 0, -3)
+
+	relicModel:SetPrimaryPartCFrame(
+		anchorPart.CFrame
+			* anchorOffsetFrame
+			* CFrame.new(0, -anchorPart.Size.Y / 2 + relicModel.PrimaryPart.Size.Y / 2, 0)
+	)
+
+	-- make all massless
+	for _, child in pairs(relicModel:GetDescendants()) do
+		if not child:IsA("BasePart") then
+			continue
+		end
+
+		child.CanCollide = false
+		child.Anchored = false
+		child.Massless = true
+
+		-- weld each part to the anchorPart
+		local weld = Instance.new("WeldConstraint")
+		weld.Part0 = child
+		weld.Part1 = anchorPart
+		weld.Parent = child
+	end
+
+	relicModel.Name = relicClass .. "_WELD_RIG"
+	relicModel.Parent = self.tool
+
+	self.relicModel = relicModel
+end
+
 function StashTool:addPetRig()
 	local race = self.race
 	if race ~= "pet" then
 		return
 	end
-
-	local head = self.user.rig.Torso
 
 	local fakeRig = game.ReplicatedStorage.Assets[self.toolClass]:Clone()
 
@@ -59,16 +98,17 @@ function StashTool:addPetRig()
 	local modelFrame, extentsSize = fakeRig:GetBoundingBox()
 	local centerOffset = modelFrame:inverse() * fakeRig.PrimaryPart.CFrame
 
-	-- local centerOffset = CFrame.new()
-
 	fakeRig:Destroy()
 
 	local petClass = self.toolClass
+
+	local anchorPart = self.user.rig.Torso
+
 	local petRig = ServerMod.weldPetManager:addWeldPetRig({
 		petClass = petClass,
 		baseWeight = self.baseWeight,
 		level = self.level,
-		anchorPart = head,
+		anchorPart = anchorPart,
 		anchorOffsetFrame = centerOffset * CFrame.new(0, 0, -3),
 
 		-- mutations
@@ -102,10 +142,14 @@ function StashTool:animatePetRig(petRig)
 	trackMod["track"]:Play()
 end
 
-function StashTool:removePetRig()
+function StashTool:removeAllToolModels()
 	if self.petRig then
 		self.petRig:Destroy()
 		self.petRig = nil
+	end
+	if self.relicModel then
+		self.relicModel:Destroy()
+		self.relicModel = nil
 	end
 end
 
@@ -113,6 +157,7 @@ function StashTool:onEquip()
 	BaseTool.onEquip(self)
 
 	self:addPetRig()
+	self:addRelicModel()
 
 	-- print("EQUIPPING STASH TOOL: ", self.toolName)
 end
@@ -124,36 +169,6 @@ function StashTool:onUnequip()
 end
 
 function StashTool:onActivate() end
-
-function StashTool:checkPetPlacementValid(data)
-	local inputPlaceFrame = data["placeFrame"]
-
-	local floorPart = self.user.home.plotManager.floorPart
-
-	local maxPetCount = self.user.home.plotManager:getMaxPetCount()
-
-	if len(self.user.home.petManager.pets) >= maxPetCount then
-		self.user:notifyError("Cannot place more than " .. maxPetCount .. " brainrots")
-		return false
-	end
-
-	local whiteList = {
-		floorPart,
-	}
-
-	local isValid, placeFrame = self:raycastPlaceModel(inputPlaceFrame, whiteList)
-	if not isValid then
-		self.user:notifyError("Invalid placement")
-		return false
-	end
-
-	local petManager = self.user.home.petManager
-	if not petManager.initialized then
-		self.user:notifyError("You can't place a brainrot yet")
-		return false
-	end
-	return true
-end
 
 function StashTool:raycastPlaceModel(frame, whiteList)
 	local raycastParams = RaycastParams.new()
@@ -171,13 +186,6 @@ function StashTool:raycastPlaceModel(frame, whiteList)
 
 	local finalFrame = CFrame.new(raycastResult.Position) * Common.getCAngle(floorPart.CFrame)
 	return true, finalFrame
-end
-
-function StashTool:checkPlacementValid(data)
-	local race = self.race
-	if race == "pet" then
-		return self:checkPetPlacementValid(data)
-	end
 end
 
 function StashTool:confirmPlacement(petSpot)
@@ -205,6 +213,13 @@ function StashTool:confirmPlacement(petSpot)
 		self.user.home.itemStash:removeItemMod({
 			itemName = self.toolName,
 		})
+	elseif race == "relic" then
+		local newItemMod = Common.deepCopy(itemMod)
+		petSpot:addRelicMod(newItemMod)
+
+		self.user.home.itemStash:removeItemMod({
+			itemName = self.toolName,
+		})
 	else
 		warn("UNKNOWN RACE TO ACTIVATE: ", self.race)
 	end
@@ -217,7 +232,7 @@ function StashTool:destroy()
 
 	BaseTool.destroy(self)
 
-	self:removePetRig()
+	self:removeAllToolModels()
 
 	self.user.home.toolManager:removeStashTool({
 		toolName = self.toolName,

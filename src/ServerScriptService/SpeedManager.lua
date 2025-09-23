@@ -85,6 +85,17 @@ function SpeedManager:tryToggleSpeedMod(data)
 	local speedName = self:getSpeedName(rating, speedIndex)
 	local speedMod = self.speedMods[speedName]
 
+	if rating == "Common" and speedIndex == 2 then
+		self.user.home.tutManager:updateTutMod({
+			targetClass = "Buy2xSpeedCommon",
+			updateCount = 1,
+		})
+		self.user.home.tutManager:updateTutMod({
+			targetClass = "Choose2xSpeedCommon",
+			updateCount = 1,
+		})
+	end
+
 	if not speedMod["unlocked"] then
 		warn("CANNOT TOGGLE LOCKED SPEED MOD: ", speedName)
 		return
@@ -119,6 +130,13 @@ function SpeedManager:tryUnlockSpeedMod(data)
 		soundClass = "CashBuy",
 		volume = 0.3,
 	})
+
+	if rating == "Common" and speedIndex == 2 then
+		self.user.home.tutManager:updateTutMod({
+			targetClass = "Buy2xSpeedCommon",
+			updateCount = 1,
+		})
+	end
 
 	local noSend = true
 	self:unlockSpeedMod(rating, speedIndex, noSend)
@@ -234,6 +252,9 @@ end
 function SpeedManager:getSpeed()
 	local saveManager = self.user.home.saveManager
 	local currWaveMod = saveManager.currWaveMod
+	if not currWaveMod then
+		return 1
+	end
 
 	local rating = currWaveMod["rating"]
 

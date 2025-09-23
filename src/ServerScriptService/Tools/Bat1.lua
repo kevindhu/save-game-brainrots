@@ -17,7 +17,7 @@ function Bat.new(user, tool, data)
 	self.swingAnimationId = 90567855405019
 	self.batSwingCooldown = 0.45 -- 0.2
 
-	self.batDamage = 10
+	self.batDamage = 1000
 
 	setmetatable(self, Bat)
 	return self
@@ -55,6 +55,8 @@ function Bat:tryBatHit()
 end
 
 function Bat:onEquip()
+	BaseTool.onEquip(self)
+
 	local rig = self.user.rig
 
 	if not self.track then

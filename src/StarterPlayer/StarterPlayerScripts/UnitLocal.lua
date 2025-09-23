@@ -137,7 +137,38 @@ function Unit:initRig()
 
 	ClientMod.ragdollManager:setupJoints(rig)
 
+	self:addNoticeModel(rig)
 	-- print("!! INIT RIG FOR UNIT: ", self.unitName)
+end
+
+function Unit:addNoticeModel(rig)
+	local chosenTutMod = ClientMod.tutManager.chosenTutMod
+	if not chosenTutMod then
+		return
+	end
+
+	if not Common.listContains({ "CompleteFirstWave", "CompleteSecondWave" }, chosenTutMod["tutName"]) then
+		return
+	end
+
+	local noticeModel = game.ReplicatedStorage.Assets.NoticeModel:Clone()
+	noticeModel.Parent = rig
+
+	local humanoidRootPart = rig.HumanoidRootPart
+	noticeModel:SetPrimaryPartCFrame(humanoidRootPart.CFrame * CFrame.new(0, humanoidRootPart.Size.Y * 2, 0))
+
+	self.noticeModel = noticeModel
+
+	-- weld it to the rootpart
+	for _, child in pairs(noticeModel:GetDescendants()) do
+		if child:IsA("BasePart") then
+			child.Anchored = false
+			local weld = Instance.new("WeldConstraint")
+			weld.Part0 = child
+			weld.Part1 = humanoidRootPart
+			weld.Parent = child
+		end
+	end
 end
 
 function Unit:refreshRigScale()
@@ -444,6 +475,11 @@ function Unit:destroy(data)
 		return
 	end
 	self.destroyed = true
+
+	if self.noticeModel then
+		self.noticeModel:Destroy()
+		self.noticeModel = nil
+	end
 
 	local rig = self.rig
 	if rig then

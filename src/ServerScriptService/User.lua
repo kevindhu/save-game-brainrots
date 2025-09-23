@@ -4,8 +4,6 @@ local ServerMod = require(game.ServerScriptService.ServerMod)
 local Store = require(game.ServerScriptService.Store)
 local Home = require(game.ServerScriptService.Home)
 
-local FoodInfo = require(game.ReplicatedStorage.FoodInfo)
-
 local Common = require(game.ReplicatedStorage.Common)
 local len, routine, wait = Common.len, Common.routine, Common.wait
 
@@ -116,8 +114,8 @@ function User:respawn(rig)
 
 	local floorPart = self.home.plotManager.floorPart
 
-	local xOffset = -110 -- 10
-	local spawnFrame = floorPart.CFrame * CFrame.new(xOffset, 10, 0) * CFrame.Angles(0, math.rad(-90), 0)
+	local xOffset = -20 -- 10
+	local spawnFrame = floorPart.CFrame * CFrame.new(xOffset, 10, 0) * CFrame.Angles(0, math.rad(90), 0)
 
 	rootPart:PivotTo(spawnFrame)
 

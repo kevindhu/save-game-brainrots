@@ -39,6 +39,11 @@ function PetSpot:init()
 		end
 		self:sync(otherUser)
 	end
+
+	routine(function()
+		wait(1)
+		self.initialized = true
+	end)
 end
 
 function PetSpot:initRealModel()
@@ -115,6 +120,13 @@ function PetSpot:refreshAttackSpeedRatio()
 	end
 	attackSpeedRatio = attackSpeedRatio * mutationMultiplier
 
+	-- add attack speed from relics
+	local relicMods = self.petData["relicMods"]
+	for _, relicData in pairs(relicMods) do
+		local attackSpeedMultiplier = relicData["attackSpeed"]
+		attackSpeedRatio = attackSpeedRatio * attackSpeedMultiplier
+	end
+
 	self.attackSpeedRatio = attackSpeedRatio
 
 	-- print("ATTACK SPEED RATIO: ", self.attackSpeedRatio)
@@ -151,6 +163,39 @@ function PetSpot:unlock()
 	ServerMod:FireAllClients("unlockPetSpot", {
 		petSpotName = self.petSpotName,
 	})
+end
+
+function PetSpot:addRelicMod(relicData)
+	local petData = self.petData
+	petData["relicMods"][relicData["relicName"]] = relicData
+
+	self:refreshAttackSpeedRatio()
+	self:sendData()
+end
+
+function PetSpot:storeRelic()
+	local petData = self.petData
+	local relicMods = petData["relicMods"]
+
+	if len(relicMods) == 0 then
+		warn("NO RELIC MODS TO STORE: ", self.petSpotName)
+		return
+	end
+
+	for _, relicData in pairs(relicMods) do
+		local newItemMod = Common.deepCopy(relicData)
+		newItemMod["noSend"] = false
+		newItemMod["forceBottom"] = true
+		newItemMod["noClick"] = false
+
+		print("STORING RELIC: ", newItemMod)
+
+		self.user.home.itemStash:addItemMod(newItemMod)
+	end
+	petData["relicMods"] = {}
+
+	self:refreshAttackSpeedRatio()
+	self:sendData()
 end
 
 function PetSpot:toggleRealModel(newBool)
@@ -268,6 +313,14 @@ function PetSpot:tickAttack(timeRatio)
 		mutationMultiplier = MutationInfo["damageMultiplierMap"][mutationClass]
 	end
 	damage = damage * mutationMultiplier
+
+	-- add damage from relics
+	local relicMods = self.petData["relicMods"]
+	for _, relicData in pairs(relicMods) do
+		local damageMultiplier = relicData["damage"]
+		print("RELIC DAMAGE MULTIPLIER: ", damageMultiplier)
+		damage = damage * damageMultiplier
+	end
 
 	local totalDelay = 0.3 + (self.petStats["attackDelay"] or 0)
 	totalDelay = totalDelay / attackSpeedRatio

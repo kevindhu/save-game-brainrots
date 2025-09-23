@@ -5,7 +5,7 @@ local len, routine, wait = Common.len, Common.routine, Common.wait
 
 local ItemInfo = require(game.ReplicatedStorage.ItemInfo)
 local PetInfo = require(game.ReplicatedStorage.PetInfo)
-local FoodInfo = require(game.ReplicatedStorage.FoodInfo)
+local RelicInfo = require(game.ReplicatedStorage.RelicInfo)
 
 local ItemStash = {}
 ItemStash.__index = ItemStash
@@ -59,51 +59,47 @@ function ItemStash:addFirstItems()
 		count = 10 * 1000,
 	})
 
-	self:addTestPetTools()
+	self:addTestPets()
+	self:addTestRelics()
 end
 
-function ItemStash:checkFullPets()
-	local totalPetCount = self:getPetItemCount()
-	return totalPetCount >= 1000
-end
-
-function ItemStash:addTestPetTools()
+function ItemStash:addTestPets()
 	local petList = {
 		"CappuccinoAssassino",
-		"TungTungSahur",
-		"TrippiTroppi",
+		-- "TungTungSahur",
+		-- "TrippiTroppi",
 
-		"Boneca",
-		"LiriLira",
-		"Ballerina",
-		"FrigoCamelo",
-		"ChimpBanana",
-		"TaTaTaSahur",
-		"CapybaraCoconut",
-		"DolphinBanana",
-		"FishCatLegs",
-		"GooseBomber",
-		"TralaleloTralala",
-		"GlorboFruttoDrillo",
-		"RhinoToast",
-		"BrrBrrPatapim",
-		"ElephantCoconut",
-		"TimCheese",
+		-- "Boneca",
+		-- "LiriLira",
+		-- "Ballerina",
+		-- "FrigoCamelo",
+		-- "ChimpBanana",
+		-- "TaTaTaSahur",
+		-- "CapybaraCoconut",
+		-- "DolphinBanana",
+		-- "FishCatLegs",
+		-- "GooseBomber",
+		-- "TralaleloTralala",
+		-- "GlorboFruttoDrillo",
+		-- "RhinoToast",
+		-- "BrrBrrPatapim",
+		-- "ElephantCoconut",
+		-- "TimCheese",
 
-		"Bombardino",
+		-- "Bombardino",
 
-		"GiraffeWatermelon",
-		"MonkeyPineapple",
-		"OwlAvocado",
-		"OrangeDunDun",
-		"CowPlanet",
+		-- "GiraffeWatermelon",
+		-- "MonkeyPineapple",
+		-- "OwlAvocado",
+		-- "OrangeDunDun",
+		-- "CowPlanet",
 
-		"OctopusBlueberry",
-		"SaltCombined",
-		"GorillaWatermelon",
+		-- "OctopusBlueberry",
+		-- "SaltCombined",
+		-- "GorillaWatermelon",
 
-		"MilkShake",
-		"GrapeSquid",
+		-- "MilkShake",
+		-- "GrapeSquid",
 	}
 
 	local mutationList = {
@@ -119,20 +115,83 @@ function ItemStash:addTestPetTools()
 				if mutationClass == "None" then
 					mutationClass = nil
 				end
-				local itemData = {
-					itemName = "STASHTOOL_" .. Common.getGUID(),
-					itemClass = petClass,
-					race = "pet",
-
-					-- unit metadata
-					creationTimestamp = os.time(),
+				self:addPet({
+					petClass = petClass,
 					mutationClass = mutationClass,
-				}
-				self.user.home.petManager:fillPetDataWithDefaults(itemData)
-				self:addItemMod(itemData)
+				})
 			end
 		end
 	end
+end
+
+function ItemStash:addTestRelics()
+	local relicList = {
+		"Relic1",
+		"Relic2",
+	}
+	for _, relicClass in ipairs(relicList) do
+		self:addRelic({
+			relicClass = relicClass,
+		})
+	end
+end
+
+function ItemStash:generatePetData(data)
+	local itemData = Common.deepCopy(data)
+
+	itemData["itemName"] = "STASH_ITEM_" .. Common.getGUID()
+	itemData["itemClass"] = itemData["petClass"]
+
+	itemData["race"] = "pet"
+
+	itemData["creationTimestamp"] = os.time()
+
+	self.user.home.petManager:fillPetDataWithDefaults(itemData)
+
+	return itemData
+end
+
+function ItemStash:checkFullPets()
+	local totalPetCount = self:getPetItemCount()
+	return totalPetCount >= 1000
+end
+
+function ItemStash:generateRelicData(data)
+	local itemData = Common.deepCopy(data)
+
+	itemData["itemName"] = "STASHTOOL_" .. Common.getGUID()
+
+	local relicClass = itemData["relicClass"]
+	itemData["itemClass"] = relicClass
+
+	itemData["relicName"] = itemData["itemName"]
+
+	local relicStats = RelicInfo:getMeta(relicClass)
+
+	local damageRange = relicStats["damageRange"] or { 1, 1 }
+	local coinsRange = relicStats["coinsRange"] or { 1, 1 }
+	local attackSpeedRange = relicStats["attackSpeedRange"] or { 1, 1 }
+
+	-- generate based on the range (TODO: make this be more than just random between)
+	itemData["damage"] = Common.randomBetween(damageRange[1], damageRange[2])
+	itemData["coins"] = Common.randomBetween(coinsRange[1], coinsRange[2])
+	itemData["attackSpeed"] = Common.randomBetween(attackSpeedRange[1], attackSpeedRange[2])
+
+	itemData["race"] = "relic"
+
+	itemData["creationTimestamp"] = os.time()
+
+	return itemData
+end
+
+function ItemStash:addPet(data)
+	local itemData = self:generatePetData(data)
+	self:addItemMod(itemData)
+end
+
+function ItemStash:addRelic(data)
+	local itemData = self:generateRelicData(data)
+	self:addItemMod(itemData)
 end
 
 function ItemStash:sanityCheckForSoftLock()
@@ -162,18 +221,6 @@ function ItemStash:getPetItemCount()
 	return totalCount
 end
 
-function ItemStash:getFoodItemCount()
-	local totalCount = 0
-	for _, itemMod in pairs(self.itemMods) do
-		local race = itemMod["race"]
-		if race == "food" then
-			totalCount += 1
-		end
-	end
-
-	return totalCount
-end
-
 -- this should only be called for currency items
 function ItemStash:updateItemCount(data)
 	local itemName = data["itemName"]
@@ -193,6 +240,8 @@ function ItemStash:updateItemCount(data)
 	if count > 0 then
 		if Common.listContains({ "Gems", "Coins" }, itemName) then
 			self.user.home.statManager:incrementStatMod("Total" .. itemName, count)
+
+			-- self:tryStartBuySpeedTutorial()
 		else
 			self.user.home.alertManager:incrementAlertCount({
 				moduleName = "itemStash",
@@ -200,6 +249,29 @@ function ItemStash:updateItemCount(data)
 			})
 		end
 	end
+end
+
+function ItemStash:tryStartBuySpeedTutorial()
+	local tutManager = self.user.home.tutManager
+	if not tutManager.completedTutMods["CompleteTutorial"] then
+		return
+	end
+	if tutManager.completedTutMods["GoToTimeWizard"] or tutManager.tutMods["GoToTimeWizard"] then
+		return
+	end
+
+	local coins = self:getItemCount({
+		itemName = "Coins",
+	})
+
+	-- print(coins)
+
+	if coins < 100 then
+		return
+	end
+
+	tutManager:newTutMod("GoToTimeWizard")
+	tutManager:tryChooseNewTutMod()
 end
 
 function ItemStash:setItemCount(itemName, newCount)
@@ -240,7 +312,7 @@ end
 function ItemStash:getFullItemStats(itemClass)
 	local itemStats = ItemInfo:getMeta(itemClass, true)
 		or PetInfo:getMeta(itemClass, true)
-		or FoodInfo:getMeta(itemClass, true)
+		or RelicInfo:getMeta(itemClass, true)
 
 	if not itemStats then
 		warn("NO ITEM STATS FOUND FOR: ", itemClass)
@@ -262,18 +334,16 @@ function ItemStash:addItemMod(data)
 	data["alias"] = itemStats["alias"]
 
 	if not itemName then
-		-- create new itemName from UUID
+		warn("!!! NO ITEM NAME FOUND FOR: ", itemClass)
 		itemName = "ITEM_" .. Common.getGUID()
 		data["itemName"] = itemName
 	end
 
-	if data["race"] == "pet" then
+	if Common.listContains({ "pet", "relic" }, data["race"]) then
 		self.user.home.alertManager:incrementAlertCount({
 			moduleName = "itemStash",
 			count = 1,
 		})
-
-		-- print("ADDING PET WITH MUTATION: ", data["mutationClass"])
 	end
 
 	local newItemMod = self:newItemMod(data)

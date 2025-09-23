@@ -59,6 +59,7 @@ function BaseTool:addCons()
 	table.insert(self.connections, connection)
 
 	connection = tool.Equipped:Connect(function()
+		-- print("EQUIPPED BASE TOOL: ", self.toolClass)
 		self:onEquip()
 	end)
 	table.insert(self.connections, connection)
@@ -86,6 +87,18 @@ end
 
 function BaseTool:onEquip()
 	self.equipped = true
+
+	if self.toolClass == "Bat1" then
+		-- print("EQUIPPED BAT1")
+		self.user.home.tutManager:updateTutMod({
+			targetClass = "EquipBat1",
+			updateCount = 1,
+		})
+		self.user.home.tutManager:updateTutMod({
+			targetClass = "EquipBat2",
+			updateCount = 1,
+		})
+	end
 
 	-- print("EQUIPPED: ", self.toolName, self.equipped)
 end
@@ -248,6 +261,9 @@ end
 function BaseTool:getHitUnits(hitPart)
 	local hitUnits = {}
 	for _, unit in pairs(self.user.home.unitManager.units) do
+		if unit.dead or unit.capturedSavedPet or unit.destroyed then
+			continue
+		end
 		local unitFrame = unit.currFrame
 		if isPointInVolume(unitFrame.Position, hitPart.CFrame, hitPart.Size) then
 			hitUnits[unit.unitName] = unit

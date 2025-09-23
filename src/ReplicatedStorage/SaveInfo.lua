@@ -1,5 +1,5 @@
 local SaveInfo = {
-	VERSION = "ve.3.001",
+	VERSION = "ve.3.005",
 	ODS_VERSION = "2.0.2",
 
 	STUDIO_VERSION = "std.ve.0.0.0003",

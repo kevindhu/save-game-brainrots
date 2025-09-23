@@ -97,12 +97,12 @@ function ServerEventManager:handleRequest(player, req, data)
 		alertManager:updateAlert(data)
 
 	-- PETMANAGER
-	elseif req == "tryStorePet" then
-		petManager:tryStorePet(data)
 	elseif req == "tryFeedPet" then
 		petManager:tryFeedPet(data)
 	elseif req == "tryPickupFromPetSpot" then
 		petManager:tryPickupFromPetSpot(data)
+	elseif req == "tryPickupRelicFromPetSpot" then
+		petManager:tryPickupRelicFromPetSpot(data)
 	elseif req == "tryLevelUpPet" then
 		petManager:tryLevelUpPet(data)
 	elseif req == "tryCollectCoins" then
@@ -135,6 +135,8 @@ function ServerEventManager:handleRequest(player, req, data)
 		toolManager:tryBuyTool(data)
 	elseif req == "tryPlacePetAtPetSpot" then
 		toolManager:tryPlacePetAtPetSpot(data)
+	elseif req == "tryPlaceRelicAtPetSpot" then
+		toolManager:tryPlaceRelicAtPetSpot(data)
 	elseif req == "tryEquipBottomMod" then
 		toolManager:tryEquipBottomMod(data)
 

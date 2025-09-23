@@ -36,6 +36,12 @@ function SaveManager:init()
 		-- self:startNewWaveMod()
 		self:sendPlaying()
 
+		if self.user.home.tutManager.completedTutMods["CompleteTutorial"] then
+			self:tryTogglePlay({
+				newBool = true,
+			})
+		end
+
 		self.initialized = true
 	end)
 end
@@ -46,24 +52,42 @@ function SaveManager:initSaveModel(saveModel)
 end
 
 function SaveManager:startNewWaveMod()
+	self.user.home.itemStash:tryStartBuySpeedTutorial()
+
 	local probManager = self.user.home.probManager
+
 	local petClass = probManager:generatePetClass()
+
+	local chosenTutMod = self.user.home.tutManager.chosenTutMod
+
+	-- override with tutorial petClass if not completed tutorial
+	if not self.user.home.tutManager.completedTutMods["CompleteFirstWave"] then
+		petClass = "CappuccinoAssassino"
+	elseif not self.user.home.tutManager.completedTutMods["CompleteSecondWave"] then
+		petClass = "TungTungSahur"
+	end
+
+	if chosenTutMod then
+		if
+			Common.listContains({
+				"GoToTimeWizard",
+				"Buy2xSpeedCommon",
+				"CloseTimeWizard",
+				"Choose2xSpeedCommon",
+			}, chosenTutMod["targetClass"])
+		then
+			petClass = "CappuccinoAssassino"
+		end
+	end
+
 	local mutationClass = probManager:generateMutationClass()
 
 	-- self.user.home.indexManager:unlockPet(petClass, mutationClass)
 
-	local petData = {
-		itemName = "STASHPET_" .. Common.getGUID(),
-		itemClass = petClass,
-		race = "pet",
-
+	local petData = self.user.home.itemStash:generatePetData({
 		petClass = petClass,
 		mutationClass = mutationClass,
-
-		-- unit metadata
-		creationTimestamp = os.time(),
-	}
-	self.user.home.petManager:fillPetDataWithDefaults(petData)
+	})
 
 	local petStats = PetInfo:getMeta(petClass)
 	local musicRating = petStats["rating"]
@@ -159,18 +183,34 @@ function SaveManager:killUnitFromWave(waveMod, unit)
 end
 
 function SaveManager:tryTogglePlay(data)
+	local newBool = data["newBool"]
+
 	if self.tryTogglePlayExpiree and self.tryTogglePlayExpiree > ServerMod.step then
 		self.user:notifyError("Clicking too fast")
 		return
 	end
 	self.tryTogglePlayExpiree = ServerMod.step + 60 * 0.5
 
-	self.playing = not self.playing
+	-- if not completed tutorial, don't allow to play
+	if not self.user.home.tutManager.completedTutMods["EquipBat1"] then
+		self.user:notifyError("Cannot do this yet")
+		return
+	end
+	if self.playing then
+		if not self.user.home.tutManager.completedTutMods["CompleteTutorial"] then
+			self.user:notifyError("Cannot do this yet")
+			return
+		end
+	end
 
-	-- print("TOGGLE PLAY: ", self.playing)
+	self.playing = newBool
 
 	if self.playing then
 		self.startNewWaveExpiree = ServerMod.step + 60 * 0.5
+		self.user.home.tutManager:updateTutMod({
+			targetClass = "PressPlay",
+			updateCount = 1,
+		})
 	else
 		if self.currWaveMod then
 			self:failWaveMod(self.currWaveMod, nil)
@@ -214,14 +254,23 @@ function SaveManager:completeWaveMod(waveMod)
 	petData["forceBottom"] = false
 	petData["noClick"] = true
 
-	local itemStash = self.user.home.itemStash
-	itemStash:addItemMod(petData)
+	self.user.home.itemStash:addItemMod(petData)
 
 	self.user.home.unitManager:clearAllWaveUnits(waveMod)
 
 	local successTimer = 1.5 --3 -- 0.5
 	successTimer = successTimer / self.user.home.speedManager:getSpeed()
 	self.startNewWaveExpiree = ServerMod.step + 60 * successTimer
+
+	self.user.home.tutManager:updateTutMod({
+		targetClass = "CompleteFirstWave",
+		updateCount = 1,
+	})
+
+	self.user.home.tutManager:updateTutMod({
+		targetClass = "CompleteSecondWave",
+		updateCount = 1,
+	})
 
 	self.waveMods[waveMod["waveName"]] = nil
 end
@@ -262,12 +311,32 @@ function SaveManager:tick()
 	if self.user.destroyed then
 		return
 	end
-
 	if not self.playing then
 		return
 	end
 
 	if len(self.waveMods) > 0 then
+		return
+	end
+
+	local tutManager = self.user.home.tutManager
+	if tutManager.completedTutMods["CompleteFirstWave"] then
+		if
+			not tutManager.completedTutMods["EquipFirstPet"]
+			or not tutManager.completedTutMods["PlaceFirstPet"]
+			or not tutManager.completedTutMods["EquipBat2"]
+		then
+			-- warn("NOT COMPLETED TUT MODS TO START NEW WAVE: ", tutManager.completedTutMods)
+			return
+		end
+	end
+
+	if self.user.home.itemStash:checkFullPets() then
+		if self.checkFullPetsExpiree and self.checkFullPetsExpiree > ServerMod.step then
+			return
+		end
+		self.checkFullPetsExpiree = ServerMod.step + 60 * 2
+		self.user:notifyError("Your inventory is full!")
 		return
 	end
 

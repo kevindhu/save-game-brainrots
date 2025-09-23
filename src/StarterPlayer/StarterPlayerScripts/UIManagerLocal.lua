@@ -113,6 +113,7 @@ function UIManager:createPrompt(data)
 	local enabled = data["enabled"]
 	local maxActivationDistance = data["maxActivationDistance"] or 1
 	local parent = data["parent"]
+	local keyCode = data["keyCode"]
 
 	local prompt = Instance.new("ProximityPrompt")
 	prompt.ActionText = actionText
@@ -121,6 +122,8 @@ function UIManager:createPrompt(data)
 	prompt.Style = Enum.ProximityPromptStyle.Custom
 
 	prompt.MaxActivationDistance = maxActivationDistance
+
+	prompt.KeyboardKeyCode = keyCode or Enum.KeyCode.E
 
 	prompt.Name = name
 	prompt.Enabled = enabled

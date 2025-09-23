@@ -271,6 +271,29 @@ function PetManager:getRandomFrame()
 	return randomFrame
 end
 
+function PetManager:fillPetDataWithDefaults(petData)
+	petData["petName"] = petData["itemName"]
+
+	if not petData["baseWeight"] then
+		petData["baseWeight"] = self:generateRandomBaseWeight()
+	end
+
+	-- handle levels and exp
+	if not petData["level"] then
+		petData["level"] = 1
+	end
+	if not petData["totalCoins"] then
+		petData["totalCoins"] = 0
+	end
+	if not petData["totalOfflineCoins"] then
+		petData["totalOfflineCoins"] = 0
+	end
+
+	if not petData["relicMods"] then
+		petData["relicMods"] = {}
+	end
+end
+
 function PetManager:generateRandomBaseWeight()
 	local baseWeight = Common.randomBetween(1, 1.3)
 	-- local baseWeight = Common.randomBetween(3, 10)
@@ -293,33 +316,16 @@ function PetManager:tryCollectCoins(data)
 	petSpot:tryCollectCoins()
 end
 
-function PetManager:fillPetDataWithDefaults(petData)
-	-- handle petName
-	if petData["itemName"] then
-		petData["petName"] = petData["itemName"]
-	end
-	if not petData["petName"] then
-		petData["petName"] = "PET_" .. Common.getGUID()
-	end
-
-	if not petData["baseWeight"] then
-		petData["baseWeight"] = self:generateRandomBaseWeight()
-	end
-
-	-- handle levels and exp
-	if not petData["level"] then
-		petData["level"] = 1
-	end
-	if not petData["totalCoins"] then
-		petData["totalCoins"] = 0
-	end
-	if not petData["totalOfflineCoins"] then
-		petData["totalOfflineCoins"] = 0
-	end
-end
-
 function PetManager:occupyPetSpot(petSpot, petData)
-	self:fillPetDataWithDefaults(petData)
+	if not petSpot.initialized then
+		warn("PET SPOT NOT INITIALIZED TO OCCUPY: ", petSpot.petSpotName)
+		return
+	end
+
+	self.user.home.tutManager:updateTutMod({
+		targetClass = "PlaceFirstPet",
+		updateCount = 1,
+	})
 
 	petSpot:occupyWithPet(petData)
 end
@@ -339,6 +345,21 @@ function PetManager:tryPickupFromPetSpot(data)
 	self:storePet(petSpot)
 end
 
+function PetManager:tryPickupRelicFromPetSpot(data)
+	local petSpotName = data["petSpotName"]
+	local petSpot = self.petSpots[petSpotName]
+	if not petSpot then
+		warn("NO PET SPOT TO PICKUP RELIC FROM: ", petSpotName)
+		return
+	end
+	if not petSpot.petData then
+		warn("NO PET DATA TO PICKUP FROM: ", petSpot.petSpotName)
+		return
+	end
+
+	petSpot:storeRelic()
+end
+
 function PetManager:tryLevelUpPet(data)
 	local petSpotName = data["petSpotName"]
 	local petSpot = self.petSpots[petSpotName]
@@ -352,26 +373,14 @@ end
 
 function PetManager:storePet(petSpot)
 	local itemData = Common.deepCopy(petSpot.petData)
-
-	local petClass = itemData["petClass"]
-	local petStats = PetInfo:getMeta(petClass)
-
-	-- self.user:notifySuccess(string.format("%s stored", petStats["alias"]))
-
-	ServerMod:FireClient(self.user.player, "newSoundMod", {
-		soundClass = "HammerHit",
-		-- volume = 0.5,
-	})
-
-	-- TODO: do we need this?
-	itemData["itemName"] = "STASHTOOL_" .. Common.getGUID()
-	itemData["itemClass"] = petClass
-	itemData["race"] = "pet"
-
 	itemData["noClick"] = false
 	itemData["forceBottom"] = true
 
 	self.user.home.itemStash:addItemMod(itemData)
+
+	ServerMod:FireClient(self.user.player, "newSoundMod", {
+		soundClass = "HammerHit",
+	})
 
 	petSpot:clearPet()
 end

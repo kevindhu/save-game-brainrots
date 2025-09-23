@@ -29,7 +29,9 @@ function BadgeManager:init()
 end
 
 local badgeIdMap = {
-	["Join"] = 1368541295116379,
+	["Join"] = 4084225341372551,
+	["CompleteTutorial"] = 2754110506721216,
+	["BoughtTimeFromTimeWizard"] = 1850469804962762,
 }
 
 function BadgeManager:addBadge(badgeClass)

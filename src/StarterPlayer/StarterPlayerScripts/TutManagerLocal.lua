@@ -16,15 +16,26 @@ local messageFrame = tutGUI.MessageFrame
 local buttonGUI = playerGui:WaitForChild("ButtonGUI")
 local topFrame = buttonGUI.TopFrame
 
+local saveGUI = playerGui:WaitForChild("SaveGUI")
+
+local blackGUI = playerGui:WaitForChild("BlackGUI")
+
 local TutManager = {
 	tutMods = {},
 	completedTutMods = {},
+
+	chosenAbsoluteSize = Vector2.new(0, 0),
+	chosenAbsolutePos = Vector2.new(0, 0),
 }
 
 function TutManager:init()
 	self:addCons()
 
-	self:initButtonHintIcons()
+	self:initAllBlackFrames()
+
+	self:initMainHintIcon()
+
+	-- self.chosenFrame = playerGui:WaitForChild("ButtonGUI").TopFrame.MyPlotCover
 
 	routine(function()
 		self:addLocationBeamModel()
@@ -35,6 +46,72 @@ function TutManager:init()
 
 		self.initialized = true
 	end)
+end
+
+function TutManager:initMainHintIcon()
+	self.hintIcon = blackGUI.HintIcon
+
+	local frame = Instance.new("Frame")
+	frame.Visible = false
+	frame.Parent = playerGui
+	self.hintAnimationFrame = frame
+
+	routine(function()
+		local moveTimer = 0.5
+		while true do
+			ClientMod.tweenManager:createTween({
+				target = self.hintAnimationFrame,
+				timer = moveTimer,
+				easingStyle = "Quad",
+				easingDirection = "Out",
+				goal = {
+					Position = UDim2.fromScale(0, 1),
+				},
+			})
+
+			wait(moveTimer)
+
+			ClientMod.tweenManager:createTween({
+				target = self.hintAnimationFrame,
+				timer = moveTimer,
+				easingStyle = "Quad",
+				easingDirection = "In",
+				goal = {
+					Position = UDim2.fromScale(0, 0),
+				},
+			})
+			wait(moveTimer)
+		end
+	end)
+end
+
+function TutManager:toggleBlackFrames(newBool)
+	self.blackLeftFrame.Visible = newBool
+	self.blackRightFrame.Visible = newBool
+	self.blackTopFrame.Visible = newBool
+	self.blackBottomFrame.Visible = newBool
+end
+
+function TutManager:initAllBlackFrames()
+	self.blackLeftFrame = self:initBlackFrame("Left")
+	self.blackRightFrame = self:initBlackFrame("Right")
+	self.blackTopFrame = self:initBlackFrame("Top")
+	self.blackBottomFrame = self:initBlackFrame("Bottom")
+
+	self:toggleBlackFrames(false)
+end
+
+function TutManager:initBlackFrame(name)
+	local frame = Instance.new("Frame")
+	frame.BackgroundTransparency = 0.3 -- 0.5
+	frame.Size = UDim2.fromScale(5, 2)
+	frame.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+	frame.Parent = blackGUI
+	frame.BorderSizePixel = 0
+
+	frame.Name = name .. "BlackFrame"
+
+	return frame
 end
 
 function TutManager:addLocationBeamModel()
@@ -56,11 +133,30 @@ function TutManager:toggleLocationBeam(newBool)
 	self.locationBeamModel.Beam.Enabled = newBool
 end
 
-function TutManager:initButtonHintIcons()
-	local myPlotHintIcon = topFrame.MyPlot.HintIcon
-	self.myPlotHintIcon = myPlotHintIcon
-	self:toggleHintIcon(myPlotHintIcon, false)
-	self:doFullHintIconAnimation(myPlotHintIcon)
+function TutManager:initBatHintIcon(batItemFrame)
+	local batHintIcon = batItemFrame.HintIcon
+	self.batHintIcon = batHintIcon
+	self:toggleHintIcon(batHintIcon, false)
+
+	self.batHintItemFrame = batItemFrame.Cover
+
+	self:refreshHintIcons()
+end
+
+function TutManager:initPetHintIcon(petItemFrame)
+	if self.petHintIcon then
+		return
+	end
+
+	self.petHintItemFrame = petItemFrame.Cover
+
+	local petHintIcon = petItemFrame.HintIcon
+	self.petHintIcon = petHintIcon
+	self:toggleHintIcon(petHintIcon, false)
+
+	print("INIT PET HINT ICON: ", petHintIcon)
+
+	self:refreshHintIcons()
 end
 
 local WAVE_ANIMATION_ID = 108989129166651
@@ -102,41 +198,11 @@ function TutManager:addCons()
 	end)
 end
 
-function TutManager:doFullHintIconAnimation(hintIcon)
-	routine(function()
-		local moveTimer = 0.5
-		while true do
-			ClientMod.tweenManager:createTween({
-				target = hintIcon,
-				timer = moveTimer,
-				easingStyle = "Quad",
-				easingDirection = "Out",
-				goal = {
-					Position = UDim2.fromScale(0.5, 2.5),
-				},
-			})
-
-			wait(moveTimer)
-
-			ClientMod.tweenManager:createTween({
-				target = hintIcon,
-				timer = moveTimer,
-				easingStyle = "Quad",
-				easingDirection = "In",
-				goal = {
-					Position = UDim2.fromScale(0.5, 1.9),
-				},
-			})
-			wait(moveTimer)
-		end
-	end)
-end
-
 function TutManager:toggleHintIcon(hintIcon, newBool)
 	if not hintIcon then
 		return
 	end
-	hintIcon.Visible = newBool
+	hintIcon.Visible = false -- newBool
 end
 
 function TutManager:toggle(data)
@@ -169,10 +235,8 @@ end
 function TutManager:chooseTutMod(data)
 	local tutName = data["tutName"]
 
-	-- clear all existing animations
-	self:toggleHintIcon(self.myPlotHintIcon, false)
-
 	self:toggleLocationBeam(false)
+	self.chosenFrame = nil
 
 	if not tutName then
 		self.chosenTutMod = nil
@@ -183,20 +247,72 @@ function TutManager:chooseTutMod(data)
 	local tutMod = self.tutMods[tutName]
 	self.chosenTutMod = tutMod
 
-	local targetClass = tutMod["targetClass"]
-
-	self:updateLocationBeam(targetClass)
+	self:refreshHintIcons()
+	self:updateLocationBeam(tutMod["targetClass"])
 
 	self:startTextAnimation()
 end
 
+function TutManager:refreshHintIcons()
+	local tutMod = self.chosenTutMod
+	if not tutMod then
+		return
+	end
+
+	local targetClass = tutMod["targetClass"]
+
+	-- clear all existing animations
+	self:toggleHintIcon(self.myPlotHintIcon, false)
+	self:toggleHintIcon(self.batHintIcon, false)
+	self:toggleHintIcon(self.petHintIcon, false)
+	self:toggleHintIcon(self.playButtonHintIcon, false)
+
+	self.flippedHintIcon = false
+
+	if targetClass == "TeleportToEggShop" then
+		self:toggleHintIcon(self.eggHintIcon, true)
+	elseif targetClass == "EquipBat1" then
+		self:toggleHintIcon(self.batHintIcon, true)
+		self.chosenFrame = self.batHintItemFrame
+	elseif targetClass == "EquipBat2" then
+		self:toggleHintIcon(self.batHintIcon, true)
+		self.chosenFrame = self.batHintItemFrame
+	elseif targetClass == "PressPlay" then
+		self:toggleHintIcon(self.playButtonHintIcon, true)
+		self.flippedHintIcon = true
+		self.chosenFrame = playerGui:WaitForChild("SaveGUI").PlayFrame.PlayButton.Cover
+	elseif targetClass == "EquipFirstPet" then
+		self:toggleHintIcon(self.petHintIcon, true)
+		self.chosenFrame = self.petHintItemFrame
+	elseif targetClass == "Buy2xSpeedCommon" then
+		self.chosenFrame = self.speedHintItemFrame
+	elseif targetClass == "CloseTimeWizard" then
+		local speedGUI = playerGui:WaitForChild("SpeedGUI")
+		local speedFrame = speedGUI.SpeedFrame
+		self.chosenFrame = speedFrame.CloseButton.Cover
+	elseif targetClass == "Choose2xSpeedCommon" then
+		self.chosenFrame = playerGui:WaitForChild("SaveGUI").PlayFrame.SpeedButton.Cover
+	end
+end
+
 function TutManager:updateLocationBeam(targetClass)
 	local endPart = self.locationBeamModel.End
+
+	if targetClass == "PlaceFirstPet" then
+		self:toggleLocationBeam(true)
+		local model = ClientMod.plotManager.model
+		if not model then
+			warn("!!! COULD NOT FIND FLOOR PART FOR LOCATION BEAM")
+			return
+		end
+		endPart.Position = model.PetSpot1.BasePart.Position
+	elseif targetClass == "GoToTimeWizard" then
+		self:toggleLocationBeam(true)
+		endPart.Position = ClientMod.vendorManager.vendorMods["TimeWizardVendor"].rig.HumanoidRootPart.Position
+	end
 end
 
 function TutManager:startTextAnimation()
-	-- print("START TEXT ANIMATION: ", self.chosenTutMod)
-
 	local tutMod = self.chosenTutMod
 	local tutName = tutMod["tutName"]
 
@@ -251,7 +367,7 @@ function TutManager:tryAddVoiceBeep()
 	})
 end
 
-function TutManager:tick()
+function TutManager:tick(timeRatio)
 	if not self.initialized then
 		return
 	end
@@ -263,6 +379,77 @@ function TutManager:tick()
 
 	self:tickLocationBeamModel()
 	self:tickHintIconsVisible()
+
+	self:tickBlackFrames()
+
+	self:tickChosenAbsoluteSize(timeRatio)
+end
+
+function TutManager:tickChosenAbsoluteSize(timeRatio)
+	local chosenFrame = self.chosenFrame
+	if not chosenFrame then
+		self:toggleBlackFrames(false)
+		self.hintIcon.Visible = false
+		return
+	end
+
+	local lerpRatio = 0.15 -- 0.1
+	self.chosenAbsoluteSize = self.chosenAbsoluteSize:Lerp(chosenFrame.AbsoluteSize, lerpRatio * timeRatio)
+
+	self.chosenAbsolutePos = self.chosenAbsolutePos:Lerp(chosenFrame.AbsolutePosition, lerpRatio * timeRatio)
+
+	self.hintIcon.Visible = true
+
+	local animationOffset = -self.hintAnimationFrame.Position.Y.Scale * self.chosenAbsoluteSize.Y * 0.25
+
+	local yOffset = 0
+	if self.flippedHintIcon then
+		yOffset = self.hintIcon.AbsoluteSize.Y * 0.5 + self.chosenAbsoluteSize.Y
+		yOffset -= animationOffset
+		self.hintIcon.Rotation = 360
+	else
+		yOffset = -self.hintIcon.AbsoluteSize.Y * 0.5
+		yOffset += animationOffset
+		self.hintIcon.Rotation = 180
+	end
+
+	local guiInset = game:GetService("GuiService"):GetGuiInset()
+	local newPos = self.chosenAbsolutePos
+		+ Vector2.new(self.chosenAbsoluteSize.X * 0.5, yOffset)
+		+ Vector2.new(0, guiInset.Y)
+
+	local vpX = workspace.CurrentCamera.ViewportSize.X
+	local vpY = workspace.CurrentCamera.ViewportSize.Y
+
+	self.hintIcon.Position = UDim2.fromScale(newPos.X / vpX, newPos.Y / vpY)
+
+	self:toggleBlackFrames(true)
+end
+
+function TutManager:tickBlackFrames()
+	local guiInset = game:GetService("GuiService"):GetGuiInset()
+
+	local frameX = self.chosenAbsoluteSize.X
+	local frameY = self.chosenAbsoluteSize.Y
+
+	-- print(frameX, frameY)
+
+	local posX = self.chosenAbsolutePos.X
+	local posY = self.chosenAbsolutePos.Y
+
+	local vpX = workspace.CurrentCamera.ViewportSize.X
+	local vpY = workspace.CurrentCamera.ViewportSize.Y
+
+	self.blackLeftFrame.Position = UDim2.fromScale((posX - self.blackLeftFrame.AbsoluteSize.X) / vpX, 0)
+
+	self.blackRightFrame.Position = UDim2.fromScale((posX + frameX) / vpX, 0)
+
+	self.blackTopFrame.Position =
+		UDim2.fromScale(posX / vpX, (posY - self.blackTopFrame.AbsoluteSize.Y + guiInset.Y) / vpY)
+	self.blackTopFrame.Size = UDim2.fromScale(frameX / vpX, 2)
+
+	self.blackBottomFrame.Position = UDim2.fromScale(posX / vpX, (posY + frameY + guiInset.Y) / vpY)
+	self.blackBottomFrame.Size = UDim2.fromScale(frameX / vpX, 2)
 end
 
 function TutManager:tickHintIconsVisible()

@@ -10,7 +10,8 @@ local Common = require(game.ReplicatedStorage.Common)
 local len, routine, wait = Common.len, Common.routine, Common.wait
 
 local PetInfo = require(game.ReplicatedStorage.PetInfo)
-local MapInfo = require(game.ReplicatedStorage.MapInfo)
+local RelicInfo = require(game.ReplicatedStorage.RelicInfo)
+
 local RatingInfo = require(game.ReplicatedStorage.RatingInfo)
 local PetBalanceInfo = require(game.ReplicatedStorage.PetBalanceInfo)
 
@@ -22,6 +23,8 @@ function PetSpot.new(data)
 	u.data = data
 
 	u.partTextureMap = {}
+
+	u.fullRelicMods = {}
 
 	setmetatable(u, PetSpot)
 	return u
@@ -174,7 +177,7 @@ function PetSpot:initCollectBB()
 			self:tryCollectCoins()
 		end)
 
-		self:initPrompts()
+		-- self:initPrompts()
 
 		ClientMod.placeManager:refreshAllPrompts()
 	end
@@ -223,9 +226,63 @@ function PetSpot:animateCoinsCollection()
 	})
 end
 
-function PetSpot:initPrompts()
-	local interactPrompt = ClientMod.uiManager:createPrompt({
-		actionText = "Interact",
+function PetSpot:addPickupRelicPrompt()
+	if self.pickupRelicPrompt then
+		return
+	end
+
+	local pickupRelicPrompt = ClientMod.uiManager:createPrompt({
+		actionText = "Pickup Relic",
+		objectText = "",
+		name = "PickupRelicPrompt",
+		holdDuration = 0.1,
+		enabled = true,
+		maxActivationDistance = 15,
+		parent = self.standPart.PickupRelicAttachment,
+		keyCode = Enum.KeyCode.F,
+	})
+	self.pickupRelicPrompt = pickupRelicPrompt
+
+	self.pickupRelicPrompt.Triggered:Connect(function()
+		ClientMod:FireServer("tryPickupRelicFromPetSpot", {
+			petSpotName = self.petSpotName,
+		})
+	end)
+end
+
+function PetSpot:addRelicPrompt()
+	if self.relicPrompt then
+		return
+	end
+
+	local relicPrompt = ClientMod.uiManager:createPrompt({
+		actionText = "Add Relic",
+		objectText = "",
+		name = "AddRelicPrompt",
+		holdDuration = 0.1,
+		enabled = true,
+		maxActivationDistance = 15,
+		parent = self.standPart.PickupRelicAttachment,
+		keyCode = Enum.KeyCode.F,
+	})
+	self.relicPrompt = relicPrompt
+
+	self.relicPrompt.Triggered:Connect(function()
+		local equippedToolMod = ClientMod.placeManager:getEquippedToolMod()
+		ClientMod:FireServer("tryPlaceRelicAtPetSpot", {
+			toolName = equippedToolMod.toolName,
+			petSpotName = self.petSpotName,
+		})
+	end)
+end
+
+function PetSpot:addPlacePrompt()
+	if self.placePrompt then
+		return
+	end
+
+	local placePrompt = ClientMod.uiManager:createPrompt({
+		actionText = "Place",
 		objectText = "",
 		name = "InteractPetPrompt",
 		holdDuration = 0.1,
@@ -233,20 +290,65 @@ function PetSpot:initPrompts()
 		maxActivationDistance = 15,
 		parent = self.standPart.InteractAttachment,
 	})
-	self.interactPrompt = interactPrompt
+	self.placePrompt = placePrompt
 
-	self.interactPrompt.Triggered:Connect(function()
+	self.placePrompt.Triggered:Connect(function()
 		local equippedToolMod = ClientMod.placeManager:getEquippedToolMod()
-		if self.petData then
-			ClientMod:FireServer("tryPickupFromPetSpot", {
-				petSpotName = self.petSpotName,
-			})
-		else
-			ClientMod:FireServer("tryPlacePetAtPetSpot", {
-				toolName = equippedToolMod.toolName,
-				petSpotName = self.petSpotName,
-			})
-		end
+		ClientMod:FireServer("tryPlacePetAtPetSpot", {
+			toolName = equippedToolMod.toolName,
+			petSpotName = self.petSpotName,
+		})
+	end)
+end
+
+function PetSpot:removePlacePrompt()
+	if self.placePrompt then
+		self.placePrompt:Destroy()
+		self.placePrompt = nil
+	end
+end
+
+function PetSpot:removePickupRelicPrompt()
+	if self.pickupRelicPrompt then
+		self.pickupRelicPrompt:Destroy()
+		self.pickupRelicPrompt = nil
+	end
+end
+
+function PetSpot:removePickupPrompt()
+	if self.pickupPrompt then
+		self.pickupPrompt:Destroy()
+		self.pickupPrompt = nil
+	end
+end
+
+function PetSpot:removeRelicPrompt()
+	if self.relicPrompt then
+		self.relicPrompt:Destroy()
+		self.relicPrompt = nil
+	end
+end
+
+function PetSpot:addPickupPrompt()
+	if self.pickupPrompt then
+		return
+	end
+
+	local pickupPrompt = ClientMod.uiManager:createPrompt({
+		actionText = "Pickup Brainrot",
+		objectText = "",
+		name = "PickupPetPrompt",
+		holdDuration = 0.1,
+		enabled = true,
+		maxActivationDistance = 15,
+		parent = self.standPart.InteractAttachment,
+	})
+	self.pickupPrompt = pickupPrompt
+
+	pickupPrompt.Triggered:Connect(function()
+		ClientMod:FireServer("tryPickupFromPetSpot", {
+			petSpotName = self.petSpotName,
+		})
 	end)
 end
 
@@ -261,22 +363,31 @@ function PetSpot:updateData(data)
 	local attackSpeedRatio = data["attackSpeedRatio"]
 	local petData = data["petData"]
 
+	local oldPetName = nil
+	if self.petData then
+		oldPetName = self.petData["petName"]
+	end
+
 	self.attackSpeedRatio = attackSpeedRatio
 	self.petData = petData
 
 	-- print("UPDATING PET SPOT DATA: ", self.petSpotName, petData)
 
-	local oldPetName = self.petName
 	if self.petData then
 		for k, v in pairs(self.petData) do
 			self[k] = v
 		end
 		self.petStats = PetInfo:getMeta(self.petClass)
 
-		if oldPetName ~= self.petName then
+		print("STARTING REFRESH RIG FOR PET SPOT: ", self.petSpotName, self.rig)
+
+		if not oldPetName or oldPetName ~= self.petData["petName"] then
 			self:refreshRig()
 		end
+
 		PetInfo:refreshPetScale(self.rig, self.petData)
+	else
+		self:destroyRig()
 	end
 
 	self:refreshLevelBB()
@@ -285,11 +396,6 @@ function PetSpot:updateData(data)
 
 	if self.userName == player.Name then
 		ClientMod.placeManager:refreshAllPrompts()
-	end
-
-	if not self.petData then
-		self:destroyRig()
-		return
 	end
 end
 
@@ -469,7 +575,7 @@ function PetSpot:refreshRig()
 end
 
 function PetSpot:initRig()
-	-- print("INIT RIG FOR PET SPOT: ", self.petSpotName)
+	print("INIT RIG FOR PET SPOT: ", self.petSpotName)
 
 	local baseRig = game.ReplicatedStorage.Assets[self.petClass]
 	if not baseRig.PrimaryPart then
@@ -552,8 +658,6 @@ function PetSpot:initRig()
 	outerShell.Parent = game.Workspace.PetRigs
 	self.outerShell = outerShell
 
-	-- print("DONE INIT RIG FOR PET SPOT: ", self.petSpotName)
-
 	self:updateRigFrame(self.currFrame)
 
 	local trackMod = ClientMod.animUtils:animate(self, {
@@ -562,6 +666,8 @@ function PetSpot:initRig()
 	})
 
 	self:initPetBB()
+
+	print("DONE INIT RIG FOR PET SPOT: ", self.petSpotName, self.rig)
 end
 
 function PetSpot:initPetBB()
@@ -594,6 +700,12 @@ function PetSpot:initPetBB()
 
 	self.petBB = petBB
 
+	local relicItemList = petBB.MainFrame.RelicItemList
+	relicItemList.BackgroundTransparency = 1
+
+	self.templateRelicItem = relicItemList.TemplateItem
+	self.templateRelicItem.Visible = false
+
 	ClientMod.uiScaleManager:addDistStrokeModsFromBB({
 		bb = petBB,
 		adornee = fakeRootPart,
@@ -610,6 +722,43 @@ function PetSpot:refreshPetBB()
 	end
 
 	petBB.MainFrame.LevelTitle.Text = string.format("Level %s", self.level)
+
+	-- clear all relic mods
+	for _, relicMod in pairs(self.fullRelicMods) do
+		relicMod["frame"]:Destroy()
+	end
+	self.fullRelicMods = {}
+
+	-- populate all relic mods
+	for _, relicData in pairs(self.petData["relicMods"]) do
+		self:newRelicMod(relicData)
+	end
+end
+
+function PetSpot:newRelicMod(relicData)
+	local frame = self.templateRelicItem:Clone()
+	frame.Visible = true
+	frame.Parent = self.templateRelicItem.Parent
+
+	local relicName = relicData["relicName"]
+	local newRelicMod = {
+		relicName = relicName,
+		frame = frame,
+	}
+	for k, v in pairs(relicData) do
+		newRelicMod[k] = v
+	end
+
+	local relicClass = relicData["relicClass"]
+	local relicStats = RelicInfo:getMeta(relicClass)
+
+	frame.InnerFrame.Icon.Image = relicStats["image"]
+
+	frame.InnerFrame.PowerTitle.Text = math.random(100, 10000)
+
+	self.fullRelicMods[relicName] = newRelicMod
+
+	return newRelicMod
 end
 
 function PetSpot:updateRigFrame(newCurrFrame)
@@ -628,11 +777,16 @@ function PetSpot:updateRigFrame(newCurrFrame)
 end
 
 function PetSpot:destroyRig()
+	-- warn(debug.traceback())
+	-- warn("DESTROYING RIG FOR PET SPOT: ", self.petSpotName)
+
 	if self.rig then
 		self.rig:Destroy()
+		self.rig = nil
 	end
 	if self.outerShell then
 		self.outerShell:Destroy()
+		self.outerShell = nil
 	end
 
 	if self.petBB then

@@ -41,13 +41,17 @@ function SaveManager:addCons()
 
 	local playButton = playFrame.PlayButton
 	ClientMod.buttonManager:addActivateCons(playButton, function()
-		ClientMod:FireServer("tryTogglePlay", {})
+		ClientMod:FireServer("tryTogglePlay", {
+			newBool = not self.playing,
+		})
 	end)
 	ClientMod.buttonManager:addBasicButtonCons(playButton)
 end
 
 function SaveManager:updatePlaying(data)
 	local playing = data["playing"]
+	self.playing = playing
+
 	local playButton = playFrame.PlayButton
 	if playing then
 		playButton.Title.Text = "STOP"

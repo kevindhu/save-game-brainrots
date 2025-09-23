@@ -35,6 +35,15 @@ end
 function SpeedManager:addCons()
 	local closeButton = speedFrame.CloseButton
 	ClientMod.buttonManager:addActivateCons(closeButton, function()
+		local chosenTutMod = ClientMod.tutManager.chosenTutMod
+		if chosenTutMod and chosenTutMod["targetClass"] == "Buy2xSpeedCommon" then
+			return
+		end
+
+		ClientMod:FireServer("tryUpdateTutMod", {
+			targetClass = "CloseTimeWizard",
+			updateCount = 1,
+		})
 		self:toggle({
 			newBool = false,
 			animateClose = true,
@@ -100,10 +109,18 @@ function SpeedManager:initModel(model)
 	})
 
 	prompt.Triggered:Connect(function()
+		if not ClientMod.tutManager.completedTutMods["CompleteTutorial"] then
+			return
+		end
+
 		ClientMod.soundManager:addBasicSound("Pop1", 0.2)
 
 		self:toggle({
 			newBool = true,
+		})
+		ClientMod:FireServer("tryUpdateTutMod", {
+			targetClass = "GoToTimeWizard",
+			updateCount = 1,
 		})
 	end)
 
@@ -210,6 +227,10 @@ function SpeedManager:initSpeedItem(rating, speedIndex)
 		})
 	end)
 	ClientMod.buttonManager:addBasicButtonCons(buttonFrame)
+
+	if rating == "Common" and speedIndex == 2 then
+		ClientMod.tutManager.speedHintItemFrame = buttonFrame.BuyButton.Cover
+	end
 end
 
 function SpeedManager:updateAllSpeedMods(data)

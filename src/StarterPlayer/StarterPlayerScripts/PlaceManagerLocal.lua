@@ -9,7 +9,6 @@ local Common = require(game.ReplicatedStorage.Common)
 local len, routine, wait = Common.len, Common.routine, Common.wait
 
 local placeGUI = playerGui:WaitForChild("PlaceGUI")
-local hintFrame = placeGUI.HintFrame
 
 local camera = workspace.CurrentCamera
 
@@ -20,121 +19,11 @@ PlaceManager.__index = PlaceManager
 
 function PlaceManager:init()
 	self:addCons()
-
-	self:initPlaceModel()
-
-	self:toggleHintFrame(false)
 end
 
-function PlaceManager:initPlaceModel()
-	local placeCollideModel = game.ReplicatedStorage.Assets.PlaceCollideModel:Clone()
-	placeCollideModel.Parent = game.Workspace.HitBoxes
-
-	self.placeCollideModel = placeCollideModel
-
-	self.placeCollidePart = placeCollideModel.PrimaryPart
-	self.placeCollidePart.Transparency = 1
-
-	local prompt = ClientMod.uiManager:createPrompt({
-		actionText = "Place",
-		objectText = nil,
-		name = "PlaceTool",
-		holdDuration = 0.0001,
-		enabled = true,
-		maxActivationDistance = 20,
-		parent = self.placeCollidePart,
-	})
-
-	self.placePrompt = prompt
-
-	prompt.Triggered:Connect(function()
-		self:tryConfirmPlacement()
-	end)
-end
-
-function PlaceManager:addCons()
-	-- turn these off now because we have placePrompt
-	-- self:addPlacementCons()
-end
-
-function PlaceManager:addPlacementCons()
-	UserInputService.InputBegan:Connect(function(input, gameProcessed)
-		if gameProcessed then
-			return
-		end
-		if Common.listContains({ Enum.UserInputType.MouseButton1 }, input.UserInputType) then
-			self:tryConfirmPlacement()
-		end
-	end)
-
-	UserInputService.InputBegan:Connect(function(input, gameProcessed)
-		if input.UserInputType ~= Enum.UserInputType.Touch then
-			return
-		end
-
-		self.startTouchTime = os.clock()
-		self.startTouchPosition = input.Position
-	end)
-
-	UserInputService.InputEnded:Connect(function(input, gameProcessed)
-		if input.UserInputType ~= Enum.UserInputType.Touch then
-			return
-		end
-		if gameProcessed then
-			return
-		end
-
-		if not self.startTouchTime then
-			return
-		end
-
-		self.endTouchTime = os.clock()
-		self.endTouchPosition = input.Position
-
-		local distance = (self.startTouchPosition - self.endTouchPosition).Magnitude
-		if distance > 10 then
-			return
-		end
-
-		local timeDiff = self.endTouchTime - self.startTouchTime
-		if timeDiff > 0.1 then
-			return
-		end
-
-		local chosenToolMod = self:getEquippedToolMod()
-		if not chosenToolMod then
-			-- warn("NO CHOSEN TOOL MOD TO PLACE")
-			return
-		end
-		local race = chosenToolMod["race"]
-		if Common.listContains({ "pet" }, race) then
-			self:tryConfirmPlacement()
-			return
-		end
-	end)
-
-	hintFrame.BackgroundTransparency = 1
-end
-
-function PlaceManager:tryConfirmPlacement()
-	if not self.placeToggled then
-		return
-	end
-
-	local currPlaceFrame = self.currPlaceFrame
-
-	local equippedToolMod = self:getEquippedToolMod()
-	ClientMod:FireServer("tryPlaceStashTool", {
-		toolName = equippedToolMod.toolName,
-		placeFrame = currPlaceFrame,
-	})
-end
+function PlaceManager:addCons() end
 
 function PlaceManager:tickRender() end
-
-function PlaceManager:toggleHintFrame(newBool)
-	hintFrame.Visible = newBool
-end
 
 function PlaceManager:getEquippedToolMod()
 	if not ClientMod.toolManager then
@@ -179,42 +68,66 @@ function PlaceManager:refreshAllPrompts()
 end
 
 function PlaceManager:doFullPromptRefresh()
-	local deleteToggled = ClientMod.deleteManager.deleteToggled
-	local placeToggled = self.placeToggled
-
-	-- NOTE: have to re-set maxactivationdistance here
-	-- because stupid bug when prompt is disabled it resets the value
-
 	local petEquipped = false
+	local relicEquipped = false
+
 	local equippedToolMod = self:getEquippedToolMod()
-	if equippedToolMod and equippedToolMod["race"] == "pet" then
-		petEquipped = true
+
+	if equippedToolMod then
+		if equippedToolMod["race"] == "pet" then
+			petEquipped = true
+		elseif equippedToolMod["race"] == "relic" then
+			relicEquipped = true
+		end
 	end
 
-	-- print("PET EQUIPPED: ", petEquipped)
-
 	for _, petSpot in pairs(ClientMod.petSpots) do
-		local interactPrompt = petSpot.interactPrompt
-		if not interactPrompt then
-			continue
-		end
-
 		if not petSpot.unlocked then
-			interactPrompt.Enabled = false
+			petSpot:removePlacePrompt()
+			petSpot:removePickupPrompt()
+			petSpot:removeRelicPrompt()
+			petSpot:removePickupRelicPrompt()
 			continue
 		end
 
-		if petSpot.petData then
-			-- print("PET DATA: ", petSpot.petData)
-			interactPrompt.Enabled = true
-			interactPrompt.ActionText = "Pickup Brainrot"
+		if not petEquipped then
+			petSpot:removePlacePrompt()
+		end
+		if not relicEquipped then
+			petSpot:removeRelicPrompt()
+			if petSpot.petData and len(petSpot.petData["relicMods"]) > 0 then
+				petSpot:addPickupRelicPrompt()
+			end
+		end
+
+		if not petSpot.petData then
+			petSpot:removePickupPrompt()
+			petSpot:removeRelicPrompt()
+			petSpot:removePickupRelicPrompt()
 		else
-			-- print("NO PET DATA: ", petSpot.petSpotName)
-			interactPrompt.ActionText = "Place"
-			if petEquipped then
-				interactPrompt.Enabled = true
-			else
-				interactPrompt.Enabled = false
+			petSpot:addPickupPrompt()
+
+			if relicEquipped then
+				local relicMods = petSpot.petData["relicMods"]
+				print("RELIC MODS: ", relicMods)
+
+				if len(relicMods) > 0 then
+					petSpot:addPickupRelicPrompt()
+
+					-- remove
+					petSpot:removeRelicPrompt()
+				else
+					petSpot:addRelicPrompt()
+
+					-- remove
+					petSpot:removePickupRelicPrompt()
+				end
+			end
+		end
+
+		if petEquipped then
+			if not petSpot.petData then
+				petSpot:addPlacePrompt()
 			end
 		end
 	end

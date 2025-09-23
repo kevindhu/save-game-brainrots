@@ -208,8 +208,8 @@ function PlotManager:tryTeleportTo(teleportClass)
 	local user = ClientMod:getLocalUser()
 	if teleportClass == "MyPlot" then
 		local floorPart = self.floorPart
-		local xOffset = -100 -- 10
-		local spawnFrame = floorPart.CFrame * CFrame.new(xOffset, 10, 0) * CFrame.Angles(0, math.rad(-90), 0)
+		local xOffset = -20 -- 10
+		local spawnFrame = floorPart.CFrame * CFrame.new(xOffset, 10, 0) * CFrame.Angles(0, math.rad(90), 0)
 
 		user.rig:PivotTo(spawnFrame)
 	elseif teleportClass == "SellPets" then
