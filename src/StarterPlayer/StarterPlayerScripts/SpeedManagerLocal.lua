@@ -75,7 +75,7 @@ function SpeedManager:toggle(data)
 end
 
 function SpeedManager:initModel(model)
-	print("INIT MODEL: ", model)
+	-- print("INIT MODEL: ", model)
 
 	local wizardModel = model:WaitForChild("TimeWizardModel")
 

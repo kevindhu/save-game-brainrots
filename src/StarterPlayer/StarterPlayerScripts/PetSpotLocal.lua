@@ -379,8 +379,6 @@ function PetSpot:updateData(data)
 		end
 		self.petStats = PetInfo:getMeta(self.petClass)
 
-		print("STARTING REFRESH RIG FOR PET SPOT: ", self.petSpotName, self.rig)
-
 		if not oldPetName or oldPetName ~= self.petData["petName"] then
 			self:refreshRig()
 		end
@@ -575,7 +573,7 @@ function PetSpot:refreshRig()
 end
 
 function PetSpot:initRig()
-	print("INIT RIG FOR PET SPOT: ", self.petSpotName)
+	-- print("INIT RIG FOR PET SPOT: ", self.petSpotName)
 
 	local baseRig = game.ReplicatedStorage.Assets[self.petClass]
 	if not baseRig.PrimaryPart then
@@ -666,8 +664,7 @@ function PetSpot:initRig()
 	})
 
 	self:initPetBB()
-
-	print("DONE INIT RIG FOR PET SPOT: ", self.petSpotName, self.rig)
+	-- print("DONE INIT RIG FOR PET SPOT: ", self.petSpotName, self.rig)
 end
 
 function PetSpot:initPetBB()

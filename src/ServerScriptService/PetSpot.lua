@@ -43,6 +43,16 @@ function PetSpot:init()
 	routine(function()
 		wait(1)
 		self.initialized = true
+
+		-- print("PET SPOT INITIALIZED: ", self.petSpotName, self.unlocked)
+
+		if self.unlocked then
+			local petData = self.user.home.itemStash:generatePetData({
+				petClass = "CappuccinoAssassino",
+				mutationClass = "Bubblegum",
+			})
+			self:occupyWithPet(petData)
+		end
 	end)
 end
 
@@ -178,7 +188,7 @@ function PetSpot:storeRelic()
 	local relicMods = petData["relicMods"]
 
 	if len(relicMods) == 0 then
-		warn("NO RELIC MODS TO STORE: ", self.petSpotName)
+		-- warn("NO RELIC MODS TO STORE: ", self.petSpotName)
 		return
 	end
 
@@ -318,7 +328,7 @@ function PetSpot:tickAttack(timeRatio)
 	local relicMods = self.petData["relicMods"]
 	for _, relicData in pairs(relicMods) do
 		local damageMultiplier = relicData["damage"]
-		print("RELIC DAMAGE MULTIPLIER: ", damageMultiplier)
+		-- print("RELIC DAMAGE MULTIPLIER: ", damageMultiplier)
 		damage = damage * damageMultiplier
 	end
 
@@ -431,6 +441,8 @@ function PetSpot:sendData()
 end
 
 function PetSpot:clearPet()
+	print("CLEARING PET: ", self.petSpotName)
+
 	self.petData = nil
 
 	self:refreshAttackSpeedRatio()

@@ -35,10 +35,12 @@ function TutManager:init()
 		if self.isNew or not self.completedTutMods["CompleteSecondWave"] then
 			self:initFirstTutMods()
 
-			-- clear all petspots
-			local petManager = self.user.home.petManager
-			for _, petSpot in pairs(petManager.petSpots) do
-				petSpot:clearPet()
+			if not Common.isStudio then
+				-- clear all petspots
+				local petManager = self.user.home.petManager
+				for _, petSpot in pairs(petManager.petSpots) do
+					petSpot:clearPet()
+				end
 			end
 		end
 		if not self.completedTutMods["Choose2xSpeedCommon"] then

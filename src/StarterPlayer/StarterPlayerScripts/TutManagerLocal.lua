@@ -154,7 +154,7 @@ function TutManager:initPetHintIcon(petItemFrame)
 	self.petHintIcon = petHintIcon
 	self:toggleHintIcon(petHintIcon, false)
 
-	print("INIT PET HINT ICON: ", petHintIcon)
+	-- print("INIT PET HINT ICON: ", petHintIcon)
 
 	self:refreshHintIcons()
 end

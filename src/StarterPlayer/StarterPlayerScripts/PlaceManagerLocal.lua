@@ -109,7 +109,7 @@ function PlaceManager:doFullPromptRefresh()
 
 			if relicEquipped then
 				local relicMods = petSpot.petData["relicMods"]
-				print("RELIC MODS: ", relicMods)
+				-- print("RELIC MODS: ", relicMods)
 
 				if len(relicMods) > 0 then
 					petSpot:addPickupRelicPrompt()

@@ -36,7 +36,7 @@ function PetManager:init()
 	self:addAllPetSpots()
 
 	routine(function()
-		wait(1)
+		wait(0.5)
 		if self.isNew then
 			local plotName = self.user.home.plotManager.plotName
 			local firstIndex = 1
@@ -317,11 +317,6 @@ function PetManager:tryCollectCoins(data)
 end
 
 function PetManager:occupyPetSpot(petSpot, petData)
-	if not petSpot.initialized then
-		warn("PET SPOT NOT INITIALIZED TO OCCUPY: ", petSpot.petSpotName)
-		return
-	end
-
 	self.user.home.tutManager:updateTutMod({
 		targetClass = "PlaceFirstPet",
 		updateCount = 1,
