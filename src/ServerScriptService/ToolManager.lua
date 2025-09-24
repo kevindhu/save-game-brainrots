@@ -330,6 +330,18 @@ function ToolManager:tryPlaceRelicAtPetSpot(data)
 	toolMod:confirmPlacement(petSpot)
 end
 
+function ToolManager:tryPlaceCrate(data)
+	local toolName = data["toolName"]
+
+	local toolMod = self.stashToolMods[toolName]
+	if not toolMod then
+		warn("NO TOOL MOD TO PLACE: ", toolName)
+		return
+	end
+
+	toolMod:confirmCratePlacement()
+end
+
 function ToolManager:tryPlacePetAtPetSpot(data)
 	local toolName = data["toolName"]
 	local petSpotName = data["petSpotName"]

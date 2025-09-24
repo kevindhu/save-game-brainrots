@@ -7,6 +7,7 @@ local BaseTool = require(game.ServerScriptService.Tools.BaseTool)
 
 local PetInfo = require(game.ReplicatedStorage.PetInfo)
 local RelicInfo = require(game.ReplicatedStorage.RelicInfo)
+local CrateInfo = require(game.ReplicatedStorage.CrateInfo)
 
 local StashTool = {}
 StashTool.__index = StashTool
@@ -25,7 +26,9 @@ function StashTool:init()
 	self.tool:SetAttribute("race", self.race)
 
 	local itemClass = self.toolClass
-	local itemStats = PetInfo:getMeta(itemClass, true) or RelicInfo:getMeta(itemClass, true)
+	local itemStats = PetInfo:getMeta(itemClass, true)
+		or RelicInfo:getMeta(itemClass, true)
+		or CrateInfo:getMeta(itemClass, true)
 
 	if not itemStats then
 		warn("NO ITEM STATS FOR: ", itemClass)
@@ -48,7 +51,7 @@ function StashTool:addRelicModel()
 	end
 
 	local relicClass = self.toolClass
-	local relicModel = game.Workspace.BaseRelicModel:Clone()
+	local relicModel = game.ReplicatedStorage.Assets.BaseRelicModel:Clone()
 
 	local anchorPart = self.user.rig.Torso
 
@@ -81,6 +84,48 @@ function StashTool:addRelicModel()
 	relicModel.Parent = self.tool
 
 	self.relicModel = relicModel
+end
+
+function StashTool:addCrateModel()
+	local race = self.race
+	if race ~= "crate" then
+		return
+	end
+
+	local crateClass = self.toolClass
+	local crateModel = game.ReplicatedStorage.Assets.BaseCrateModel:Clone()
+
+	local anchorPart = self.user.rig.Torso
+
+	local anchorOffsetFrame = CFrame.new(0, 0, -3)
+
+	crateModel:SetPrimaryPartCFrame(
+		anchorPart.CFrame
+			* anchorOffsetFrame
+			* CFrame.new(0, -anchorPart.Size.Y / 2 + crateModel.PrimaryPart.Size.Y / 2, 0)
+	)
+
+	-- make all massless
+	for _, child in pairs(crateModel:GetDescendants()) do
+		if not child:IsA("BasePart") then
+			continue
+		end
+
+		child.CanCollide = false
+		child.Anchored = false
+		child.Massless = true
+
+		-- weld each part to the anchorPart
+		local weld = Instance.new("WeldConstraint")
+		weld.Part0 = child
+		weld.Part1 = anchorPart
+		weld.Parent = child
+	end
+
+	crateModel.Name = crateClass .. "_WELD_RIG"
+	crateModel.Parent = self.tool
+
+	self.crateModel = crateModel
 end
 
 function StashTool:addPetRig()
@@ -151,6 +196,10 @@ function StashTool:removeAllToolModels()
 		self.relicModel:Destroy()
 		self.relicModel = nil
 	end
+	if self.crateModel then
+		self.crateModel:Destroy()
+		self.crateModel = nil
+	end
 end
 
 function StashTool:onEquip()
@@ -158,6 +207,7 @@ function StashTool:onEquip()
 
 	self:addPetRig()
 	self:addRelicModel()
+	self:addCrateModel()
 
 	-- print("EQUIPPING STASH TOOL: ", self.toolName)
 end
@@ -222,6 +272,40 @@ function StashTool:confirmPlacement(petSpot)
 		})
 	else
 		warn("UNKNOWN RACE TO ACTIVATE: ", self.race)
+	end
+end
+
+function StashTool:confirmCratePlacement()
+	local itemName = self.toolName
+	local crateClass = self.toolClass
+
+	if self.race ~= "crate" then
+		warn("CANNOT ACTIVATE CRATE WITH RACE: ", self.race)
+		return
+	end
+
+	local itemMod = self.user.home.itemStash:getItemMod(itemName)
+
+	local crateData = {
+		crateClass = crateClass,
+	}
+	for k, v in pairs(itemMod) do
+		crateData[k] = v
+	end
+
+	self.user.home.crateManager:addCrate(crateData)
+
+	local count = itemMod["count"]
+	if count > 1 then
+		self.user.home.itemStash:updateItemCount({
+			itemName = itemName,
+			count = -1,
+		})
+	else
+		self.user.home.itemStash:removeItemMod({
+			itemName = itemName,
+		})
+		self:destroy()
 	end
 end
 

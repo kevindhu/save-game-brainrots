@@ -34,8 +34,8 @@ function RewardManager:addRewards(rewardData)
 	local setServerLuck = rewardData["setServerLuck"]
 	local permanentToolClass = rewardData["permanentToolClass"]
 	local potionClass = rewardData["potionClass"]
-	local zoneClass = rewardData["zoneClass"]
 	local offlineCoinsBoost = rewardData["offlineCoinsBoost"]
+	local premiumCrateClass = rewardData["premiumCrateClass"]
 
 	local home = self.user.home
 	local boostManager = home.boostManager
@@ -60,6 +60,19 @@ function RewardManager:addRewards(rewardData)
 		self.user.home.petManager:claimOfflineCoins({
 			boost = true,
 		})
+	end
+
+	if premiumCrateClass then
+		local lastPremiumCrateClass = self.user.home.crateManager.lastPremiumCrateClass
+
+		local count = rewardData["count"] or 1
+
+		for i = 1, count do
+			itemStash:addCrate({
+				crateClass = lastPremiumCrateClass,
+				mutationClass = nil,
+			})
+		end
 	end
 
 	if itemMod then

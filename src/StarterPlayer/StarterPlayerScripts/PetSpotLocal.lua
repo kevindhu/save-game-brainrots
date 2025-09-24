@@ -371,8 +371,6 @@ function PetSpot:updateData(data)
 	self.attackSpeedRatio = attackSpeedRatio
 	self.petData = petData
 
-	-- print("UPDATING PET SPOT DATA: ", self.petSpotName, petData)
-
 	if self.petData then
 		for k, v in pairs(self.petData) do
 			self[k] = v

@@ -71,6 +71,8 @@ function Home:initAllModules()
 		{ "SaveManager", "saveManager" },
 
 		{ "SpeedManager", "speedManager" },
+
+		{ "CrateManager", "crateManager" },
 	}
 	for _, moduleInfo in ipairs(moduleList) do
 		self:loadModule(moduleInfo[1], moduleInfo[2])
@@ -173,6 +175,8 @@ function Home:saveState()
 		"badgeManager",
 		"boostManager",
 		"favoriteManager",
+
+		"crateManager",
 
 		"tutManager",
 

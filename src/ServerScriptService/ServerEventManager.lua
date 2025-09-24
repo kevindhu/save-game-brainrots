@@ -57,12 +57,12 @@ function ServerEventManager:handleRequest(player, req, data)
 	local tradeManager = home.tradeManager
 	local rewardManager = home.rewardManager
 	local petManager = home.petManager
-	local unitManager = home.unitManager
 	local afkManager = home.afkManager
 	local favoriteManager = home.favoriteManager
 	local alertManager = home.alertManager
 	local speedManager = home.speedManager
 	local saveManager = home.saveManager
+	local crateManager = home.crateManager
 
 	-- USER
 	if req == "userDied" then
@@ -110,6 +110,10 @@ function ServerEventManager:handleRequest(player, req, data)
 	elseif req == "tryUnlockPetSpot" then
 		petManager:tryUnlockPetSpot(data)
 
+	-- BUYCRATEMANAGER
+	elseif req == "tryBuyCrate" then
+		crateManager:tryBuyCrate(data)
+
 	-- SAVEMANAGER
 	elseif req == "tryTogglePlay" then
 		saveManager:tryTogglePlay(data)
@@ -137,6 +141,8 @@ function ServerEventManager:handleRequest(player, req, data)
 		toolManager:tryPlacePetAtPetSpot(data)
 	elseif req == "tryPlaceRelicAtPetSpot" then
 		toolManager:tryPlaceRelicAtPetSpot(data)
+	elseif req == "tryPlaceCrate" then
+		toolManager:tryPlaceCrate(data)
 	elseif req == "tryEquipBottomMod" then
 		toolManager:tryEquipBottomMod(data)
 

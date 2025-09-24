@@ -6,6 +6,7 @@ local len, routine, wait = Common.len, Common.routine, Common.wait
 local ItemInfo = require(game.ReplicatedStorage.ItemInfo)
 local PetInfo = require(game.ReplicatedStorage.PetInfo)
 local RelicInfo = require(game.ReplicatedStorage.RelicInfo)
+local CrateInfo = require(game.ReplicatedStorage.CrateInfo)
 
 local ItemStash = {}
 ItemStash.__index = ItemStash
@@ -194,6 +195,38 @@ function ItemStash:addRelic(data)
 	self:addItemMod(itemData)
 end
 
+function ItemStash:addCrate(data)
+	local crateClass = data["crateClass"]
+
+	for _, currItemMod in pairs(self.itemMods) do
+		if not currItemMod["race"] == "egg" then
+			continue
+		end
+		if currItemMod["itemClass"] ~= crateClass then
+			continue
+		end
+
+		self:updateItemCount({
+			itemName = currItemMod["itemName"],
+			count = 1,
+		})
+
+		return
+	end
+
+	local itemName = "CRATETOOL_" .. Common.getGUID()
+	self:addItemMod({
+		itemName = itemName,
+		itemClass = crateClass,
+		race = "crate",
+	})
+
+	self:updateItemCount({
+		itemName = itemName,
+		count = 1,
+	})
+end
+
 function ItemStash:sanityCheckForSoftLock()
 	-- see if coins is less than 100
 	local coinsCount = self:getItemCount({
@@ -313,6 +346,7 @@ function ItemStash:getFullItemStats(itemClass)
 	local itemStats = ItemInfo:getMeta(itemClass, true)
 		or PetInfo:getMeta(itemClass, true)
 		or RelicInfo:getMeta(itemClass, true)
+		or CrateInfo:getMeta(itemClass, true)
 
 	if not itemStats then
 		warn("NO ITEM STATS FOUND FOR: ", itemClass)
@@ -339,7 +373,7 @@ function ItemStash:addItemMod(data)
 		data["itemName"] = itemName
 	end
 
-	if Common.listContains({ "pet", "relic" }, data["race"]) then
+	if Common.listContains({ "pet", "relic", "crate" }, data["race"]) then
 		self.user.home.alertManager:incrementAlertCount({
 			moduleName = "itemStash",
 			count = 1,

@@ -28,6 +28,7 @@ end
 function VendorManager:initModels()
 	local shopList = {
 		"SellPets",
+		"CrateShop",
 	}
 
 	for _, shopClass in pairs(shopList) do
@@ -78,6 +79,10 @@ function VendorManager:newVendorMod(shopClass)
 
 		if shopClass == "SellPets" then
 			ClientMod.sellManager:toggle({
+				newBool = true,
+			})
+		elseif shopClass == "CrateShop" then
+			ClientMod.buyCrateManager:toggle({
 				newBool = true,
 			})
 		end

@@ -11,6 +11,7 @@ local ItemInfo = require(game.ReplicatedStorage.ItemInfo)
 local ToolInfo = require(game.ReplicatedStorage.ToolInfo)
 local PetInfo = require(game.ReplicatedStorage.PetInfo)
 local RelicInfo = require(game.ReplicatedStorage.RelicInfo)
+local CrateInfo = require(game.ReplicatedStorage.CrateInfo)
 
 local PetBalanceInfo = require(game.ReplicatedStorage.PetBalanceInfo)
 
@@ -150,6 +151,7 @@ function ItemStash:addTabCons()
 		"All",
 		"Pets",
 		"Relics",
+		"Crates",
 	}
 
 	for _, tabClass in ipairs(tabList) do
@@ -371,9 +373,11 @@ function ItemStash:newBottomMod(itemData)
 	local innerFrame = frame.InnerFrame
 
 	local race = newBottomMod["race"]
-	if race ~= "pet" then
-		innerFrame.Icon.Image = itemStats["image"] or "rbxassetid://120444751052938"
-	else
+	if race == "relic" then
+		innerFrame.Icon.Image = RelicInfo:getMeta(itemClass)["image"]
+	elseif race == "crate" then
+		innerFrame.Icon.Image = CrateInfo:getMeta(itemClass)["image"]
+	elseif race == "pet" then
 		innerFrame.Icon.Image = PetInfo:getPetImage(itemClass, newBottomMod["mutationClass"])
 	end
 
@@ -718,6 +722,9 @@ function ItemStash:newItemMod(itemData)
 	elseif race == "relic" then
 		local relicStats = RelicInfo:getMeta(itemClass)
 		icon.Image = relicStats["image"]
+	elseif race == "crate" then
+		local crateStats = CrateInfo:getMeta(itemClass)
+		icon.Image = crateStats["image"]
 	end
 
 	-- add weight title
@@ -830,6 +837,7 @@ function ItemStash:getFullItemStats(itemClass)
 		or ToolInfo:getMeta(itemClass, true)
 		or PetInfo:getMeta(itemClass, true)
 		or RelicInfo:getMeta(itemClass, true)
+		or CrateInfo:getMeta(itemClass, true)
 
 	if not itemStats then
 		warn("NO ITEM STATS FOUND FOR: ", itemClass)
@@ -867,6 +875,7 @@ function ItemStash:refreshGUI()
 	local raceMap = {
 		pet = 1,
 		relic = 2,
+		crate = 3,
 	}
 
 	local mutationMap = {
@@ -938,6 +947,8 @@ function ItemStash:refreshGUI()
 			frame.Visible = (race == "pet")
 		elseif self.chosenTabClass == "Relics" then
 			frame.Visible = (race == "relic")
+		elseif self.chosenTabClass == "Crates" then
+			frame.Visible = (race == "crate")
 		end
 
 		if race == "pet" then

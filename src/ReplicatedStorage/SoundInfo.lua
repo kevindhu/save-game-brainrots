@@ -210,7 +210,7 @@ SoundInfo["sounds"] = {
 		id = 118801631044440,
 		volume = 0.05,
 	},
-	["EggFinish1"] = {
+	["CrateFinish1"] = {
 		id = 75986971248561,
 		volume = 0.2,
 	},
@@ -243,16 +243,16 @@ SoundInfo["sounds"] = {
 		volume = 0.8,
 	},
 
-	-- EGG SOUNDS
-	["EggBreak1"] = {
+	-- CRATE SOUNDS
+	["CrateBreak1"] = {
 		id = 9113959343,
 		volume = 0.5,
 	},
-	["EggBreak2"] = {
+	["CrateBreak2"] = {
 		id = 126409451844008,
 		volume = 0.5,
 	},
-	["EggHit1"] = {
+	["CrateHit1"] = {
 		id = 9113958649,
 		volume = 0.5,
 	},

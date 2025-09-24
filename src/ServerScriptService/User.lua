@@ -398,6 +398,7 @@ function User:syncAllGlobalMods()
 
 	ServerMod.weatherManager:sync(self)
 	ServerMod.luckManager:sync(self)
+	ServerMod.buyCrateManager:sync(self)
 
 	routine(function()
 		wait(3)

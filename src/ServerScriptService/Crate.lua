@@ -1,0 +1,110 @@
+local ServerMod = require(script.Parent.ServerMod)
+
+local Common = require(game.ReplicatedStorage.Common)
+local len, routine, wait = Common.len, Common.routine, Common.wait
+
+local CrateInfo = require(game.ReplicatedStorage.CrateInfo)
+local RatingInfo = require(game.ReplicatedStorage.RatingInfo)
+local PetInfo = require(game.ReplicatedStorage.PetInfo)
+
+local Crate = {}
+Crate.__index = Crate
+
+function Crate.new(data)
+	local u = {}
+	u.data = data
+
+	setmetatable(u, Crate)
+	return u
+end
+
+function Crate:init()
+	for k, v in pairs(self.data) do
+		self[k] = v
+	end
+	self.user = self.owner.user
+
+	-- self.baseModel = game.ReplicatedStorage.Assets[self.crateClass]
+
+	self.crateStats = CrateInfo:getMeta(self.crateClass)
+	self.currFrame = self.firstFrame
+
+	for _, otherUser in pairs(ServerMod.users) do
+		self:sync(otherUser)
+	end
+
+	routine(function()
+		self:hatch()
+	end)
+end
+
+function Crate:sync(otherUser)
+	ServerMod:FireClient(otherUser.player, "newCrate", {
+		crateName = self.crateName,
+		userName = self.user.name,
+
+		crateClass = self.crateClass,
+
+		currFrame = self.currFrame,
+	})
+end
+
+function Crate:addLuckWeights(petProbMap)
+	-- TODO: make this work with crates using rating!
+
+	local totalLuck = self.user.home.plotManager:getTotalLuck()
+
+	local luckDebuff = 0.05 -- 0.1
+
+	for petClass, weight in pairs(petProbMap) do
+		local petStats = PetInfo:getMeta(petClass)
+		local rating = petStats["rating"]
+		local luckMultiplier = totalLuck * RatingInfo.ratingLuckMultiplier[rating]
+
+		local luckWeightBuff = weight * luckMultiplier * luckDebuff
+		petProbMap[petClass] = weight + luckWeightBuff
+	end
+end
+
+function Crate:hatch()
+	local relicProbMap = Common.deepCopy(self.crateStats["relicProbMap"])
+	-- self:addWeatherWeight(petProbMap)
+	-- self:addLuckWeights(relicProbMap)
+
+	local relicClass = Common.rollFromProbMap(relicProbMap)
+
+	self.user.home.tutManager:updateTutMod({
+		targetClass = "HatchFirstCrate",
+		updateCount = 1,
+	})
+
+	-- ServerMod:FireAllClients("addHatchAnimation", {
+	-- 	crateName = self.crateName,
+	-- 	hatchExpiree = self.hatchExpiree,
+	-- 	itemData = itemData,
+	-- 	userName = self.user.name,
+	-- })
+
+	local itemData = {
+		relicClass = relicClass,
+	}
+	self.user.home.itemStash:addRelic(itemData)
+
+	self:destroy()
+end
+
+function Crate:destroy()
+	if self.destroyed then
+		warn("ALREADY DESTROYED USER HUH: ", self.name)
+		return
+	end
+	self.destroyed = true
+
+	self.owner.crates[self.crateName] = nil
+
+	ServerMod:FireAllClients("removeCrate", {
+		crateName = self.crateName,
+	})
+end
+
+return Crate

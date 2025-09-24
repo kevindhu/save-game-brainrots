@@ -21,6 +21,8 @@ local modulesToLoad = {
 	{ "WeatherManager", "weatherManager" },
 
 	{ "LuckManager", "luckManager" },
+
+	{ "BuyCrateManager", "buyCrateManager" },
 }
 for _, moduleData in pairs(modulesToLoad) do
 	local moduleClass, moduleAlias = moduleData[1], moduleData[2]
@@ -77,6 +79,8 @@ game:GetService("RunService").Heartbeat:Connect(function(deltaTime)
 	ServerMod.map:tick(timeRatio)
 	ServerMod.weatherManager:tick(timeRatio)
 	ServerMod.luckManager:tick(timeRatio)
+
+	ServerMod.buyCrateManager:tick(timeRatio)
 
 	-- ServerMod.likeManager:tick(timeRatio)
 

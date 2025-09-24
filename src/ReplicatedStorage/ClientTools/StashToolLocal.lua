@@ -38,6 +38,15 @@ function StashTool:onUnequip()
 	ClientMod.placeManager:refreshAllPrompts()
 end
 
+function StashTool:onActivate()
+	BaseTool.onActivate(self)
+	if self.race == "crate" then
+		ClientMod:FireServer("tryPlaceCrate", {
+			toolName = self.toolName,
+		})
+	end
+end
+
 function StashTool:destroy()
 	BaseTool.destroy(self)
 end

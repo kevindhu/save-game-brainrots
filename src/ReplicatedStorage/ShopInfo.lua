@@ -42,6 +42,25 @@ ShopInfo["products"] = {
 			offlineCoinsBoost = true,
 		},
 	},
+
+	["BuyCrate1"] = {
+		id = 3378332057,
+		rewards = {
+			premiumCrateClass = "Crate1",
+		},
+	},
+	["BuyCrate2"] = {
+		id = 3378332143,
+		rewards = {
+			premiumCrateClass = "Crate2",
+		},
+	},
+	["BuyCrate3"] = {
+		id = 3378332206,
+		rewards = {
+			premiumCrateClass = "Crate3",
+		},
+	},
 }
 
 ShopInfo["currencies"] = {

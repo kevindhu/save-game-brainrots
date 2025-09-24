@@ -98,6 +98,10 @@ function handleRequest(req, data)
 	elseif req == "unlockPetSpot" then
 		ClientMod.petManager:unlockPetSpot(data)
 
+	-- BUYCRATEMANAGER
+	elseif req == "updateCrateShopStock" then
+		ClientMod.buyCrateManager:updateCrateShopStock(data)
+
 	-- FIREWORKSMANAGER
 	elseif req == "shootFireworks" then
 		ClientMod.fireworksManager:shootFireworkSequence(data)
