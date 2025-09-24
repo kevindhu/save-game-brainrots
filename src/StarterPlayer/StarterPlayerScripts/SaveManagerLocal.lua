@@ -39,6 +39,11 @@ function SaveManager:addCons()
 	end)
 	ClientMod.buttonManager:addBasicButtonCons(speedButton)
 
+	ClientMod.hintManager:addHintFrameCons({
+		frame = speedButton,
+		alias = "Speed",
+	})
+
 	local playButton = playFrame.PlayButton
 	ClientMod.buttonManager:addActivateCons(playButton, function()
 		ClientMod:FireServer("tryTogglePlay", {
@@ -46,6 +51,11 @@ function SaveManager:addCons()
 		})
 	end)
 	ClientMod.buttonManager:addBasicButtonCons(playButton)
+
+	ClientMod.hintManager:addHintFrameCons({
+		frame = playButton,
+		alias = "Play",
+	})
 end
 
 function SaveManager:updatePlaying(data)

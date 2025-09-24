@@ -61,6 +61,8 @@ end
 function PetManager:loadState()
 	local fullPetSpotData = self.fullPetSpotData
 
+	print("LOAD STATE: ", fullPetSpotData)
+
 	for _, petSpotData in pairs(fullPetSpotData) do
 		local petData = petSpotData.petData
 		local chosenPetSpot = nil
@@ -400,6 +402,8 @@ function PetManager:saveState()
 		local petSpotData = petSpot:getSaveData()
 		fullPetSpotData[petSpot.petSpotName] = petSpotData
 	end
+
+	print("SAVE STATE: ", fullPetSpotData)
 
 	local managerData = {
 		fullPetSpotData = fullPetSpotData,

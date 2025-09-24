@@ -122,7 +122,7 @@ function DamageManager:updateDPS(data)
 	self.dpsExpiree = ClientMod.step + 60 * 3
 	self:toggleDPSFrame(true)
 
-	dpsFrame.DpsTitle.Text = "DPS: " .. Common.abbreviateNumber(dps)
+	dpsFrame.DpsTitle.Text = "DPS: " .. Common.abbreviateNumber(dps, 1)
 	-- dpsFrame.TotalDamageTitle.Text = "Total: " .. Common.abbreviateNumber(totalDamage)
 end
 

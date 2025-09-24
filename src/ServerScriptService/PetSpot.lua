@@ -16,6 +16,8 @@ function PetSpot.new(owner, data)
 
 	u.eventsList = {}
 
+	u.leaveTimestamp = os.time()
+
 	setmetatable(u, PetSpot)
 	return u
 end
@@ -46,12 +48,14 @@ function PetSpot:init()
 
 		-- print("PET SPOT INITIALIZED: ", self.petSpotName, self.unlocked)
 
-		if self.unlocked then
-			local petData = self.user.home.itemStash:generatePetData({
-				petClass = "CappuccinoAssassino",
-				mutationClass = "Bubblegum",
-			})
-			self:occupyWithPet(petData)
+		if self.user.store.noSave then
+			if self.unlocked then
+				local petData = self.user.home.itemStash:generatePetData({
+					petClass = "CappuccinoAssassino",
+					mutationClass = "Bubblegum",
+				})
+				self:occupyWithPet(petData)
+			end
 		end
 	end)
 end
@@ -303,7 +307,6 @@ function PetSpot:tickAttack(timeRatio)
 	end
 
 	local attackSpeedRatio = self.attackSpeedRatio * self.user.home.speedManager:getSpeed()
-
 	if self.attackExpiree and self.attackExpiree > ServerMod.step then
 		return
 	end
@@ -335,9 +338,7 @@ function PetSpot:tickAttack(timeRatio)
 	local totalDelay = 0.3 + (self.petStats["attackDelay"] or 0)
 	totalDelay = totalDelay / attackSpeedRatio
 
-	routine(function()
-		targetUnit:updateHealth(-damage, self, totalDelay)
-	end)
+	targetUnit:updateHealth(-damage, self, totalDelay)
 
 	self.user.home.damageManager:addDamage(damage)
 

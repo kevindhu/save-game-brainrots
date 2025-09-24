@@ -374,11 +374,13 @@ function ItemStash:newBottomMod(itemData)
 
 	local race = newBottomMod["race"]
 	if race == "relic" then
-		innerFrame.Icon.Image = RelicInfo:getMeta(itemClass)["image"]
+		innerFrame.Icon.Image = itemStats["image"]
 	elseif race == "crate" then
-		innerFrame.Icon.Image = CrateInfo:getMeta(itemClass)["image"]
+		innerFrame.Icon.Image = itemStats["image"]
 	elseif race == "pet" then
 		innerFrame.Icon.Image = PetInfo:getPetImage(itemClass, newBottomMod["mutationClass"])
+	else
+		innerFrame.Icon.Image = itemStats["image"]
 	end
 
 	local mutationTitle = innerFrame.Tags.MutationTitle
@@ -870,8 +872,6 @@ function ItemStash:removeItemMod(itemData, noRefreshGUI)
 end
 
 function ItemStash:refreshGUI()
-	local totalPetCount = 0
-
 	local raceMap = {
 		pet = 1,
 		relic = 2,
@@ -936,6 +936,9 @@ function ItemStash:refreshGUI()
 		return a["itemName"] < b["itemName"]
 	end)
 
+	local totalPetCount = 0
+	local totalRelicCount = 0
+
 	for i, itemMod in ipairs(self.itemModsList) do
 		local frame = itemMod["frame"]
 		frame.LayoutOrder = i
@@ -953,6 +956,8 @@ function ItemStash:refreshGUI()
 
 		if race == "pet" then
 			totalPetCount += 1
+		elseif race == "relic" then
+			totalRelicCount += 1
 		end
 
 		local itemName = itemMod["itemName"]
@@ -984,6 +989,9 @@ function ItemStash:refreshGUI()
 
 	local petTabMod = self.tabMods["Pets"]
 	petTabMod["frame"].Title.BagSize.Text = string.format("%d/1000", totalPetCount)
+
+	local relicTabMod = self.tabMods["Relics"]
+	relicTabMod["frame"].Title.BagSize.Text = string.format("%d/1000", totalRelicCount)
 
 	if ClientMod.sellManager then
 		ClientMod.sellManager:refreshSellAllFrame()

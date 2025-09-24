@@ -339,6 +339,12 @@ function ToolManager:tryPlaceCrate(data)
 		return
 	end
 
+	local relicItemCount = self.user.home.itemStash:getRelicItemCount()
+	if relicItemCount >= 1000 then
+		self.user:notifyError("Sell relics to open this")
+		return
+	end
+
 	toolMod:confirmCratePlacement()
 end
 

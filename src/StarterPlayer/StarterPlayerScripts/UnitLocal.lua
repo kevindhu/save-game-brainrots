@@ -97,8 +97,8 @@ function Unit:initRig()
 
 	self.humanoid = rig:WaitForChild("Humanoid", 2)
 
-	self.humanoid.MaxHealth = self.unitStats["health"]
-	self.humanoid.Health = self.unitStats["health"]
+	self.humanoid.MaxHealth = self.maxHealth
+	self.humanoid.Health = self.health
 
 	self.humanoid.HealthDisplayType = Enum.HumanoidHealthDisplayType.AlwaysOn
 	self.humanoid.DisplayDistanceType = Enum.HumanoidDisplayDistanceType.Viewer
@@ -361,6 +361,13 @@ function Unit:addDamageFromServer(data)
 	local damage = data["damage"]
 	local newHealth = data["newHealth"]
 
+	local damagePos = self.currFrame.Position
+	ClientMod.soundManager:newSoundMod({
+		soundClass = "PetHit" .. math.random(1, 5),
+		pos = damagePos,
+		volume = 0.1, -- 0.025
+	})
+
 	self:animateHit({
 		damage = damage,
 		damagePos = self.currFrame.Position,
@@ -382,12 +389,6 @@ function Unit:animateHit(data)
 		})
 	end
 
-	ClientMod.soundManager:newSoundMod({
-		soundClass = "PetHit" .. math.random(1, 5),
-		pos = damagePos,
-		volume = 0.1, -- 0.025
-	})
-
 	ClientMod.spellManager:addExplosion({
 		spellClass = "RockHit",
 		pos = hitPos,
@@ -395,6 +396,11 @@ function Unit:animateHit(data)
 	})
 
 	local humanoid = self.humanoid
+
+	if humanoid.Health < newHealth then
+		return
+	end
+
 	humanoid.Health = newHealth
 
 	-- print("ANIMATE HIT: ", newHealth, humanoid.MaxHealth)

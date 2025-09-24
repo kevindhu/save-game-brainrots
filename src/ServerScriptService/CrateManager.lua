@@ -34,7 +34,7 @@ function CrateManager:init()
 end
 
 function CrateManager:updateStock(scheduleMod)
-	print("UPDATE CRATE STOCK: ", scheduleMod)
+	-- print("UPDATE CRATE STOCK: ", scheduleMod)
 
 	local stock = scheduleMod.stock
 	local restockTime = scheduleMod.restockTime
@@ -81,12 +81,12 @@ function CrateManager:tryBuyCrate(data)
 		stashCrateCount += 1
 	end
 
-	if not Common.checkDeveloper(self.user.userId) then
-		if not self.user.home.tutManager.completedTutMods["PlaceFirstCrate"] and stashCrateCount >= 1 then
-			self.user:notifyError("Cannot buy more crates yet")
-			return
-		end
-	end
+	-- if not Common.checkDeveloper(self.user.userId) then
+	-- 	if not self.user.home.tutManager.completedTutMods["PlaceFirstCrate"] and stashCrateCount >= 1 then
+	-- 		self.user:notifyError("Cannot buy more crates yet")
+	-- 		return
+	-- 	end
+	-- end
 
 	-- SUCCESS, REWARD THE CRATE AND REMOVE CURRENCY
 

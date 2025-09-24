@@ -114,6 +114,14 @@ function SaveManager:initWaveMod(petData)
 
 	local totalWaveData = WaveInfo["ratingWaveMap"][rating]
 
+	-- local totalWaveData = {
+	-- 	{
+	-- 		unitClass = "Unit1",
+	-- 		count = 20,
+	-- 		spawnTimer = 2, -- 0.5
+	-- 	},
+	-- }
+
 	-- print("!! TOTAL WAVE DATA: ", rating, totalWaveData)
 
 	local totalUnitCount = 0

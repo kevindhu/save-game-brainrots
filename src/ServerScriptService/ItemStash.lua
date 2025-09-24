@@ -241,6 +241,17 @@ function ItemStash:sanityCheckForSoftLock()
 	end
 end
 
+function ItemStash:getRelicItemCount()
+	local totalCount = 0
+	for _, itemMod in pairs(self.itemMods) do
+		local race = itemMod["race"]
+		if race == "relic" then
+			totalCount += 1
+		end
+	end
+	return totalCount
+end
+
 function ItemStash:getPetItemCount()
 	local totalCount = 0
 	for _, itemMod in pairs(self.itemMods) do

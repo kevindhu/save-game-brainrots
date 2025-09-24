@@ -496,6 +496,7 @@ function PetSpot:addAttack(data)
 		totalDelay = totalDelay / attackSpeedRatio
 
 		wait(totalDelay)
+
 		local unit = ClientMod.units[unitName]
 		if not unit or not unit.rig or not unit.rig.Parent then
 			-- warn("NO UNIT FOUND TO ATTACK: ", unitName)
@@ -509,10 +510,21 @@ function PetSpot:addAttack(data)
 
 		-- in the middle
 		local attackDir = (unitPos - petPos).Unit
-		local attackDist = (unitPos - petPos).Magnitude
 		local damagePos = unitPos - attackDir * Common.randomBetween(0.7, 1.15)
 
 		local hitPos = unitPos - attackDir
+
+		ClientMod.soundManager:newSoundMod({
+			soundClass = "Bullet1",
+			pos = damagePos,
+			volume = 0.1, -- 0.025
+		})
+
+		-- ClientMod.soundManager:newSoundMod({
+		-- 	soundClass = "PetHit" .. math.random(1, 5),
+		-- 	pos = damagePos,
+		-- 	volume = 0.1, -- 0.025
+		-- })
 
 		unit:animateHit({
 			newHealth = newUnitHealth,

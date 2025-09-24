@@ -43,6 +43,7 @@ function Unit:init()
 
 	local petData = self.user.home.saveManager.currWaveMod["petData"]
 	local petClass = petData["petClass"]
+
 	local unitHealthMultiplier = PetBalanceInfo["unitHealthMultiplierMap"][petClass]
 
 	local finalHealth = baseHealth * unitHealthMultiplier
@@ -75,8 +76,10 @@ function Unit:init()
 	end)
 end
 
-function Unit:updateHealth(delta, attacker, totalDelay)
-	self.health += delta
+function Unit:updateHealth(count, attacker, totalDelay)
+	-- print("UPDATING HEALTH: ", count, self.health, self.health + count)
+
+	self.health += count
 
 	if self.capturedSavedPet then
 		return
@@ -85,6 +88,7 @@ function Unit:updateHealth(delta, attacker, totalDelay)
 	-- print("!! UNIT HEALTH: ", self.unitName, self.health)
 
 	if self.health <= 0 then
+		self.health = 0
 		self:die(totalDelay)
 	end
 end
@@ -118,6 +122,9 @@ function Unit:sync(otherUser)
 
 		userName = self.user.name,
 		plotName = self.user.home.plotManager.plotName,
+
+		health = self.health,
+		maxHealth = self.maxHealth,
 	})
 end
 

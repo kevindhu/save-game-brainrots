@@ -45,7 +45,7 @@ function BuyCrateManager:updateCrateShopStock(data)
 	local restockTime = data["restockTime"]
 	local stock = data["stock"]
 
-	print("UPDATE CRATE SHOP STOCK: ", restockTime, stock)
+	-- print("UPDATE CRATE SHOP STOCK: ", restockTime, stock)
 
 	self.restockTime = restockTime
 

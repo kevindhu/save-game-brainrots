@@ -17,7 +17,9 @@ function VendorManager:init()
 		local chooseHighlight = Instance.new("Highlight")
 		self.chooseHighlight = chooseHighlight
 		chooseHighlight.Name = "ChooseHighlight"
-		chooseHighlight.FillTransparency = 1 -- 0.5
+		chooseHighlight.FillTransparency = 0.8 -- 0.5
+		chooseHighlight.FillColor = Color3.fromRGB(65, 203, 79)
+		chooseHighlight.OutlineColor = Color3.fromRGB(139, 255, 151)
 		self.chooseHighlight.Parent = game.Workspace.VendorHighlightModels
 		self.chooseHighlight.Adornee = nil
 
