@@ -1,12 +1,12 @@
 local SaveInfo = {
-	VERSION = "ve.3.005",
+	VERSION = "ve.3.006",
 	ODS_VERSION = "2.0.2",
 
 	STUDIO_VERSION = "std.ve.0.0.0003",
 	STUDIO_ODS_VERSION = "10.0.1",
 
 	-- only enabled in studio!
-	NO_SAVE = true,
+	NO_SAVE = false,
 
 	-- update this with every update
 	GAME_VERSION = "0.0.5",

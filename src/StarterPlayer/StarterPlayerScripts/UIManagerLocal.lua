@@ -119,7 +119,7 @@ function UIManager:createPrompt(data)
 	prompt.ActionText = actionText
 	prompt.ObjectText = objectText
 
-	prompt.Style = Enum.ProximityPromptStyle.Custom
+	-- prompt.Style = Enum.ProximityPromptStyle.Custom
 
 	prompt.MaxActivationDistance = maxActivationDistance
 

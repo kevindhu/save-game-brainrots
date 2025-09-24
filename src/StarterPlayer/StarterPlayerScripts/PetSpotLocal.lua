@@ -671,6 +671,8 @@ function PetSpot:initPetBB()
 	local fakeRootPart = self.rig:FindFirstChild("RootPart")
 	petBB.Adornee = fakeRootPart:FindFirstChild("BBAttachment")
 
+	petBB.StudsOffset = Vector3.new(0, 3, 0)
+
 	petBB.Parent = playerGui
 
 	petBB.Name = "PetBB" .. self.petSpotName

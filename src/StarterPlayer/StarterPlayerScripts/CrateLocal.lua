@@ -31,22 +31,6 @@ function Crate:init()
 
 	self:initModel()
 	self:initPrompt()
-	self:initBB()
-end
-
-function Crate:initBB()
-	local bb = game.ReplicatedStorage.Assets.CrateBBPart.BB:Clone()
-	bb.Parent = playerGui
-	bb.Adornee = self.model.PrimaryPart.BBAttachment
-	bb.MaxDistance = 100
-
-	self.bb = bb
-
-	ClientMod.uiScaleManager:addDistStrokeModsFromBB({
-		bb = bb,
-		adornee = self.model.PrimaryPart,
-		baseDistance = 30,
-	})
 end
 
 function Crate:initPrompt()
