@@ -39,6 +39,13 @@ UnitInfo["units"] = {
 
 		attackRange = 2,
 	},
+	["Unit5"] = {
+		alias = "Dominus King",
+		health = 1,
+		moveSpeed = 0.4,
+
+		attackRange = 2,
+	},
 }
 
 function UnitInfo:init()

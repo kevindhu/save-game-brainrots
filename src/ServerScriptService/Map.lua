@@ -25,9 +25,11 @@ end
 -- when you want to clone changes from the first plot to all other plots
 -- NOTE: turn off "makeUser" in ServerEventManager
 function Map:testClonePlots()
-	local basePlotModel = game.Workspace.Plot5
+	local cloneIndex = 1
+
+	local basePlotModel = game.Workspace["Plot" .. cloneIndex]
 	for i = 1, MapInfo.PLOT_COUNT do
-		if i == 5 then
+		if i == cloneIndex then
 			continue
 		end
 

@@ -497,7 +497,13 @@ function Unit:destroy(data)
 			self:destroyRig()
 		else
 			wait(1.5)
+
 			for _, child in pairs(rig:GetDescendants()) do
+				if child:IsA("ParticleEmitter") then
+					child.Enabled = false
+					continue
+				end
+
 				if child:IsA("BasePart") then
 					ClientMod.tweenManager:createTween({
 						target = child,
@@ -623,13 +629,11 @@ function Unit:captureSavePet(data)
 
 	local laughClass = Common.rollFromProbMap(laughProbMap)
 
-	if not Common.isStudio then
-		ClientMod.soundManager:newSoundMod({
-			soundClass = laughClass,
-			pos = self.currFrame.Position,
-			playbackSpeed = Common.randomBetween(0.8, 1),
-		})
-	end
+	ClientMod.soundManager:newSoundMod({
+		soundClass = laughClass,
+		pos = self.currFrame.Position,
+		playbackSpeed = Common.randomBetween(0.8, 1),
+	})
 
 	self.baseMoveSpeed = 0.2
 
