@@ -10,7 +10,7 @@ local len, routine, wait = Common.len, Common.routine, Common.wait
 local MapInfo = require(game.ReplicatedStorage.MapInfo)
 
 function Map:init()
-	-- self:testClonePlots()
+	self:testClonePlots()
 
 	self:initSpawns()
 	self:initFolders()
@@ -25,9 +25,9 @@ end
 -- when you want to clone changes from the first plot to all other plots
 -- NOTE: turn off "makeUser" in ServerEventManager
 function Map:testClonePlots()
-	local basePlotModel = game.Workspace.Plot1
+	local basePlotModel = game.Workspace.Plot5
 	for i = 1, MapInfo.PLOT_COUNT do
-		if i == 1 then
+		if i == 5 then
 			continue
 		end
 

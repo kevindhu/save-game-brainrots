@@ -448,11 +448,17 @@ function ItemStash:toggleItemFavorite(data)
 	})
 end
 
-function ItemStash:trySellAllToolItems()
+function ItemStash:trySellAllToolItems(data)
+	local chosenRace = data["race"]
+
+	if not Common.listContains({ "pet", "relic" }, chosenRace) then
+		return
+	end
+
 	local sellTotalPrice = 0
 	for itemName, itemMod in pairs(self.itemMods) do
 		local race = itemMod["race"]
-		if not Common.listContains({ "pet" }, race) then
+		if race ~= chosenRace then
 			continue
 		end
 		if itemMod["deleted"] then
@@ -462,10 +468,17 @@ function ItemStash:trySellAllToolItems()
 			continue
 		end
 
-		local sellPrice = PetInfo:calculateSellPrice({
-			petClass = itemMod["itemClass"],
-			mutationClass = itemMod["mutationClass"],
-		})
+		local sellPrice = 0
+		if chosenRace == "pet" then
+			sellPrice = PetInfo:calculateSellPrice({
+				petClass = itemMod["itemClass"],
+				mutationClass = itemMod["mutationClass"],
+			})
+		elseif chosenRace == "relic" then
+			sellPrice = RelicInfo:calculateSellPrice({
+				relicClass = itemMod["itemClass"],
+			})
+		end
 		sellTotalPrice += sellPrice
 
 		self:removeItemMod({
@@ -500,7 +513,7 @@ function ItemStash:trySellItem(data)
 		return
 	end
 	local race = itemMod["race"]
-	if race ~= "pet" then
+	if not Common.listContains({ "pet", "relic" }, race) then
 		warn("CANNOT SELL NON-PET ITEM: ", itemName)
 		return
 	end
@@ -510,19 +523,26 @@ function ItemStash:trySellItem(data)
 	end
 
 	-- local itemStats = self:getFullItemStats(itemMod["itemClass"])
-	local sellPrice = PetInfo:calculateSellPrice({
-		petClass = itemMod["itemClass"],
-		mutationClass = itemMod["mutationClass"],
+	local sellPrice = 0
+	if race == "pet" then
+		sellPrice = PetInfo:calculateSellPrice({
+			petClass = itemMod["itemClass"],
+			mutationClass = itemMod["mutationClass"],
+		})
+	elseif race == "relic" then
+		sellPrice = RelicInfo:calculateSellPrice({
+			relicClass = itemMod["itemClass"],
+		})
+	end
+
+	self:updateItemCount({
+		itemName = "Coins",
+		count = sellPrice,
 	})
 
 	ServerMod:FireClient(self.user.player, "newSoundMod", {
 		soundClass = "CashRegister",
 		volume = 0.5,
-	})
-
-	self:updateItemCount({
-		itemName = "Coins",
-		count = sellPrice,
 	})
 
 	self.user.home.toolManager:removeStashTool({

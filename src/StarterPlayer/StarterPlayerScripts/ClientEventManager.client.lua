@@ -43,10 +43,6 @@ function handleRequest(req, data)
 		ClientMod.userManager:toggleRagdoll(data)
 	elseif req == "toggleControls" then
 		ClientMod.userManager:toggleControls(data)
-	elseif req == "toggleUserStone" then
-		ClientMod.userManager:toggleUserStone(data)
-	elseif req == "toggleUserIce" then
-		ClientMod.userManager:toggleUserIce(data)
 	elseif req == "toggleInvertedControls" then
 		ClientMod.userManager:toggleInvertedControls(data)
 	elseif req == "updateWalkspeed" then

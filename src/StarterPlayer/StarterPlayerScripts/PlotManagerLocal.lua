@@ -197,10 +197,10 @@ function PlotManager:addCons()
 		self:tryTeleportTo("MyPlot")
 	end)
 
-	local sellButton = topFrame.Sell
-	ClientMod.buttonManager:addBasicButtonCons(sellButton)
-	ClientMod.buttonManager:addActivateCons(sellButton, function()
-		self:tryTeleportTo("SellPets")
+	local cratesButton = topFrame.Crates
+	ClientMod.buttonManager:addBasicButtonCons(cratesButton)
+	ClientMod.buttonManager:addActivateCons(cratesButton, function()
+		self:tryTeleportTo("Crates")
 	end)
 end
 
@@ -212,8 +212,8 @@ function PlotManager:tryTeleportTo(teleportClass)
 		local spawnFrame = floorPart.CFrame * CFrame.new(xOffset, 10, 0) * CFrame.Angles(0, math.rad(90), 0)
 
 		user.rig:PivotTo(spawnFrame)
-	elseif teleportClass == "SellPets" then
-		local spawnFrame = game.Workspace.SellPetsModel.TeleportPart.CFrame
+	elseif teleportClass == "Crates" then
+		local spawnFrame = game.Workspace.CrateShopModel.TeleportPart.CFrame
 		user.rig:PivotTo(spawnFrame)
 	end
 end

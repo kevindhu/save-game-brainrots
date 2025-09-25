@@ -30,6 +30,7 @@ end
 function VendorManager:initModels()
 	local shopList = {
 		"SellPets",
+		"SellRelics",
 		"CrateShop",
 	}
 
@@ -80,7 +81,11 @@ function VendorManager:newVendorMod(shopClass)
 		ClientMod.soundManager:addBasicSound("Pop1")
 
 		if shopClass == "SellPets" then
-			ClientMod.sellManager:toggle({
+			ClientMod.sellPetManager:toggle({
+				newBool = true,
+			})
+		elseif shopClass == "SellRelics" then
+			ClientMod.sellRelicManager:toggle({
 				newBool = true,
 			})
 		elseif shopClass == "CrateShop" then

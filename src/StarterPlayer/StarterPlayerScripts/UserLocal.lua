@@ -304,7 +304,7 @@ end
 
 function User:refreshWalkspeed()
 	if not self:isPlayerUser() then
-		warn("NOT PLAYER USER CANNOT REFRESH WALKSPEED: ", self.name)
+		-- warn("NOT PLAYER USER CANNOT REFRESH WALKSPEED: ", self.name)
 		return
 	end
 

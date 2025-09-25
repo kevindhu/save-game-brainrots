@@ -63,6 +63,20 @@ function StashTool:addRelicModel()
 			* CFrame.new(0, -anchorPart.Size.Y / 2 + relicModel.PrimaryPart.Size.Y / 2, 0)
 	)
 
+	-- put a decal on every face
+	local relicStats = RelicInfo:getMeta(relicClass)
+	local basePart = relicModel.PrimaryPart
+	self:addDecalToFace(basePart, relicStats["image"], Enum.NormalId.Front)
+	self:addDecalToFace(basePart, relicStats["image"], Enum.NormalId.Back)
+	self:addDecalToFace(basePart, relicStats["image"], Enum.NormalId.Left)
+	self:addDecalToFace(basePart, relicStats["image"], Enum.NormalId.Right)
+	self:addDecalToFace(basePart, relicStats["image"], Enum.NormalId.Top)
+	self:addDecalToFace(basePart, relicStats["image"], Enum.NormalId.Bottom)
+
+	basePart.Color = relicStats["color"]
+
+	basePart.Transparency = 0.5
+
 	-- make all massless
 	for _, child in pairs(relicModel:GetDescendants()) do
 		if not child:IsA("BasePart") then
@@ -84,6 +98,13 @@ function StashTool:addRelicModel()
 	relicModel.Parent = self.tool
 
 	self.relicModel = relicModel
+end
+
+function StashTool:addDecalToFace(basePart, image, face)
+	local decal = Instance.new("Decal")
+	decal.Texture = image
+	decal.Face = face
+	decal.Parent = basePart
 end
 
 function StashTool:addCrateModel()

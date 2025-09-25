@@ -84,7 +84,7 @@ function ServerEventManager:handleRequest(player, req, data)
 	elseif req == "trySellItem" then
 		itemStash:trySellItem(data)
 	elseif req == "trySellAllToolItems" then
-		itemStash:trySellAllToolItems()
+		itemStash:trySellAllToolItems(data)
 	elseif req == "toggleItemFavorite" then
 		itemStash:toggleItemFavorite(data)
 

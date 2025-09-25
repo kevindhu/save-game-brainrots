@@ -35,7 +35,8 @@ end
 function PlaceManager:refreshStashTool()
 	local chosenToolMod = self:getEquippedToolMod()
 
-	ClientMod.sellManager:refreshEquippedItem()
+	ClientMod.sellPetManager:refreshEquippedItem()
+	ClientMod.sellRelicManager:refreshEquippedItem()
 
 	local user = ClientMod:getLocalUser()
 

@@ -23,9 +23,19 @@ RelicInfo["aliasMap"] = {
 	["Relic2"] = "Relic 2",
 }
 
+RelicInfo["colorMap"] = {
+	["Relic1"] = Color3.fromRGB(232, 90, 90),
+	["Relic2"] = Color3.fromRGB(86, 143, 250),
+}
+
 RelicInfo["imageMap"] = {
 	["Relic1"] = "rbxassetid://60422237", -- fist
-	["Relic2"] = "rbxassetid://60422237", -- fist
+	["Relic2"] = "rbxassetid://1178571805", -- fist
+}
+
+RelicInfo["sellPriceMap"] = {
+	["Relic1"] = 100,
+	["Relic2"] = 200,
 }
 
 function RelicInfo:init()
@@ -38,9 +48,16 @@ function RelicInfo:init()
 			coinsRange = self.coinsMap[relicClass],
 			attackSpeedRange = self.attackSpeedMap[relicClass],
 			image = self.imageMap[relicClass],
+			color = self.colorMap[relicClass],
 		}
 		self.relics[relicClass] = relicData
 	end
+end
+
+function RelicInfo:calculateSellPrice(data)
+	local relicClass = data["relicClass"]
+	local sellPrice = self.sellPriceMap[relicClass]
+	return sellPrice
 end
 
 function RelicInfo:getMeta(itemClass, noWarn)

@@ -30,7 +30,7 @@ function TutManager:init()
 	self:sendTutMods()
 
 	routine(function()
-		wait(2)
+		wait(1)
 
 		if self.isNew or not self.completedTutMods["CompleteSecondWave"] then
 			self:initFirstTutMods()

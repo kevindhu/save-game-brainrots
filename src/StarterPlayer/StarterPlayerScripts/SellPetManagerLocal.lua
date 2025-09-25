@@ -12,13 +12,13 @@ local len, routine, wait = Common.len, Common.routine, Common.wait
 
 local PetInfo = require(game.ReplicatedStorage.PetInfo)
 
-local confirmSellAllModal = shopGUI.ConfirmSellAllModal
+local confirmSellAllModal = shopGUI.ConfirmSellAllPetsModal
 
-local SellManager = {
+local SellPetManager = {
 	itemMods = {},
 }
 
-function SellManager:init()
+function SellPetManager:init()
 	self:addCons()
 	self:addConfirmSellAllCons()
 
@@ -28,26 +28,7 @@ function SellManager:init()
 	self:toggleConfirmSellAllModal(false)
 end
 
-function SellManager:addConfirmSellAllCons()
-	local confirmButton = confirmSellAllModal.Confirm
-	ClientMod.buttonManager:addActivateCons(confirmButton, function()
-		ClientMod:FireServer("trySellAllToolItems", {})
-		self:toggleConfirmSellAllModal(false)
-		self:toggle({
-			newBool = true,
-		})
-	end)
-
-	local cancelButton = confirmSellAllModal.Cancel
-	ClientMod.buttonManager:addActivateCons(cancelButton, function()
-		self:toggleConfirmSellAllModal(false)
-		self:toggle({
-			newBool = true,
-		})
-	end)
-end
-
-function SellManager:addCons()
+function SellPetManager:addCons()
 	local closeButton = sellPetFrame.CloseButton
 	ClientMod.buttonManager:addActivateCons(closeButton, function()
 		self:toggle({
@@ -62,7 +43,6 @@ function SellManager:addCons()
 
 	local sellAllButton = sellAllFrame.InnerFrame.SellButton
 	ClientMod.buttonManager:addActivateCons(sellAllButton, function()
-		-- ClientMod:FireServer("trySellAllToolItems", {})
 		confirmSellAllModal.DescriptionTitle.Text = string.format(
 			"Would you like to sell %s for %s?",
 			Common.addRichTextColor(
@@ -96,13 +76,32 @@ function SellManager:addCons()
 	ClientMod.buttonManager:addBasicButtonCons(sellEquippedButton)
 end
 
-function SellManager:tick() end
+function SellPetManager:addConfirmSellAllCons()
+	local confirmButton = confirmSellAllModal.Confirm
+	ClientMod.buttonManager:addActivateCons(confirmButton, function()
+		ClientMod:FireServer("trySellAllToolItems", {
+			race = "pet",
+		})
+		self:toggleConfirmSellAllModal(false)
+		self:toggle({
+			newBool = true,
+		})
+	end)
 
-function SellManager:toggleConfirmSellAllModal(newBool)
+	local cancelButton = confirmSellAllModal.Cancel
+	ClientMod.buttonManager:addActivateCons(cancelButton, function()
+		self:toggleConfirmSellAllModal(false)
+		self:toggle({
+			newBool = true,
+		})
+	end)
+end
+
+function SellPetManager:toggleConfirmSellAllModal(newBool)
 	confirmSellAllModal.Visible = newBool
 end
 
-function SellManager:refreshEquippedItem()
+function SellPetManager:refreshEquippedItem()
 	local sellEquippedFrame = sellPetFrame.InnerFrame.SellEquippedFrame
 	local innerFrame = sellEquippedFrame.InnerFrame
 	local cannotSellFrame = sellEquippedFrame.CannotSellFrame
@@ -138,28 +137,15 @@ function SellManager:refreshEquippedItem()
 
 	innerFrame.CoinsTitle.Text = "$" .. Common.abbreviateNumber(sellPrice, 1)
 
+	local currWeight = PetInfo:getRealWeight(itemClass, equippedToolMod["baseWeight"], equippedToolMod["level"])
+
+	innerFrame.WeightTitle.Text = Common.abbreviateNumber(currWeight, 2) .. "kg"
+
 	local mutationTitle = innerFrame.MutationTitle
 	ClientMod.mutationManager:applyMutationColor(mutationTitle, mutationClass)
 end
 
-function SellManager:toggle(data)
-	local newBool = data["newBool"]
-
-	if newBool == self.toggled then
-		return
-	end
-
-	if newBool then
-		ClientMod.uiManager:animateOpen(sellPetFrame)
-		ClientMod.uiManager:toggleOffAllGUI()
-	end
-
-	ClientMod.uiManager:interactMainFrame(sellPetFrame, data)
-
-	self.toggled = newBool
-end
-
-function SellManager:refreshSellAllFrame()
+function SellPetManager:refreshSellAllFrame()
 	local totalSellPrice = 0
 	local sellAllCount = 0
 	for _, itemMod in pairs(ClientMod.itemStash.itemMods) do
@@ -189,6 +175,23 @@ function SellManager:refreshSellAllFrame()
 	self.sellAllCount = sellAllCount
 end
 
-SellManager:init()
+function SellPetManager:toggle(data)
+	local newBool = data["newBool"]
 
-return SellManager
+	if newBool == self.toggled then
+		return
+	end
+
+	if newBool then
+		ClientMod.uiManager:animateOpen(sellPetFrame)
+		ClientMod.uiManager:toggleOffAllGUI()
+	end
+
+	ClientMod.uiManager:interactMainFrame(sellPetFrame, data)
+
+	self.toggled = newBool
+end
+
+SellPetManager:init()
+
+return SellPetManager

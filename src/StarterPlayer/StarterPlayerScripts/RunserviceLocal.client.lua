@@ -75,7 +75,9 @@ function LoadAllModules()
 		{ "WeatherManager", "weatherManager" },
 
 		{ "BasicManager", "basicManager" },
-		{ "SellManager", "sellManager" },
+
+		{ "SellPetManager", "sellPetManager" },
+		{ "SellRelicManager", "sellRelicManager" },
 
 		{ "IndexManager", "indexManager" },
 
@@ -153,7 +155,7 @@ RunService.Heartbeat:Connect(function(deltaTime)
 		"luckManager",
 		"tutManager",
 		"plotManager",
-		"sellManager",
+
 		"uiScaleManager",
 		"musicManager",
 		"vendorManager",

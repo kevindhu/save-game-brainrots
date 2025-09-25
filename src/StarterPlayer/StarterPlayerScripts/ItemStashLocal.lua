@@ -552,7 +552,9 @@ end
 function ItemStash:refreshBottomMod(bottomMod)
 	local index = bottomMod["index"]
 	local frame = bottomMod["frame"]
-	local countTitle = frame.InnerFrame.CountTitle
+
+	local innerFrame = frame.InnerFrame
+	local countTitle = innerFrame.CountTitle
 
 	frame.InputVisual.Title.Text = index
 
@@ -569,6 +571,27 @@ function ItemStash:refreshBottomMod(bottomMod)
 
 	local favoriteIcon = frame.FavoriteIcon
 	favoriteIcon.Visible = bottomMod["favorited"]
+
+	local relicIcon = innerFrame.RelicIcon
+
+	local race = bottomMod["race"]
+	if race == "pet" then
+		local relicMods = bottomMod["relicMods"]
+
+		if len(relicMods) > 0 then
+			relicIcon.Visible = true
+			for _, relicMod in pairs(relicMods) do
+				local relicClass = relicMod["relicClass"]
+				local relicStats = RelicInfo:getMeta(relicClass)
+				relicIcon.Image = relicStats["image"]
+				break
+			end
+		else
+			relicIcon.Visible = false
+		end
+	else
+		relicIcon.Visible = false
+	end
 end
 
 function ItemStash:refreshDisplay()
@@ -970,6 +993,25 @@ function ItemStash:refreshGUI()
 			buttonFrame.Equipped.Visible = false
 		end
 
+		local relicIcon = buttonFrame.RelicIcon
+
+		if race == "pet" then
+			local relicMods = itemMod["relicMods"]
+			if len(relicMods) > 0 then
+				relicIcon.Visible = true
+				for _, relicMod in pairs(relicMods) do
+					local relicClass = relicMod["relicClass"]
+					local relicStats = RelicInfo:getMeta(relicClass)
+					relicIcon.Image = relicStats["image"]
+					break
+				end
+			else
+				relicIcon.Visible = false
+			end
+		else
+			relicIcon.Visible = false
+		end
+
 		local favorited = itemMod["favorited"]
 		if favorited then
 			buttonFrame.FavoriteFrame.Visible = true
@@ -993,8 +1035,11 @@ function ItemStash:refreshGUI()
 	local relicTabMod = self.tabMods["Relics"]
 	relicTabMod["frame"].Title.BagSize.Text = string.format("%d/1000", totalRelicCount)
 
-	if ClientMod.sellManager then
-		ClientMod.sellManager:refreshSellAllFrame()
+	if ClientMod.sellPetManager then
+		ClientMod.sellPetManager:refreshSellAllFrame()
+	end
+	if ClientMod.sellRelicManager then
+		ClientMod.sellRelicManager:refreshSellAllFrame()
 	end
 end
 
