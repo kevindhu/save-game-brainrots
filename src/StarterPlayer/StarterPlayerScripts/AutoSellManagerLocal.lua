@@ -88,6 +88,8 @@ function SellPetManager:updateRatingMods(data)
 	end
 
 	self:refreshAllRatingMods()
+
+	ClientMod.saveManager:refreshCurrWaveModFrame()
 end
 
 function SellPetManager:refreshAllRatingMods()

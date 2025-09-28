@@ -15,6 +15,8 @@ local RelicInfo = require(game.ReplicatedStorage.RelicInfo)
 local RatingInfo = require(game.ReplicatedStorage.RatingInfo)
 local PetBalanceInfo = require(game.ReplicatedStorage.PetBalanceInfo)
 
+local MutationInfo = require(game.ReplicatedStorage.MutationInfo)
+
 local PetSpot = {}
 PetSpot.__index = PetSpot
 
@@ -717,8 +719,15 @@ function PetSpot:initPetBB()
 
 	local mutationPrefix = ""
 	if self.mutationClass and self.mutationClass ~= "None" then
-		mutationPrefix = self.mutationClass .. " "
+		mutationPrefix = "[" .. self.mutationClass .. "] "
 	end
+
+	local mutationColor = Color3.fromRGB(255, 255, 255)
+	if self.mutationClass and self.mutationClass ~= "None" then
+		mutationColor = MutationInfo.mutations[self.mutationClass].color
+	end
+	mutationPrefix = Common.addRichTextColor(mutationPrefix, mutationColor)
+	nameTitle.RichText = true
 
 	nameTitle.Text = mutationPrefix .. self.petStats["alias"]
 

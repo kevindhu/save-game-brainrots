@@ -33,7 +33,8 @@ function RatingManager:applyRatingColor(frame, rating)
 			frame.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
 		end
 
-		local visualMod = EasyVisuals.new(frame, easyVisualPresetMap[rating], 0.5)
+		local speed = 0.5
+		local visualMod = EasyVisuals.new(frame, easyVisualPresetMap[rating], speed)
 		self.visualMods[frame] = visualMod
 	end
 

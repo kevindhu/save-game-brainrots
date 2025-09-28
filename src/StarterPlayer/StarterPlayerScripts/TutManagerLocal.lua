@@ -133,32 +133,6 @@ function TutManager:toggleLocationBeam(newBool)
 	self.locationBeamModel.Beam.Enabled = newBool
 end
 
-function TutManager:initBatHintIcon(batItemFrame)
-	local batHintIcon = batItemFrame.HintIcon
-	self.batHintIcon = batHintIcon
-	self:toggleHintIcon(batHintIcon, false)
-
-	self.batHintItemFrame = batItemFrame.Cover
-
-	self:refreshHintIcons()
-end
-
-function TutManager:initPetHintIcon(petItemFrame)
-	if self.petHintIcon then
-		return
-	end
-
-	self.petHintItemFrame = petItemFrame.Cover
-
-	local petHintIcon = petItemFrame.HintIcon
-	self.petHintIcon = petHintIcon
-	self:toggleHintIcon(petHintIcon, false)
-
-	-- print("INIT PET HINT ICON: ", petHintIcon)
-
-	self:refreshHintIcons()
-end
-
 local WAVE_ANIMATION_ID = 108989129166651
 
 function TutManager:addCons()
@@ -196,13 +170,6 @@ function TutManager:addCons()
 			wait(7)
 		end
 	end)
-end
-
-function TutManager:toggleHintIcon(hintIcon, newBool)
-	if not hintIcon then
-		return
-	end
-	hintIcon.Visible = false -- newBool
 end
 
 function TutManager:toggle(data)
@@ -261,28 +228,16 @@ function TutManager:refreshHintIcons()
 
 	local targetClass = tutMod["targetClass"]
 
-	-- clear all existing animations
-	self:toggleHintIcon(self.myPlotHintIcon, false)
-	self:toggleHintIcon(self.batHintIcon, false)
-	self:toggleHintIcon(self.petHintIcon, false)
-	self:toggleHintIcon(self.playButtonHintIcon, false)
-
 	self.flippedHintIcon = false
 
-	if targetClass == "TeleportToEggShop" then
-		self:toggleHintIcon(self.eggHintIcon, true)
-	elseif targetClass == "EquipBat1" then
-		self:toggleHintIcon(self.batHintIcon, true)
+	if targetClass == "EquipBat1" then
 		self.chosenFrame = self.batHintItemFrame
 	elseif targetClass == "EquipBat2" then
-		self:toggleHintIcon(self.batHintIcon, true)
 		self.chosenFrame = self.batHintItemFrame
 	elseif targetClass == "PressPlay" then
-		self:toggleHintIcon(self.playButtonHintIcon, true)
 		self.flippedHintIcon = true
 		self.chosenFrame = playerGui:WaitForChild("SaveGUI").PlayFrame.PlayButton.Cover
 	elseif targetClass == "EquipFirstPet" then
-		self:toggleHintIcon(self.petHintIcon, true)
 		self.chosenFrame = self.petHintItemFrame
 	elseif targetClass == "Buy2xSpeedCommon" then
 		self.chosenFrame = self.speedHintItemFrame

@@ -56,10 +56,10 @@ MutationInfo["mutationProbMap"] = {
 	None = 5000, -- 1000,
 
 	Gold = 400, -- 1000
-	Giant = 100, -- 100
+	Diamond = 100, -- 100
 
 	-- rarest cause best
-	Rainbow = 50,
+	Bubblegum = 50,
 }
 
 MutationInfo["mutationProbMap_TEST"] = {

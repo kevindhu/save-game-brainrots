@@ -66,7 +66,7 @@ function SaveManager:startNewWaveMod()
 		petClass = probManager:generatePetClass("Mythic")
 	elseif pityManager.legendaryUnlocked then
 		pityManager.legendaryUnlocked = false
-		print("GENERATING LEGENDARY PET CLASS")
+		-- print("GENERATING LEGENDARY PET CLASS")
 		petClass = probManager:generatePetClass("Legendary")
 	end
 
@@ -276,20 +276,6 @@ function SaveManager:completeWaveMod(waveMod)
 	local petData = waveMod["petData"]
 	self.user.home.indexManager:unlockPet(petData["petClass"], petData["mutationClass"])
 
-	-- ServerMod:FireClient(self.user.player, "shootFireworks", {
-	-- 	launchCFrame = self.user.currFrame,
-	-- })
-
-	ServerMod:FireAllClients("completeWaveMod", {
-		waveName = waveMod["waveName"],
-		userName = self.user.name,
-
-		petClass = petData["petClass"],
-		mutationClass = petData["mutationClass"],
-
-		pos = self.saveBaseFrame.Position,
-	})
-
 	petData["forceBottom"] = false
 	petData["noClick"] = true
 
@@ -307,7 +293,7 @@ function SaveManager:completeWaveMod(waveMod)
 			itemName = "Coins",
 			count = sellPrice,
 		})
-		print("SOLD PET IMMEDIATELY FOR: ", sellPrice)
+		-- print("SOLD PET IMMEDIATELY FOR: ", sellPrice)
 	else
 		self.user.home.itemStash:addItemMod(petData)
 	end
@@ -329,6 +315,20 @@ function SaveManager:completeWaveMod(waveMod)
 	})
 
 	self.waveMods[waveMod["waveName"]] = nil
+
+	-- ServerMod:FireClient(self.user.player, "shootFireworks", {
+	-- 	launchCFrame = self.user.currFrame,
+	-- })
+
+	ServerMod:FireAllClients("completeWaveMod", {
+		waveName = waveMod["waveName"],
+		userName = self.user.name,
+
+		petClass = petData["petClass"],
+		mutationClass = petData["mutationClass"],
+
+		pos = self.saveBaseFrame.Position,
+	})
 end
 
 function SaveManager:failWaveMod(waveMod, unit)

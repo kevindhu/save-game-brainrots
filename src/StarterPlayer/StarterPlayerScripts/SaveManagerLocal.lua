@@ -93,6 +93,11 @@ function SaveManager:updateWaveModData(data)
 	chosenWaveMod["killedUnitCount"] = data["killedUnitCount"]
 	chosenWaveMod["totalUnitCount"] = data["totalUnitCount"]
 
+	if userName == player.Name then
+		self.currWaveMod = chosenWaveMod
+		self:refreshCurrWaveModFrame()
+	end
+
 	self:refreshBB(chosenWaveMod)
 
 	-- print("UPDATED WAVE MOD DATA: ", waveName, chosenWaveMod["killedUnitCount"], chosenWaveMod["totalUnitCount"])
@@ -111,11 +116,27 @@ function SaveManager:refreshBB(waveMod)
 
 	unitBar.CurrProgress.Size = UDim2.fromScale(progressRatio, 1)
 	unitBar.Title.Text = string.format("%s/%s", waveMod["killedUnitCount"], waveMod["totalUnitCount"])
+end
 
-	if waveMod["userName"] == player.Name then
-		local mainUnitBar = saveFrame.UnitBar
-		mainUnitBar.CurrProgress.Size = UDim2.fromScale(progressRatio, 1)
-		mainUnitBar.Title.Text = string.format("%s/%s", waveMod["killedUnitCount"], waveMod["totalUnitCount"])
+function SaveManager:refreshCurrWaveModFrame()
+	local waveMod = self.currWaveMod
+	if not waveMod then
+		return
+	end
+
+	local progressRatio = waveMod["killedUnitCount"] / waveMod["totalUnitCount"]
+
+	local mainUnitBar = saveFrame.UnitBar
+	mainUnitBar.CurrProgress.Size = UDim2.fromScale(progressRatio, 1)
+	mainUnitBar.Title.Text = string.format("%s/%s", waveMod["killedUnitCount"], waveMod["totalUnitCount"])
+
+	local petClass = waveMod["petData"]["petClass"]
+	local rating = PetInfo:getMeta(petClass)["rating"]
+	local ratingMod = ClientMod.autoSellManager.ratingMods[rating]
+	if ratingMod["toggled"] then
+		saveFrame.AutoSellTitle.Visible = false
+	else
+		saveFrame.AutoSellTitle.Visible = true
 	end
 end
 
@@ -162,6 +183,9 @@ function SaveManager:addWaveMod(data)
 		ClientMod.ratingManager:applyRatingColor(ratingTitle, petStats["rating"])
 
 		waveMod["ratingTitle"] = ratingTitle
+
+		self.currWaveMod = waveMod
+		self:refreshCurrWaveModFrame()
 
 		self:toggleSaveFrame(true)
 	end

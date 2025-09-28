@@ -44,9 +44,11 @@ function PetManager:init()
 				petSpotName = plotName .. "_PetSpot" .. 1,
 			})
 
-			self:tryUnlockPetSpot({
-				petSpotName = plotName .. "_PetSpot" .. 2,
-			})
+			if Common.isStudio then
+				self:tryUnlockPetSpot({
+					petSpotName = plotName .. "_PetSpot" .. 2,
+				})
+			end
 		else
 			self:loadState()
 		end

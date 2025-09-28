@@ -417,10 +417,6 @@ function ItemStash:newBottomMod(itemData)
 
 	self:refreshAllBottomMods()
 
-	if itemName == "Bat1" then
-		ClientMod.tutManager:initBatHintIcon(frame)
-	end
-
 	-- print("NEW BOTTOM MOD: ", itemName, newBottomMod)
 
 	if newBottomMod["petClass"] == "CappuccinoAssassino" then
@@ -950,6 +946,9 @@ function ItemStash:refreshGUI()
 
 		local mutationAIndex = mutationMap[a["mutationClass"] or "None"]
 		local mutationBIndex = mutationMap[b["mutationClass"] or "None"]
+		if not mutationAIndex or not mutationBIndex then
+			warn("NO MUTATION INDEX FOUND FOR: ", a["mutationClass"], b["mutationClass"], a, b)
+		end
 		if mutationAIndex ~= mutationBIndex then
 			return mutationAIndex > mutationBIndex
 		end

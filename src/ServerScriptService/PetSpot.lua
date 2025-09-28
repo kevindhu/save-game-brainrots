@@ -48,63 +48,66 @@ function PetSpot:init()
 
 		-- print("PET SPOT INITIALIZED: ", self.petSpotName, self.unlocked)
 
-		if self.user.store.noSave then
-			if self.unlocked then
-				local petClassList = {
-					"CappuccinoAssassino",
-					"TungTungSahur",
-					"TrippiTroppi",
-
-					"Boneca",
-					"LiriLira",
-					"Ballerina",
-					"FrigoCamelo",
-					"ChimpBanana",
-					"TaTaTaSahur",
-					"CapybaraCoconut",
-					"DolphinBanana",
-					"FishCatLegs",
-					"GooseBomber",
-					"TralaleloTralala",
-					"GlorboFruttoDrillo",
-					"RhinoToast",
-					"BrrBrrPatapim",
-					"ElephantCoconut",
-					"TimCheese",
-
-					"Bombardino",
-
-					"GiraffeWatermelon",
-					"MonkeyPineapple",
-					"OwlAvocado",
-					"OrangeDunDun",
-					"CowPlanet",
-
-					"OctopusBlueberry",
-					"SaltCombined",
-					"GorillaWatermelon",
-
-					"MilkShake",
-					"GrapeSquid",
-				}
-				local randomPetClass = petClassList[math.random(1, #petClassList)]
-
-				local mutationClassList = {
-					"None",
-					"Gold",
-					"Diamond",
-					"Bubblegum",
-				}
-				local randomMutationClass = mutationClassList[math.random(1, #mutationClassList)]
-
-				local petData = self.user.home.itemStash:generatePetData({
-					petClass = randomPetClass,
-					mutationClass = randomMutationClass,
-				})
-				self:occupyWithPet(petData)
-			end
-		end
+		self:occupyWithDevPet()
 	end)
+end
+
+-- only for testing
+function PetSpot:occupyWithDevPet()
+	if not self.user.store.noSave then
+		return
+	end
+	if not self.unlocked then
+		return
+	end
+
+	local petClassList = {
+		"CappuccinoAssassino",
+		"TungTungSahur",
+		"TrippiTroppi",
+
+		"Boneca",
+		"LiriLira",
+		"Ballerina",
+		"FrigoCamelo",
+		"ChimpBanana",
+		"TaTaTaSahur",
+		"CapybaraCoconut",
+		"DolphinBanana",
+		"FishCatLegs",
+		"GooseBomber",
+		"TralaleloTralala",
+		"GlorboFruttoDrillo",
+		"RhinoToast",
+		"BrrBrrPatapim",
+		"ElephantCoconut",
+		"TimCheese",
+
+		"Bombardino",
+
+		"GiraffeWatermelon",
+		"MonkeyPineapple",
+		"OwlAvocado",
+		"OrangeDunDun",
+		"CowPlanet",
+
+		"OctopusBlueberry",
+		"SaltCombined",
+		"GorillaWatermelon",
+
+		"MilkShake",
+		"GrapeSquid",
+	}
+	local randomPetClass = petClassList[math.random(1, #petClassList)]
+
+	local probManager = self.user.home.probManager
+	local randomMutationClass = probManager:generateMutationClass()
+
+	local petData = self.user.home.itemStash:generatePetData({
+		petClass = randomPetClass,
+		mutationClass = randomMutationClass,
+	})
+	self:occupyWithPet(petData)
 end
 
 function PetSpot:initRealModel()
@@ -489,7 +492,7 @@ function PetSpot:sendData()
 end
 
 function PetSpot:clearPet()
-	print("CLEARING PET: ", self.petSpotName)
+	-- print("CLEARING PET: ", self.petSpotName)
 
 	self.petData = nil
 
