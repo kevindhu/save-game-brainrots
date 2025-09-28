@@ -35,7 +35,7 @@ function ShopManager:init()
 	self:initGamepassMods()
 	-- self:initProductMods()
 
-	-- self:addServerLuckCons()
+	self:addServerLuckCons()
 
 	self:initCurrencyMods()
 
@@ -51,6 +51,8 @@ function ShopManager:addServerLuckCons()
 	ClientMod.buttonManager:addActivateCons(buyButton, function()
 		ClientMod:FireServer("tryBuyNextServerLuck", {})
 	end)
+
+	ClientMod.buttonManager:addBasicButtonCons(buyButton)
 end
 
 local TOP_PADDING_RATIO = 0.09
@@ -234,7 +236,7 @@ function ShopManager:newGamepassMod(data)
 
 	ClientMod.buttonManager:addActivateCons(buyButton, function()
 		if self.ownedGamepassMods[gamepassClass] then
-			ClientMod.notifyManager:notifyError("You already own this gamepass!")
+			-- ClientMod.notifyManager:notifyError("You already own this gamepass!")
 			return
 		end
 
@@ -283,7 +285,7 @@ function ShopManager:retryProductPrice(title, productId, productType)
 		end
 
 		local robuxPrice = productInfo["PriceInRobux"]
-		title.Text = Common.robuxSymbol .. " " .. Common.abbreviateNumber(robuxPrice)
+		title.Text = Common.robuxSymbol .. " " .. robuxPrice
 	end)
 end
 
@@ -361,11 +363,10 @@ function ShopManager:addCons()
 	end)
 	ClientMod.buttonManager:addBasicButtonCons(closeButton)
 
-	local mainItemList = shopFrame.MainItemList
-
-	local templateProductItem = mainItemList.Products.ItemList.TemplateItem
-	templateProductItem.Visible = false
-	self.templateProductItem = templateProductItem
+	-- local mainItemList = shopFrame.MainItemList
+	-- local templateProductItem = mainItemList.Products.ItemList.TemplateItem
+	-- templateProductItem.Visible = false
+	-- self.templateProductItem = templateProductItem
 
 	shopFrame.TabListFrame.BackgroundTransparency = 1
 end

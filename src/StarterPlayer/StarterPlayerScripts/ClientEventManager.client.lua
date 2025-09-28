@@ -50,6 +50,10 @@ function handleRequest(req, data)
 	elseif req == "updateUserStrength" then
 		ClientMod.userManager:updateUserStrength(data)
 
+	-- AUTOSELLMANAGER
+	elseif req == "updateAutoSellRatingMods" then
+		ClientMod.autoSellManager:updateRatingMods(data)
+
 	-- TRADEMANAGER
 	elseif req == "updateGiftMod" then
 		ClientMod.tradeManager:updateGiftMod(data)

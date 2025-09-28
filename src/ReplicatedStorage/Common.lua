@@ -5,9 +5,13 @@ local players = game:GetService("Players")
 local RunService = game:GetService("RunService")
 local UserInputService = game:GetService("UserInputService")
 
+local TEST_CLONE_PLOTS = false
+
 local Common = {
 	isStudio = RunService:IsStudio(),
 	isServer = RunService:IsServer(),
+
+	testClonePlots = TEST_CLONE_PLOTS,
 
 	robuxSymbol = "",
 

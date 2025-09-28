@@ -142,6 +142,17 @@ function ItemStash:addCons()
 		})
 	end)
 	ClientMod.buttonManager:addBasicButtonCons(closeButton)
+
+	local autoSellButton = stashFrame.InnerFrame.AutoSellButton
+	ClientMod.buttonManager:addActivateCons(autoSellButton, function()
+		self:toggle({
+			newBool = false,
+		})
+		ClientMod.autoSellManager:toggle({
+			newBool = true,
+		})
+	end)
+	ClientMod.buttonManager:addBasicButtonCons(autoSellButton)
 end
 
 function ItemStash:addTabCons()
@@ -625,7 +636,9 @@ function ItemStash:toggle(data)
 		ClientMod.uiManager:animateOpen(stashFrame)
 		ClientMod.uiManager:toggleOffAllGUI()
 
-		ClientMod.alertManager:tryClearAlert("itemStash")
+		if ClientMod.alertManager then
+			ClientMod.alertManager:tryClearAlert("itemStash")
+		end
 	else
 		self:chooseInfoItemMod(nil)
 

@@ -66,7 +66,7 @@ end
 
 function ItemStash:addTestPets()
 	local petList = {
-		"CappuccinoAssassino",
+		-- "CappuccinoAssassino",
 		-- "TungTungSahur",
 		-- "TrippiTroppi",
 
@@ -75,32 +75,32 @@ function ItemStash:addTestPets()
 		-- "Ballerina",
 		-- "FrigoCamelo",
 		-- "ChimpBanana",
-		-- "TaTaTaSahur",
-		-- "CapybaraCoconut",
-		-- "DolphinBanana",
-		-- "FishCatLegs",
-		-- "GooseBomber",
-		-- "TralaleloTralala",
-		-- "GlorboFruttoDrillo",
+		"TaTaTaSahur",
+		"CapybaraCoconut",
+		"DolphinBanana",
+		"FishCatLegs",
+		"GooseBomber",
+		"TralaleloTralala",
+		"GlorboFruttoDrillo",
 		-- "RhinoToast",
 		-- "BrrBrrPatapim",
 		-- "ElephantCoconut",
 		-- "TimCheese",
 
-		-- "Bombardino",
+		"Bombardino",
 
-		-- "GiraffeWatermelon",
-		-- "MonkeyPineapple",
-		-- "OwlAvocado",
-		-- "OrangeDunDun",
-		-- "CowPlanet",
+		"GiraffeWatermelon",
+		"MonkeyPineapple",
+		"OwlAvocado",
+		"OrangeDunDun",
+		"CowPlanet",
 
-		-- "OctopusBlueberry",
-		-- "SaltCombined",
-		-- "GorillaWatermelon",
+		"OctopusBlueberry",
+		"SaltCombined",
+		"GorillaWatermelon",
 
-		-- "MilkShake",
-		-- "GrapeSquid",
+		"MilkShake",
+		"GrapeSquid",
 	}
 
 	local mutationList = {

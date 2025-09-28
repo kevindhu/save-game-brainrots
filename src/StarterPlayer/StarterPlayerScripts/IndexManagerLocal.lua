@@ -200,6 +200,19 @@ function IndexManager:newPetMod(petClass, index, mutationClass)
 
 	frame.LayoutOrder = index
 
+	ClientMod.buttonManager:addButtonHoverCons({
+		button = innerFrame,
+		easingStyle = "Quad",
+		expandRatio = 1.05, -- 1.08
+		noIconRotate = true,
+		timer = 0.15, -- 0.15
+
+		-- icon
+		expandIcon = false,
+
+		-- noDisableHover = true,
+	})
+
 	local newPetMod = {
 		frame = frame,
 		petClass = petClass,

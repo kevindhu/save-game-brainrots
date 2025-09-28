@@ -39,9 +39,13 @@ function PetManager:init()
 		wait(0.5)
 		if self.isNew then
 			local plotName = self.user.home.plotManager.plotName
-			local firstIndex = 1
+
 			self:tryUnlockPetSpot({
-				petSpotName = plotName .. "_PetSpot" .. firstIndex,
+				petSpotName = plotName .. "_PetSpot" .. 1,
+			})
+
+			self:tryUnlockPetSpot({
+				petSpotName = plotName .. "_PetSpot" .. 2,
 			})
 		else
 			self:loadState()
@@ -376,7 +380,7 @@ function PetManager:storePet(petSpot)
 	self.user.home.itemStash:addItemMod(itemData)
 
 	ServerMod:FireClient(self.user.player, "newSoundMod", {
-		soundClass = "HammerHit",
+		soundClass = "SproutPop1",
 	})
 
 	petSpot:clearPet()
@@ -403,7 +407,7 @@ function PetManager:saveState()
 		fullPetSpotData[petSpot.petSpotName] = petSpotData
 	end
 
-	print("SAVE STATE: ", fullPetSpotData)
+	-- print("SAVE STATE: ", fullPetSpotData)
 
 	local managerData = {
 		fullPetSpotData = fullPetSpotData,

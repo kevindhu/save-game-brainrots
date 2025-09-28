@@ -115,6 +115,8 @@ function TutManager:initFirstTutMods()
 	self.user.home.analyticsManager:logOnboardingFunnelEvent(1, "Tutorial Started", {})
 
 	self:newTutMod("EquipBat1")
+
+	-- print("INIT FIRST TUT MODS")
 end
 
 function TutManager:newTutMod(tutName)

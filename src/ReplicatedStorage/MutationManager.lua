@@ -184,6 +184,11 @@ function MutationManager:applyMutationColor(title, mutationClass)
 	title.Visible = true
 
 	local mutationStats = MutationInfo.mutations[mutationClass]
+	if not mutationStats then
+		warn("!!! NO MUTATION STATS FOUND FOR: ", mutationClass)
+		return
+	end
+
 	title.Text = mutationStats["alias"]
 	title.TextColor3 = mutationStats["color"]
 

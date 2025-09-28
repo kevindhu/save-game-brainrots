@@ -27,9 +27,9 @@ function ServerEventManager:addCons()
 end
 
 function ServerEventManager:handleRequest(player, req, data)
-	-- if true then
-	-- 	return
-	-- end
+	if Common.testClonePlots then
+		return
+	end
 
 	if req == "makeUser" then
 		ServerMod.map:addUser(player)
@@ -63,6 +63,7 @@ function ServerEventManager:handleRequest(player, req, data)
 	local speedManager = home.speedManager
 	local saveManager = home.saveManager
 	local crateManager = home.crateManager
+	local autoSellManager = home.autoSellManager
 
 	-- USER
 	if req == "userDied" then
@@ -95,6 +96,10 @@ function ServerEventManager:handleRequest(player, req, data)
 	-- ALERTMANAGER
 	elseif req == "updateAlert" then
 		alertManager:updateAlert(data)
+
+	-- AUTOSELLMANAGER
+	elseif req == "tryToggleAutoSellRatingMod" then
+		autoSellManager:tryToggleRatingMod(data)
 
 	-- PETMANAGER
 	elseif req == "tryFeedPet" then

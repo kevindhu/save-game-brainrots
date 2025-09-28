@@ -1,5 +1,15 @@
 local RatingInfo = {}
 
+RatingInfo["ratingList"] = {
+	"Secret",
+	"Mythic",
+	"Legendary",
+	"Epic",
+	"Rare",
+	"Uncommon",
+	"Common",
+}
+
 RatingInfo["ratingColorMap"] = {
 	["Secret"] = Color3.fromRGB(0, 0, 0), -- Gold (Legendary)
 	["Mythic"] = Color3.fromRGB(226, 43, 86), -- Purple (Epic)
@@ -19,6 +29,17 @@ RatingInfo["ratingLuckMultiplier"] = {
 	["Rare"] = 0.05,
 	["Uncommon"] = 0.00005,
 	["Common"] = 0.0,
+}
+
+RatingInfo["laserThicknessMap"] = {
+	["Secret"] = 0.5, -- 5
+	["Cosmic"] = 0.4,
+	["Mythic"] = 0.3,
+	["Legendary"] = 0.24,
+	["Epic"] = 0.23,
+	["Rare"] = 0.22,
+	["Uncommon"] = 0.21,
+	["Common"] = 0.2,
 }
 
 RatingInfo["ratingMaxLevelMap"] = {

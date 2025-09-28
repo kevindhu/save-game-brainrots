@@ -1,3 +1,5 @@
+local TextChatService = game:GetService("TextChatService")
+
 local player = game.Players.LocalPlayer
 local playerScripts = player.PlayerScripts
 local playerGui = player.PlayerGui
@@ -7,7 +9,7 @@ local ClientMod = require(playerScripts.ClientMod)
 local Common = require(game.ReplicatedStorage.Common)
 local len, routine, wait = Common.len, Common.routine, Common.wait
 
-local TOGGLE_TEST_TORSO = false
+local TOGGLE_TEST_TORSO = true
 
 local PetInfo = require(game.ReplicatedStorage.PetInfo)
 local UnitInfo = require(game.ReplicatedStorage.UnitInfo)
@@ -19,6 +21,8 @@ Unit.__index = Unit
 function Unit.new(data)
 	local u = {}
 	u.data = data
+
+	u.chatExpiree = ClientMod.step + 60 * Common.randomBetween(0.1, 10)
 
 	setmetatable(u, Unit)
 	return u
@@ -34,11 +38,16 @@ function Unit:init()
 
 	self.rating = unitStats["rating"]
 
+	-- if math.random() < 0.1 then
+	-- 	self.chatToggled = true
+	-- end
+	self.chatToggled = true
+
 	if TOGGLE_TEST_TORSO then
 		local torso = Instance.new("Part")
-		torso.Size = Vector3.new(1, 20, 1)
+		torso.Size = Vector3.new(1, 1, 1)
 		torso.Color = Color3.fromRGB(255, 0, 0)
-		torso.Transparency = 0.2
+		torso.Transparency = 1 -- 0.2
 		torso.Anchored = true
 		torso.CanCollide = false
 		torso.Parent = game.Workspace.HitBoxes
@@ -112,6 +121,11 @@ function Unit:initRig()
 	self.rootPart = rig:WaitForChild("HumanoidRootPart", 2)
 	if not self.rootPart then
 		warn("!! NO ROOT PART FOUND FOR UNIT: ", self.unitName, self.unitClass)
+	end
+
+	self.head = rig:WaitForChild("Head", 2)
+	if not self.head then
+		warn("!! NO HEAD PART FOUND FOR UNIT: ", self.unitName, self.unitClass)
 	end
 
 	for _, part in pairs(rig:GetDescendants()) do
@@ -209,6 +223,32 @@ function Unit:tickRender(timeRatio)
 
 	self:tickCurrFrame(timeRatio)
 	self:tickCurrAction(timeRatio)
+
+	self:tickChat()
+end
+
+function Unit:tickChat()
+	if self.capturedSavedPet then
+		return
+	end
+	if self.destroyed then
+		return
+	end
+	if not self.chatToggled then
+		return
+	end
+
+	if self.chatExpiree and self.chatExpiree > ClientMod.step then
+		return
+	end
+	self.chatExpiree = ClientMod.step + 60 * Common.randomBetween(5, 10)
+
+	local chatStringList = UnitInfo["chatPhraseMap"][self.unitClass]
+
+	local chatString = chatStringList[math.random(1, #chatStringList)]
+	TextChatService:DisplayBubble(self.torso, chatString)
+
+	-- print("!! TICK CHAT: ", self.unitName, chatString)
 end
 
 function Unit:tickCurrAction(timeRatio)
@@ -274,10 +314,6 @@ function Unit:tickCurrFrame(timeRatio)
 	-- Combine position and rotation into final frame
 	local newFrame = CFrame.new(newPos) * newAngle
 	self.currFrame = newFrame
-
-	if TOGGLE_TEST_TORSO then
-		self.torso.CFrame = newFrame * CFrame.new(0, self.torso.Size.Y * 0.5, 0)
-	end
 
 	-- Update model position
 	self:updateRigFrame(newFrame)
@@ -482,6 +518,11 @@ function Unit:destroy(data)
 	end
 	self.destroyed = true
 
+	if self.torso then
+		self.torso:Destroy()
+		self.torso = nil
+	end
+
 	if self.noticeModel then
 		self.noticeModel:Destroy()
 		self.noticeModel = nil
@@ -621,7 +662,7 @@ function Unit:captureSavePet(data)
 	-- print("!! CAPTURED SAVED PET: ", self.unitName, petData)
 
 	local laughProbMap = {
-		["EvilLaugh"] = 5,
+		["EvilLaugh"] = 15,
 		["ClashLaugh"] = 3,
 		["JokerLaugh"] = 2,
 		["FrogLaugh"] = 2,
@@ -633,7 +674,17 @@ function Unit:captureSavePet(data)
 		soundClass = laughClass,
 		pos = self.currFrame.Position,
 		playbackSpeed = Common.randomBetween(0.8, 1),
+		volume = 0.5,
 	})
+
+	local obtainedStringList = {
+		"I got it! 🤑",
+		"this is mine now :)",
+		"this is mine!",
+		"hahaha i stole it 😈",
+	}
+	local obtainedString = obtainedStringList[math.random(1, #obtainedStringList)]
+	TextChatService:DisplayBubble(self.torso, obtainedString)
 
 	self.baseMoveSpeed = 0.2
 

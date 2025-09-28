@@ -5,7 +5,8 @@ local ShopInfo = {
 ShopInfo["gamepassList"] = {
 	"VIP",
 	"2xCoins",
-	"10MorePets",
+	"SuperLuck",
+	"2xDamage",
 	-- "BigLuck",
 	-- "SmallLuck",
 }
@@ -17,14 +18,10 @@ ShopInfo["gamepasses"] = {
 	["2xCoins"] = {
 		id = 1438643814,
 	},
-	["BigLuck"] = {
-		id = 1438879429,
-	},
-	["SmallLuck"] = {
+	["SuperLuck"] = {
 		id = 1442739646,
 	},
-
-	["10MorePets"] = {
+	["2xDamage"] = {
 		id = 1462499604,
 	},
 }

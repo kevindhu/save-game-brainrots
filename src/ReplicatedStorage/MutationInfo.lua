@@ -70,8 +70,8 @@ MutationInfo["mutationProbMap_TEST"] = {
 	Bubblegum = 10000,
 }
 
-if Common.isStudio then
-	MutationInfo.mutationProbMap = MutationInfo.mutationProbMap_TEST
-end
+-- if Common.isStudio then
+-- 	MutationInfo.mutationProbMap = MutationInfo.mutationProbMap_TEST
+-- end
 
 return MutationInfo

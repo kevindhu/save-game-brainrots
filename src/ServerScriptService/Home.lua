@@ -73,6 +73,9 @@ function Home:initAllModules()
 		{ "SpeedManager", "speedManager" },
 
 		{ "CrateManager", "crateManager" },
+
+		{ "PityManager", "pityManager" },
+		{ "AutoSellManager", "autoSellManager" },
 	}
 	for _, moduleInfo in ipairs(moduleList) do
 		self:loadModule(moduleInfo[1], moduleInfo[2])
@@ -186,6 +189,8 @@ function Home:saveState()
 		"testManager",
 
 		"speedManager",
+		"pityManager",
+		"autoSellManager",
 
 		"itemStash",
 	}

@@ -249,7 +249,7 @@ function SaveManager:completeWaveMod(data)
 	local userName = data["userName"]
 	local waveName = data["waveName"]
 
-	local playbackSpeed = Common.randomBetween(0.8, 1)
+	local playbackSpeed = Common.randomBetween(0.8, 1.1)
 	ClientMod.soundManager:newSoundMod({
 		soundClass = "Pop1",
 		volume = 0.2,

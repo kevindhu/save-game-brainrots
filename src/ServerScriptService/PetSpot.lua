@@ -50,9 +50,56 @@ function PetSpot:init()
 
 		if self.user.store.noSave then
 			if self.unlocked then
+				local petClassList = {
+					"CappuccinoAssassino",
+					"TungTungSahur",
+					"TrippiTroppi",
+
+					"Boneca",
+					"LiriLira",
+					"Ballerina",
+					"FrigoCamelo",
+					"ChimpBanana",
+					"TaTaTaSahur",
+					"CapybaraCoconut",
+					"DolphinBanana",
+					"FishCatLegs",
+					"GooseBomber",
+					"TralaleloTralala",
+					"GlorboFruttoDrillo",
+					"RhinoToast",
+					"BrrBrrPatapim",
+					"ElephantCoconut",
+					"TimCheese",
+
+					"Bombardino",
+
+					"GiraffeWatermelon",
+					"MonkeyPineapple",
+					"OwlAvocado",
+					"OrangeDunDun",
+					"CowPlanet",
+
+					"OctopusBlueberry",
+					"SaltCombined",
+					"GorillaWatermelon",
+
+					"MilkShake",
+					"GrapeSquid",
+				}
+				local randomPetClass = petClassList[math.random(1, #petClassList)]
+
+				local mutationClassList = {
+					"None",
+					"Gold",
+					"Diamond",
+					"Bubblegum",
+				}
+				local randomMutationClass = mutationClassList[math.random(1, #mutationClassList)]
+
 				local petData = self.user.home.itemStash:generatePetData({
-					petClass = "CappuccinoAssassino",
-					mutationClass = "Bubblegum",
+					petClass = randomPetClass,
+					mutationClass = randomMutationClass,
 				})
 				self:occupyWithPet(petData)
 			end

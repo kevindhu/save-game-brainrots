@@ -120,6 +120,8 @@ function LoadAllModules()
 		-- speed manager
 		{ "SpeedManager", "speedManager" },
 
+		{ "AutoSellManager", "autoSellManager" },
+
 		{ "BuyCrateManager", "buyCrateManager" },
 	}
 

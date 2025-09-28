@@ -5,6 +5,7 @@ local len, routine, wait = Common.len, Common.routine, Common.wait
 
 local MutationInfo = require(game.ReplicatedStorage.MutationInfo)
 local PetRollInfo = require(game.ReplicatedStorage.PetRollInfo)
+local PetInfo = require(game.ReplicatedStorage.PetInfo)
 
 local ProbManager = {}
 ProbManager.__index = ProbManager
@@ -32,8 +33,17 @@ function ProbManager:init()
 	end)
 end
 
-function ProbManager:generatePetClass()
+function ProbManager:generatePetClass(chosenRating)
 	local petProbMap = Common.deepCopy(PetRollInfo.probMap)
+
+	if chosenRating ~= "None" then
+		for petClass, weight in pairs(petProbMap) do
+			local petStats = PetInfo:getMeta(petClass)
+			if petStats["rating"] ~= chosenRating then
+				petProbMap[petClass] = nil
+			end
+		end
+	end
 
 	-- self:addWeatherWeight(petProbMap)
 	-- self:addLuckWeights(petProbMap)

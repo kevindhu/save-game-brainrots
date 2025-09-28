@@ -540,7 +540,7 @@ function PetSpot:addLaser(petFrame, unitFrame)
 	local posA = petFrame.Position
 	local posB = unitFrame.Position
 
-	local size = 0.2
+	local thickness = RatingInfo["laserThicknessMap"][self.petStats["rating"]]
 
 	local line = Instance.new("Part")
 
@@ -560,15 +560,30 @@ function PetSpot:addLaser(petFrame, unitFrame)
 	local length = (posA - posB).Magnitude
 	local finalFrame = CFrame.new(midPos, midPos + vect)
 
-	line.Size = Vector3.new(size, size, length)
+	line.Size = Vector3.new(thickness, thickness, length)
 	line.CFrame = finalFrame
-	line.Name = "TESTLINE123"
+	line.Name = "LASER_LINE_" .. self.petSpotName
 	line.Parent = game.Workspace.HitBoxes
+
+	if self.petStats["rating"] == "Secret" then
+		-- add sparkles
+		local secretParticlesPart = game.ReplicatedStorage.Assets.SecretParticlesPart.Particles:Clone()
+		secretParticlesPart.Parent = line
+		secretParticlesPart.Enabled = true
+	end
 
 	routine(function()
 		local timer = 0.1 -- / ClientMod.speedManager:getSpeed(self.userName)
 		wait(timer)
-		line:Destroy()
+
+		for _, child in pairs(line:GetDescendants()) do
+			if child:IsA("ParticleEmitter") then
+				child.Enabled = false
+			end
+		end
+
+		line.Transparency = 1
+		Debris:AddItem(line, 3)
 	end)
 
 	return line
@@ -819,10 +834,27 @@ function PetSpot:tickCurrFrame(timeRatio)
 	local currPosition = self.currFrame.Position
 
 	for _, unit in pairs(ClientMod.units) do
+		if unit.capturedSavedPet then
+			continue
+		end
 		local dist = Common.getHorizontalDist(currPosition, unit.currFrame.p)
 		if dist < closestDist then
 			closestDist = dist
 			targetUnit = unit
+		end
+	end
+
+	-- if no target unit, look for unit that has captured saved pet
+	if not targetUnit then
+		for _, unit in pairs(ClientMod.units) do
+			if not unit.capturedSavedPet then
+				continue
+			end
+			local dist = Common.getHorizontalDist(currPosition, unit.currFrame.p)
+			if dist < closestDist then
+				closestDist = dist
+				targetUnit = unit
+			end
 		end
 	end
 

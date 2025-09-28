@@ -12,8 +12,6 @@ local len, routine, wait = Common.len, Common.routine, Common.wait
 local buttonGUI = playerGui:WaitForChild("ButtonGUI")
 local topFrame = buttonGUI.TopFrame
 
-local plotGUI = playerGui:WaitForChild("PlotGUI")
-
 local MapInfo = require(game.ReplicatedStorage.MapInfo)
 
 local PlotManager = {

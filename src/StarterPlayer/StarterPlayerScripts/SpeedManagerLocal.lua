@@ -198,7 +198,14 @@ function SpeedManager:initSpeedItem(rating, speedIndex)
 
 	frame.LayoutOrder = speedIndex
 
-	frame.ButtonFrame.SpeedTitle.Text = speedIndex .. "x"
+	local speedTitle = frame.ButtonFrame.SpeedTitle
+
+	speedTitle.Text = speedIndex .. "x"
+	if speedIndex == 2 then
+		speedTitle.TextColor3 = Color3.fromRGB(255, 211, 90)
+	elseif speedIndex == 3 then
+		speedTitle.TextColor3 = Color3.fromRGB(26, 251, 255)
+	end
 
 	local speedName = self:getSpeedName(rating, speedIndex)
 	local newSpeedMod = {
@@ -335,6 +342,7 @@ function SpeedManager:chooseNextSpeedMod()
 			-- soundClass = "ButtonClick1",
 			-- volume = 0.1,
 		})
+		ClientMod.soundManager:addBasicSound("Pop1", 0.2)
 		return
 	end
 

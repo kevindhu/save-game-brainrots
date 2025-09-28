@@ -55,8 +55,20 @@ function SaveManager:startNewWaveMod()
 	self.user.home.itemStash:tryStartBuySpeedTutorial()
 
 	local probManager = self.user.home.probManager
+	local pityManager = self.user.home.pityManager
 
-	local petClass = probManager:generatePetClass()
+	self.user.home.pityManager:incrementPetCount()
+
+	local petClass = probManager:generatePetClass("None")
+
+	if pityManager.mythicUnlocked then
+		pityManager.mythicUnlocked = false
+		petClass = probManager:generatePetClass("Mythic")
+	elseif pityManager.legendaryUnlocked then
+		pityManager.legendaryUnlocked = false
+		print("GENERATING LEGENDARY PET CLASS")
+		petClass = probManager:generatePetClass("Legendary")
+	end
 
 	local chosenTutMod = self.user.home.tutManager.chosenTutMod
 
@@ -78,6 +90,15 @@ function SaveManager:startNewWaveMod()
 		then
 			petClass = "CappuccinoAssassino"
 		end
+	end
+
+	local petStats = PetInfo:getMeta(petClass)
+	local rating = petStats["rating"]
+	if Common.listContains({
+		"Mythic",
+		"Legendary",
+	}, rating) then
+		self.user:notifySuccess(string.format("A %s brainrot has spawned!", rating))
 	end
 
 	local mutationClass = probManager:generateMutationClass()
@@ -272,7 +293,24 @@ function SaveManager:completeWaveMod(waveMod)
 	petData["forceBottom"] = false
 	petData["noClick"] = true
 
-	self.user.home.itemStash:addItemMod(petData)
+	local petStats = PetInfo:getMeta(petData["petClass"])
+	local rating = petStats["rating"]
+
+	local autoSellManager = self.user.home.autoSellManager
+	local ratingMod = autoSellManager.ratingMods[rating]
+	if not ratingMod["toggled"] then
+		local sellPrice = PetInfo:calculateSellPrice({
+			petClass = petData["petClass"],
+			mutationClass = petData["mutationClass"],
+		})
+		self.user.home.itemStash:updateItemCount({
+			itemName = "Coins",
+			count = sellPrice,
+		})
+		print("SOLD PET IMMEDIATELY FOR: ", sellPrice)
+	else
+		self.user.home.itemStash:addItemMod(petData)
+	end
 
 	self.user.home.unitManager:clearAllWaveUnits(waveMod)
 

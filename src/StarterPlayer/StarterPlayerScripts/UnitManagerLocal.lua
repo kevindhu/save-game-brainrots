@@ -98,6 +98,12 @@ function UnitManager:tickRender(timeRatio)
 			continue
 		end
 
+		if unit.torso then
+			table.insert(unitParts, unit.torso)
+			local torsoFrame = unit.currFrame * CFrame.new(0, unit.head.Size.Y * 0.5 + unit.rootPart.Size.Y * 2, 0)
+			table.insert(unitCFrames, torsoFrame)
+		end
+
 		table.insert(unitParts, unit.rig.PrimaryPart)
 		table.insert(unitCFrames, unit.rigFrame)
 	end

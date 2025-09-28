@@ -33,6 +33,7 @@ function PlotManager:init()
 
 		wait(1)
 		self.user.home.saveManager:initSaveModel(self.saveModel)
+		self.user.home.pityManager:initPityModel(self.model)
 	end)
 end
 
