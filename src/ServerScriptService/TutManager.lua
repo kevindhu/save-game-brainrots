@@ -43,7 +43,7 @@ function TutManager:init()
 				end
 			end
 		end
-		if not self.completedTutMods["Choose2xSpeedCommon"] then
+		if not self.completedTutMods["Buy2xSpeedCommon"] then
 			-- clear all the time wizard tutMods
 			local timeWizardTutMods = {
 				"GoToTimeWizard",
@@ -278,6 +278,23 @@ function TutManager:completeTutMod(tutName)
 			favoriteManager:tryStartFavorite()
 		end
 	end)
+
+	if tutName == "CloseTimeWizard" then
+		self.user.home.speedManager:tryToggleSpeedMod({
+			rating = "Common",
+			speedIndex = 1,
+		})
+	end
+	if tutName == "Choose2xSpeedCommon" then
+		local saveManager = self.user.home.saveManager
+		saveManager.cappucinoExpiree = os.time() + 60 * 10
+
+		if not saveManager.playing then
+			saveManager:tryTogglePlay({
+				newBool = true,
+			})
+		end
+	end
 
 	self:tryChooseNewTutMod()
 end

@@ -70,8 +70,6 @@ function SaveManager:startNewWaveMod()
 		petClass = probManager:generatePetClass("Legendary")
 	end
 
-	local chosenTutMod = self.user.home.tutManager.chosenTutMod
-
 	-- override with tutorial petClass if not completed tutorial
 	if not self.user.home.tutManager.completedTutMods["CompleteFirstWave"] then
 		petClass = "CappuccinoAssassino"
@@ -79,6 +77,12 @@ function SaveManager:startNewWaveMod()
 		petClass = "TungTungSahur"
 	end
 
+	if self.cappucinoExpiree then
+		self.cappucinoExpiree = nil
+		petClass = "CappuccinoAssassino"
+	end
+
+	local chosenTutMod = self.user.home.tutManager.chosenTutMod
 	if chosenTutMod then
 		if
 			Common.listContains({
@@ -88,7 +92,11 @@ function SaveManager:startNewWaveMod()
 				"Choose2xSpeedCommon",
 			}, chosenTutMod["targetClass"])
 		then
-			petClass = "CappuccinoAssassino"
+			-- petClass = "CappuccinoAssassino"
+			if self.currWaveMod then
+				self:failWaveMod(self.currWaveMod, nil)
+			end
+			return
 		end
 	end
 
@@ -383,6 +391,21 @@ function SaveManager:tick()
 			or not tutManager.completedTutMods["EquipBat2"]
 		then
 			-- warn("NOT COMPLETED TUT MODS TO START NEW WAVE: ", tutManager.completedTutMods)
+			return
+		end
+	end
+
+	local chosenTutMod = tutManager.chosenTutMod
+	if chosenTutMod then
+		local tutName = chosenTutMod["tutName"]
+		if
+			Common.listContains({
+				"GoToTimeWizard",
+				"Buy2xSpeedCommon",
+				"CloseTimeWizard",
+				"Choose2xSpeedCommon",
+			}, tutName)
+		then
 			return
 		end
 	end

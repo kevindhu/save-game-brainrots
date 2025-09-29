@@ -130,6 +130,10 @@ function SaveManager:refreshCurrWaveModFrame()
 	mainUnitBar.CurrProgress.Size = UDim2.fromScale(progressRatio, 1)
 	mainUnitBar.Title.Text = string.format("%s/%s", waveMod["killedUnitCount"], waveMod["totalUnitCount"])
 
+	if waveMod["killedUnitCount"] >= waveMod["totalUnitCount"] then
+		mainUnitBar.Title.Text = "SAVED"
+	end
+
 	local petClass = waveMod["petData"]["petClass"]
 	local rating = PetInfo:getMeta(petClass)["rating"]
 	local ratingMod = ClientMod.autoSellManager.ratingMods[rating]
@@ -337,18 +341,21 @@ function SaveManager:completeWaveMod(data)
 		})
 	end
 
-	-- for i = 1, 8 do
-	-- 	local direction = Common.getRandomFlatDir()
+	routine(function()
+		for i = 1, 8 do
+			local direction = Common.getRandomFlatDir()
 
-	-- 	ClientMod.orbManager:newOrbMod({
-	-- 		userName = userName,
-	-- 		name = "ORB_" .. Common.getGUID(),
-	-- 		startPos = startPos,
-	-- 		direction = direction,
-	-- 		value = 1,
-	-- 		itemClass = "Coins",
-	-- 	})
-	-- end
+			ClientMod.orbManager:newOrbMod({
+				userName = userName,
+				name = "ORB_" .. Common.getGUID(),
+				startPos = startPos,
+				direction = direction,
+				value = 1,
+				itemClass = "Coins",
+			})
+			wait(Common.randomBetween(0.01, 0.05))
+		end
+	end)
 
 	rig:Destroy()
 end

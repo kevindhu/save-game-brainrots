@@ -458,10 +458,8 @@ function Unit:setStationary(newBool)
 			race = "Movement",
 			animationId = animationId,
 		})
-		if trackMod then
-			trackMod["track"]:AdjustSpeed(ClientMod.speedManager:getSpeed(self.userName))
-		end
-		self.moveTrackMod = nil
+		self.moveTrackMod = trackMod
+		self:refreshMoveTrackMod()
 	else
 		local user = ClientMod.users[self.userName]
 		if not user then
@@ -478,10 +476,15 @@ function Unit:setStationary(newBool)
 			animationId = animationId,
 			speedRatio = speedRatio, --user.humanoid.WalkSpeed / 20,
 		})
-		if moveTrackMod then
-			moveTrackMod["track"]:AdjustSpeed(ClientMod.speedManager:getSpeed(self.userName))
-		end
 		self.moveTrackMod = moveTrackMod
+		self:refreshMoveTrackMod()
+	end
+end
+
+function Unit:refreshMoveTrackMod()
+	local moveTrackMod = self.moveTrackMod
+	if moveTrackMod then
+		moveTrackMod["track"]:AdjustSpeed(ClientMod.speedManager:getSpeed(self.userName))
 	end
 end
 

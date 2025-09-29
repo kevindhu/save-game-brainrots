@@ -36,14 +36,8 @@ function ServerMod:registerPhysics()
 	-- register groups
 	PhysicsService:RegisterCollisionGroup("Players")
 	PhysicsService:RegisterCollisionGroup("Units")
-
-	PhysicsService:RegisterCollisionGroup("RopeRigs")
-	-- PhysicsService:RegisterCollisionGroup("WeldRopeRigs")
-
-	PhysicsService:RegisterCollisionGroup("Carpet")
 	PhysicsService:RegisterCollisionGroup("Pets")
-	PhysicsService:RegisterCollisionGroup("Misc")
-	PhysicsService:RegisterCollisionGroup("ObtainParts")
+	PhysicsService:RegisterCollisionGroup("Resources")
 
 	-- SET PLAYERS COLLIDE GROUPS
 	PhysicsService:CollisionGroupSetCollidable("Players", "Players", false)
@@ -52,45 +46,16 @@ function ServerMod:registerPhysics()
 	PhysicsService:CollisionGroupSetCollidable("Units", "Players", false)
 	PhysicsService:CollisionGroupSetCollidable("Units", "Units", false)
 
-	-- SET ROPE RIGS COLLIDE GROUPS
-	PhysicsService:CollisionGroupSetCollidable("RopeRigs", "Players", false)
-	PhysicsService:CollisionGroupSetCollidable("RopeRigs", "Units", false)
-	PhysicsService:CollisionGroupSetCollidable("RopeRigs", "RopeRigs", true) -- false
-
-	-- -- SET WELD ROPE RIGS COLLIDE GROUPS
-	-- PhysicsService:CollisionGroupSetCollidable("WeldRopeRigs", "Players", false)
-	-- PhysicsService:CollisionGroupSetCollidable("WeldRopeRigs", "Units", false)
-	-- PhysicsService:CollisionGroupSetCollidable("WeldRopeRigs", "RopeRigs", false)
-	-- PhysicsService:CollisionGroupSetCollidable("WeldRopeRigs", "WeldRopeRigs", true)
-
-	-- SET CARPET COLLIDE GROUPS
-	PhysicsService:CollisionGroupSetCollidable("Carpet", "Players", true)
-	PhysicsService:CollisionGroupSetCollidable("Carpet", "Units", false)
-	PhysicsService:CollisionGroupSetCollidable("Carpet", "RopeRigs", false)
-	PhysicsService:CollisionGroupSetCollidable("Carpet", "Carpet", false)
-
 	-- SET PETS COLLIDE GROUPS
 	PhysicsService:CollisionGroupSetCollidable("Pets", "Players", false)
 	PhysicsService:CollisionGroupSetCollidable("Pets", "Units", false)
-	PhysicsService:CollisionGroupSetCollidable("Pets", "RopeRigs", false)
-	PhysicsService:CollisionGroupSetCollidable("Pets", "Carpet", false)
 	PhysicsService:CollisionGroupSetCollidable("Pets", "Pets", false)
 
-	-- SET MISC COLLIDE GROUPS
-	PhysicsService:CollisionGroupSetCollidable("Misc", "Players", false)
-	PhysicsService:CollisionGroupSetCollidable("Misc", "Units", false)
-	PhysicsService:CollisionGroupSetCollidable("Misc", "RopeRigs", false)
-	PhysicsService:CollisionGroupSetCollidable("Misc", "Carpet", false)
-	PhysicsService:CollisionGroupSetCollidable("Misc", "Pets", false)
-	PhysicsService:CollisionGroupSetCollidable("Misc", "Misc", false)
-
-	-- SET OBTAIN PARTS COLLIDE GROUPS
-	PhysicsService:CollisionGroupSetCollidable("ObtainParts", "Players", true)
-	PhysicsService:CollisionGroupSetCollidable("ObtainParts", "Units", false)
-	PhysicsService:CollisionGroupSetCollidable("ObtainParts", "RopeRigs", false)
-	PhysicsService:CollisionGroupSetCollidable("ObtainParts", "Carpet", false)
-	PhysicsService:CollisionGroupSetCollidable("ObtainParts", "Pets", false)
-	PhysicsService:CollisionGroupSetCollidable("ObtainParts", "ObtainParts", false)
+	-- SET RESOURCES COLLIDE GROUPS
+	PhysicsService:CollisionGroupSetCollidable("Resources", "Players", false)
+	PhysicsService:CollisionGroupSetCollidable("Resources", "Units", false)
+	PhysicsService:CollisionGroupSetCollidable("Resources", "Pets", false)
+	PhysicsService:CollisionGroupSetCollidable("Resources", "Resources", false)
 end
 
 function ServerMod:refreshPlayerCount()

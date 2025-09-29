@@ -211,6 +211,10 @@ function TutManager:chooseTutMod(data)
 		return
 	end
 
+	if tutName == "GoToTimeWizard" then
+		ClientMod.saveManager:toggleSaveFrame(false)
+	end
+
 	local tutMod = self.tutMods[tutName]
 	self.chosenTutMod = tutMod
 
@@ -253,7 +257,7 @@ function TutManager:refreshHintIcons()
 		self.chosenFrame = playerGui:WaitForChild("SaveGUI").PlayFrame.PlayButton.Cover
 	elseif targetClass == "EquipFirstPet" then
 		self.chosenFrame = self.petHintItemFrame
-		print("CHOSEN FRAME: ", self.chosenFrame)
+		-- print("CHOSEN FRAME: ", self.chosenFrame)
 	elseif targetClass == "Buy2xSpeedCommon" then
 		self.chosenFrame = self.speedHintItemFrame
 	elseif targetClass == "CloseTimeWizard" then

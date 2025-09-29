@@ -265,6 +265,13 @@ function SpeedManager:updateAllSpeedMods(data)
 	end
 
 	ClientMod.saveManager:refreshSpeedFrame()
+
+	for _, unit in pairs(ClientMod.units) do
+		if unit.userName ~= userName then
+			continue
+		end
+		unit:refreshMoveTrackMod()
+	end
 end
 
 function SpeedManager:refreshSpeedMod(speedMod)
@@ -314,6 +321,22 @@ function SpeedManager:chooseNextSpeedMod()
 	end
 
 	local rating = currWaveMod["rating"]
+
+	local chosenTutMod = ClientMod.tutManager.chosenTutMod
+	if chosenTutMod then
+		local tutName = chosenTutMod["tutName"]
+		if
+			Common.listContains({
+				"GoToTimeWizard",
+				"Buy2xSpeedCommon",
+				"CloseTimeWizard",
+				"Choose2xSpeedCommon",
+			}, tutName)
+		then
+			rating = "Common"
+			print("!!! CHOSEN TUT MOD IS TIME WIZARD TUT: ", tutName)
+		end
+	end
 
 	local startIndex = 1
 

@@ -12,7 +12,8 @@ TutInfo["enableMapping"] = {
 	-- second
 	["GoToTimeWizard"] = { "Buy2xSpeedCommon" },
 	["Buy2xSpeedCommon"] = { "CloseTimeWizard" },
-	-- ["CloseTimeWizard"] = { "Choose2xSpeedCommon" },
+	["CloseTimeWizard"] = { "Choose2xSpeedCommon" },
+	["Choose2xSpeedCommon"] = { "FinishedTimeWizardTut" },
 }
 
 TutInfo["funnelStepList"] = {
@@ -29,6 +30,7 @@ TutInfo["funnelStepList"] = {
 	"Buy2xSpeedCommon",
 	"CloseTimeWizard",
 	"Choose2xSpeedCommon",
+	"FinishedTimeWizardTut",
 }
 
 TutInfo["tuts"] = {
@@ -98,6 +100,7 @@ TutInfo["tuts"] = {
 		},
 	},
 
+	-- TIME WIZARD TUTORIALS
 	["GoToTimeWizard"] = {
 		targetClass = "GoToTimeWizard",
 		text = "Go to the time wizard!",
@@ -128,6 +131,14 @@ TutInfo["tuts"] = {
 
 		requireMod = {
 			count = 1,
+		},
+	},
+	["FinishedTimeWizardTut"] = {
+		targetClass = "Nothing",
+		text = "Save the Cappuccino Assassino (2x Speed)!",
+
+		requireMod = {
+			timer = 3,
 		},
 	},
 }

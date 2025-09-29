@@ -169,10 +169,14 @@ function OrbManager:animateBB(decorPart, itemClass, petClass, mutationClass, use
 
 	wait(1.35)
 
-	ClientMod.soundManager:newSoundMod({
-		soundClass = "CoinCollect3",
-		volume = 0.2,
-	})
+	-- local volume = 0.2
+	-- if itemClass == "Coins" then
+	-- 	volume = 0.1
+	-- end
+	-- ClientMod.soundManager:newSoundMod({
+	-- 	soundClass = "CoinCollect3",
+	-- 	volume = volume,
+	-- })
 
 	-- TURN EMITTERS OFF FIRST
 	for _, thing in pairs(decorPart:GetDescendants()) do
@@ -284,6 +288,18 @@ function OrbManager:newScreenOrb(decorPart, itemClass, petClass, mutationClass)
 	}
 	local fadeTween = ts:Create(frame.Icon, info, goal)
 	fadeTween:Play()
+
+	routine(function()
+		wait(travelTimer * 0.5)
+		local volume = 0.2
+		if itemClass == "Coins" then
+			volume = 0.1
+		end
+		ClientMod.soundManager:newSoundMod({
+			soundClass = "CoinCollect3",
+			volume = volume,
+		})
+	end)
 
 	debris:AddItem(frame, 3)
 end

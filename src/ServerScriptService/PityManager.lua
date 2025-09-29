@@ -29,7 +29,7 @@ function PityManager:init()
 end
 
 function PityManager:initPityModel(model)
-	print("INIT PITY MODEL: ", model)
+	-- print("INIT PITY MODEL: ", model)
 
 	self.boardModel = model.PityBoardModel
 
