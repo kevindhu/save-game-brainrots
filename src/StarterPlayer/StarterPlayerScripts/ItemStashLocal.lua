@@ -422,6 +422,9 @@ function ItemStash:newBottomMod(itemData)
 	if newBottomMod["petClass"] == "CappuccinoAssassino" then
 		ClientMod.tutManager:initPetHintIcon(frame)
 	end
+	if newBottomMod["itemName"] == "Bat1" then
+		ClientMod.tutManager:initBatHintIcon(frame)
+	end
 
 	return newBottomMod
 end

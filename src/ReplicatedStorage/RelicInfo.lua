@@ -17,7 +17,7 @@ RelicInfo["coinsMap"] = {
 }
 
 RelicInfo["attackSpeedMap"] = {
-	["Speed1"] = { 1, 3 },
+	["Speed1"] = { 2.5, 3 },
 	["Titan1"] = { 5, 10 },
 }
 

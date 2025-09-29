@@ -331,11 +331,24 @@ function SaveManager:completeWaveMod(data)
 			startPos = startPos,
 			direction = direction,
 			value = 1,
-			itemClass = "Coins",
+			itemClass = "Pet",
 			petClass = petEntity.petClass,
 			mutationClass = petEntity.mutationClass,
 		})
 	end
+
+	-- for i = 1, 8 do
+	-- 	local direction = Common.getRandomFlatDir()
+
+	-- 	ClientMod.orbManager:newOrbMod({
+	-- 		userName = userName,
+	-- 		name = "ORB_" .. Common.getGUID(),
+	-- 		startPos = startPos,
+	-- 		direction = direction,
+	-- 		value = 1,
+	-- 		itemClass = "Coins",
+	-- 	})
+	-- end
 
 	rig:Destroy()
 end

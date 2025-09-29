@@ -220,6 +220,20 @@ function TutManager:chooseTutMod(data)
 	self:startTextAnimation()
 end
 
+function TutManager:initPetHintIcon(frame)
+	self.petHintItemFrame = frame.Cover
+
+	-- print("INIT PET HINT ICON: ", self.petHintItemFrame)
+
+	self:refreshHintIcons()
+end
+
+function TutManager:initBatHintIcon(frame)
+	self.batHintItemFrame = frame.Cover
+
+	self:refreshHintIcons()
+end
+
 function TutManager:refreshHintIcons()
 	local tutMod = self.chosenTutMod
 	if not tutMod then
@@ -239,6 +253,7 @@ function TutManager:refreshHintIcons()
 		self.chosenFrame = playerGui:WaitForChild("SaveGUI").PlayFrame.PlayButton.Cover
 	elseif targetClass == "EquipFirstPet" then
 		self.chosenFrame = self.petHintItemFrame
+		print("CHOSEN FRAME: ", self.chosenFrame)
 	elseif targetClass == "Buy2xSpeedCommon" then
 		self.chosenFrame = self.speedHintItemFrame
 	elseif targetClass == "CloseTimeWizard" then

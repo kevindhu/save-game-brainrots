@@ -3,7 +3,7 @@ local ItemInfo = {}
 ItemInfo["currencies"] = {
 	["Coins"] = {
 		alias = "Coins",
-		image = "rbxassetid://130716098554520",
+		image = "rbxassetid://87861169766396",
 	},
 }
 

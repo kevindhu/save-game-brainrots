@@ -169,7 +169,7 @@ function PetSpot:getTotalCoinsPerSecond()
 	end
 	coinsPerSecond = coinsPerSecond * relicCoinsMultiplier
 
-	print("GOT RELIC COINS MULTIPLIER: ", relicCoinsMultiplier)
+	-- print("GOT RELIC COINS MULTIPLIER: ", relicCoinsMultiplier)
 
 	coinsPerSecond = math.floor(coinsPerSecond)
 

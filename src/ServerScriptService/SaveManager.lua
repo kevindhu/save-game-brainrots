@@ -133,25 +133,25 @@ function SaveManager:initWaveMod(petData)
 	local petStats = PetInfo:getMeta(petClass)
 	local rating = petStats["rating"]
 
-	-- local totalWaveData = WaveInfo["ratingWaveMap"][rating]
+	local totalWaveData = WaveInfo["ratingWaveMap"][rating]
 
-	local totalWaveData = {
-		{
-			unitClass = "Unit1",
-			count = 20,
-			spawnTimer = 0.1, -- 0.5
-		},
-		-- {
-		-- 	unitClass = "Unit4",
-		-- 	count = 20,
-		-- 	spawnTimer = 0.1, -- 0.5
-		-- },
-		-- {
-		-- 	unitClass = "Unit3",
-		-- 	count = 20,
-		-- 	spawnTimer = 0.1, -- 0.5
-		-- },
-	}
+	-- local totalWaveData = {
+	-- 	{
+	-- 		unitClass = "Unit1",
+	-- 		count = 20,
+	-- 		spawnTimer = 0.1, -- 0.5
+	-- 	},
+	-- 	-- {
+	-- 	-- 	unitClass = "Unit4",
+	-- 	-- 	count = 20,
+	-- 	-- 	spawnTimer = 0.1, -- 0.5
+	-- 	-- },
+	-- 	-- {
+	-- 	-- 	unitClass = "Unit3",
+	-- 	-- 	count = 20,
+	-- 	-- 	spawnTimer = 0.1, -- 0.5
+	-- 	-- },
+	-- }
 
 	-- print("!! TOTAL WAVE DATA: ", rating, totalWaveData)
 
