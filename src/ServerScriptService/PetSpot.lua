@@ -161,6 +161,18 @@ function PetSpot:getTotalCoinsPerSecond()
 		coinsPerSecond = coinsPerSecond * 2
 	end
 
+	local relicMods = self.petData["relicMods"]
+
+	local relicCoinsMultiplier = 1
+	for _, relicData in pairs(relicMods) do
+		relicCoinsMultiplier = relicCoinsMultiplier + (relicData["coins"] - 1)
+	end
+	coinsPerSecond = coinsPerSecond * relicCoinsMultiplier
+
+	print("GOT RELIC COINS MULTIPLIER: ", relicCoinsMultiplier)
+
+	coinsPerSecond = math.floor(coinsPerSecond)
+
 	return coinsPerSecond
 end
 
@@ -315,9 +327,7 @@ function PetSpot:tickCoinsGeneration(timeRatio)
 	end
 	self.coinGenerationExpiree = ServerMod.step + 60 * 1
 
-	local coinsCount = self.petStats["coinsPerSecond"]
-
-	-- TODO: add multipliers here
+	local coinsCount = self:getTotalCoinsPerSecond()
 
 	self.petData["totalCoins"] += coinsCount
 

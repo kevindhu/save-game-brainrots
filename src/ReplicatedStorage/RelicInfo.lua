@@ -1,41 +1,56 @@
 local RelicInfo = {}
 
 RelicInfo["relicList"] = {
-	"Relic1",
-	"Relic2",
+	"Fist1",
+	"Speed1",
+	"Rich1",
+	"Titan1",
+	"Angel1",
 }
 
 RelicInfo["damageMap"] = {
-	["Relic2"] = { 2, 2.5 },
+	["Fist1"] = { 2, 2.5 },
 }
 
 RelicInfo["coinsMap"] = {
-	["Relic1"] = { 1, 1.5 },
+	["Rich1"] = { 1, 1.5 },
 }
 
 RelicInfo["attackSpeedMap"] = {
-	["Relic1"] = { 1, 3 },
-	["Relic2"] = { 5, 10 },
+	["Speed1"] = { 1, 3 },
+	["Titan1"] = { 5, 10 },
 }
 
 RelicInfo["aliasMap"] = {
-	["Relic1"] = "Relic 1",
-	["Relic2"] = "Relic 2",
+	["Fist1"] = "Fist I",
+	["Speed1"] = "Speed I",
+	["Rich1"] = "Rich I",
+	["Titan1"] = "Titan I",
+	["Angel1"] = "Angel I",
 }
 
 RelicInfo["colorMap"] = {
-	["Relic1"] = Color3.fromRGB(232, 90, 90),
-	["Relic2"] = Color3.fromRGB(86, 143, 250),
+	["Fist1"] = Color3.fromRGB(255, 0, 0),
+	["Speed1"] = Color3.fromRGB(0, 255, 0),
+	["Rich1"] = Color3.fromRGB(0, 0, 255),
+	["Titan1"] = Color3.fromRGB(255, 255, 0),
+	["Angel1"] = Color3.fromRGB(0, 255, 255),
 }
 
 RelicInfo["imageMap"] = {
-	["Relic1"] = "rbxassetid://60422237", -- fist
-	["Relic2"] = "rbxassetid://1178571805", -- fist
+	["Fist1"] = "rbxassetid://60422237", -- fist
+	["Speed1"] = "rbxassetid://14825379863", -- fist
+	["Rich1"] = "rbxassetid://14957838175", -- fist
+	["Titan1"] = "rbxassetid://14782788955", -- fist
+	["Angel1"] = "rbxassetid://14782792065", -- fist
 }
 
 RelicInfo["sellPriceMap"] = {
-	["Relic1"] = 100,
-	["Relic2"] = 200,
+	["Fist1"] = 100,
+	["Speed1"] = 200,
+	["Rich1"] = 300,
+	["Titan1"] = 400,
+	["Angel1"] = 500,
 }
 
 function RelicInfo:init()

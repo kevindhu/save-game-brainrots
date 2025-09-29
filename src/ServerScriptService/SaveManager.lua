@@ -137,7 +137,7 @@ function SaveManager:initWaveMod(petData)
 
 	local totalWaveData = {
 		{
-			unitClass = "Unit5",
+			unitClass = "Unit1",
 			count = 20,
 			spawnTimer = 0.1, -- 0.5
 		},
@@ -391,7 +391,7 @@ function SaveManager:tick()
 		if self.checkFullPetsExpiree and self.checkFullPetsExpiree > ServerMod.step then
 			return
 		end
-		self.checkFullPetsExpiree = ServerMod.step + 60 * 2
+		self.checkFullPetsExpiree = ServerMod.step + 60 * 20
 		self.user:notifyError("Your inventory is full!")
 		return
 	end

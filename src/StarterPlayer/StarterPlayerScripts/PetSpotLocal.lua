@@ -241,7 +241,7 @@ function PetSpot:addPickupRelicPrompt()
 		enabled = true,
 		maxActivationDistance = 15,
 		parent = self.standPart.PickupRelicAttachment,
-		keyCode = Enum.KeyCode.F,
+		keyCode = Enum.KeyCode.Q,
 	})
 	self.pickupRelicPrompt = pickupRelicPrompt
 
@@ -265,7 +265,7 @@ function PetSpot:addRelicPrompt()
 		enabled = true,
 		maxActivationDistance = 15,
 		parent = self.standPart.PickupRelicAttachment,
-		keyCode = Enum.KeyCode.F,
+		keyCode = Enum.KeyCode.Q,
 	})
 	self.relicPrompt = relicPrompt
 

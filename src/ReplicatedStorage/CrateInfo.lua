@@ -9,40 +9,31 @@ CrateInfo["crateList"] = {
 	"Crate2",
 	"Crate3",
 
-	-- cannot buy these crates
-	"SpecCrate1",
-	-- "SpecCrate2",
-
 	"LuckyBlockCrate",
 }
 
 CrateInfo["relicProbMapMapping"] = {
 	["Crate1"] = {
-		Relic1 = 1,
+		Fist1 = 1,
 	},
 	["Crate2"] = {
-		Relic1 = 10,
-		Relic2 = 10,
+		Fist1 = 10,
+		Speed1 = 10,
 	},
 	["Crate3"] = {
-		Relic1 = 5,
-		Relic2 = 10,
+		Fist1 = 5,
+		Speed1 = 10,
+		Rich1 = 10,
+		Titan1 = 10,
+		Angel1 = 10,
 	},
 
 	["LuckyBlockCrate"] = {
-		OctopusBlueberry = 10,
-		SaltCombined = 10,
-
-		TimCheese = 10,
-		GiraffeWatermelon = 10,
-		MonkeyPineapple = 10,
-		OwlAvocado = 10,
-		OrangeDunDun = 10,
-		CowPlanet = 10,
-	},
-
-	["SpecCrate1"] = {
-		Ballerina = 10,
+		Fist1 = 5,
+		Speed1 = 10,
+		Rich1 = 10,
+		Titan1 = 10,
+		Angel1 = 10,
 	},
 }
 
@@ -51,7 +42,6 @@ CrateInfo["imageMap"] = {
 	["Crate2"] = "rbxassetid://77670058674209",
 	["Crate3"] = "rbxassetid://116080005450512",
 
-	["SpecCrate1"] = "rbxassetid://116833654211082",
 	["LuckyBlockCrate"] = "rbxassetid://95448593603129",
 }
 
@@ -60,17 +50,7 @@ CrateInfo["aliasMap"] = {
 	["Crate2"] = "Crate 2",
 	["Crate3"] = "Crate 3",
 
-	["SpecCrate1"] = "SpecCrate 1",
 	["LuckyBlockCrate"] = "Lucky Block",
-}
-
-CrateInfo["hatchTimeMap"] = {
-	["Crate1"] = 2, -- 1
-	["Crate2"] = 20, -- 2
-	["Crate3"] = 30, -- 3
-
-	["SpecCrate1"] = 10,
-	["LuckyBlockCrate"] = 5,
 }
 
 -- do not contain gem crates
@@ -105,8 +85,7 @@ function CrateInfo:init()
 			probCount = self.stockProbCountMap[crateClass],
 			price = self.stockPriceMap[crateClass],
 			alias = self.aliasMap[crateClass],
-			hatchTime = self.hatchTimeMap[crateClass],
-			description = "An crate",
+			description = "A crate with random relics",
 
 			relicProbMap = self.relicProbMapMapping[crateClass],
 			image = self.imageMap[crateClass],

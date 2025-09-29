@@ -127,8 +127,11 @@ end
 
 function ItemStash:addTestRelics()
 	local relicList = {
-		"Relic1",
-		"Relic2",
+		"Fist1",
+		"Speed1",
+		"Rich1",
+		"Titan1",
+		"Angel1",
 	}
 	for _, relicClass in ipairs(relicList) do
 		self:addRelic({
