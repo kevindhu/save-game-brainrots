@@ -56,9 +56,6 @@ function ProbManager:generateMutationClass()
 	local probMap = Common.deepCopy(MutationInfo.mutationProbMap)
 
 	local mutationClass = Common.rollFromProbMap(probMap)
-	if mutationClass == "None" then
-		return nil
-	end
 	return mutationClass
 end
 

@@ -240,7 +240,8 @@ function PetSpot:addPickupRelicPrompt()
 		holdDuration = 0.1,
 		enabled = true,
 		maxActivationDistance = 15,
-		parent = self.standPart.PickupRelicAttachment,
+		parent = self.standPart.BottomAttachment,
+		uiOffset = Vector2.new(0, 80),
 		keyCode = Enum.KeyCode.Q,
 	})
 	self.pickupRelicPrompt = pickupRelicPrompt
@@ -264,7 +265,8 @@ function PetSpot:addRelicPrompt()
 		holdDuration = 0.1,
 		enabled = true,
 		maxActivationDistance = 15,
-		parent = self.standPart.PickupRelicAttachment,
+		parent = self.standPart.BottomAttachment,
+		uiOffset = Vector2.new(0, 80),
 		keyCode = Enum.KeyCode.Q,
 	})
 	self.relicPrompt = relicPrompt
@@ -276,6 +278,40 @@ function PetSpot:addRelicPrompt()
 			petSpotName = self.petSpotName,
 		})
 	end)
+end
+
+function PetSpot:addSwapRelicPrompt()
+	if self.swapRelicPrompt then
+		return
+	end
+
+	local swapRelicPrompt = ClientMod.uiManager:createPrompt({
+		actionText = "Swap Relic",
+		objectText = "",
+		name = "SwapRelicPrompt",
+		holdDuration = 0.1,
+		enabled = true,
+		maxActivationDistance = 15,
+		parent = self.standPart.BottomAttachment,
+		uiOffset = Vector2.new(0, 80),
+		keyCode = Enum.KeyCode.Q,
+	})
+	self.swapRelicPrompt = swapRelicPrompt
+
+	self.swapRelicPrompt.Triggered:Connect(function()
+		local equippedToolMod = ClientMod.placeManager:getEquippedToolMod()
+		ClientMod:FireServer("trySwapRelicAtPetSpot", {
+			toolName = equippedToolMod.toolName,
+			petSpotName = self.petSpotName,
+		})
+	end)
+end
+
+function PetSpot:removeSwapRelicPrompt()
+	if self.swapRelicPrompt then
+		self.swapRelicPrompt:Destroy()
+		self.swapRelicPrompt = nil
+	end
 end
 
 function PetSpot:addPlacePrompt()
@@ -290,7 +326,7 @@ function PetSpot:addPlacePrompt()
 		holdDuration = 0.1,
 		enabled = true,
 		maxActivationDistance = 15,
-		parent = self.standPart.InteractAttachment,
+		parent = self.standPart.BottomAttachment,
 	})
 	self.placePrompt = placePrompt
 
@@ -331,19 +367,51 @@ function PetSpot:removeRelicPrompt()
 	end
 end
 
+function PetSpot:addSwapPetPrompt()
+	if self.swapPetPrompt then
+		return
+	end
+
+	local swapPetPrompt = ClientMod.uiManager:createPrompt({
+		actionText = "Swap Brainrot",
+		objectText = "",
+		name = "SwapPetPrompt",
+		holdDuration = 0.1,
+		enabled = true,
+		maxActivationDistance = 15,
+		parent = self.standPart.BottomAttachment,
+	})
+	self.swapPetPrompt = swapPetPrompt
+
+	swapPetPrompt.Triggered:Connect(function()
+		local equippedToolMod = ClientMod.placeManager:getEquippedToolMod()
+		ClientMod:FireServer("trySwapPetAtPetSpot", {
+			toolName = equippedToolMod.toolName,
+			petSpotName = self.petSpotName,
+		})
+	end)
+end
+
+function PetSpot:removeSwapPetPrompt()
+	if self.swapPetPrompt then
+		self.swapPetPrompt:Destroy()
+		self.swapPetPrompt = nil
+	end
+end
+
 function PetSpot:addPickupPrompt()
 	if self.pickupPrompt then
 		return
 	end
 
 	local pickupPrompt = ClientMod.uiManager:createPrompt({
-		actionText = "Pickup Brainrot",
-		objectText = "",
+		actionText = "Pickup",
+		objectText = string.format("(Lvl %s)", self.level),
 		name = "PickupPetPrompt",
 		holdDuration = 0.1,
 		enabled = true,
 		maxActivationDistance = 15,
-		parent = self.standPart.InteractAttachment,
+		parent = self.standPart.BottomAttachment,
 	})
 	self.pickupPrompt = pickupPrompt
 
@@ -393,6 +461,13 @@ function PetSpot:updateData(data)
 	self:refreshPetBB()
 
 	if self.userName == player.Name then
+		-- force clear previous prompts
+		self:removePickupPrompt()
+		self:removeRelicPrompt()
+		self:removePickupRelicPrompt()
+		self:removeSwapPetPrompt()
+		self:removeSwapRelicPrompt()
+
 		ClientMod.placeManager:refreshAllPrompts()
 	end
 end
@@ -519,7 +594,7 @@ function PetSpot:addAttack(data)
 		ClientMod.soundManager:newSoundMod({
 			soundClass = "Bullet1",
 			pos = damagePos,
-			volume = 0.1, -- 0.025
+			volume = 0.07, -- 0.1
 		})
 
 		-- ClientMod.soundManager:newSoundMod({
@@ -718,14 +793,15 @@ function PetSpot:initPetBB()
 	local nameTitle = petBB.MainFrame.NameTitle
 
 	local mutationPrefix = ""
-	if self.mutationClass and self.mutationClass ~= "None" then
+	if self.mutationClass ~= "Normal" then
 		mutationPrefix = "[" .. self.mutationClass .. "] "
 	end
 
 	local mutationColor = Color3.fromRGB(255, 255, 255)
-	if self.mutationClass and self.mutationClass ~= "None" then
+	if self.mutationClass ~= "Normal" then
 		mutationColor = MutationInfo.mutations[self.mutationClass].color
 	end
+
 	mutationPrefix = Common.addRichTextColor(mutationPrefix, mutationColor)
 	nameTitle.RichText = true
 

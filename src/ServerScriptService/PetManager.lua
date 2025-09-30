@@ -109,15 +109,15 @@ function PetManager:sendOfflineCoinsData()
 		totalSeconds = math.max(totalSeconds, os.time() - petSpot.leaveTimestamp)
 	end
 
-	-- less than 30 minutes
-	if totalSeconds < 60 * 30 then
-		-- immediately just claim without boost
-		print("CLAIMING WITHOUT BOOST")
-		self:claimOfflineCoins({
-			boost = false,
-		})
-		return
-	end
+	-- -- less than 30 minutes
+	-- if totalSeconds < 60 * 30 then
+	-- 	-- immediately just claim without boost
+	-- 	print("CLAIMING WITHOUT BOOST")
+	-- 	self:claimOfflineCoins({
+	-- 		boost = false,
+	-- 	})
+	-- 	return
+	-- end
 
 	ServerMod:FireClient(self.user.player, "updateCoinsOfflineData", {
 		totalOfflineCoins = totalOfflineCoins,
@@ -348,6 +348,24 @@ function PetManager:tryPickupFromPetSpot(data)
 	self:storePet(petSpot)
 end
 
+function PetManager:trySwapPetAtPetSpot(data)
+	local petSpotName = data["petSpotName"]
+	local petSpot = self.petSpots[petSpotName]
+	if not petSpot then
+		warn("NO PET SPOT TO SWAP PET AT: ", petSpotName)
+		return
+	end
+	self:tryPickupFromPetSpot(data)
+
+	if self.swapPetExpiree and self.swapPetExpiree > ServerMod.step then
+		self.user:notifyError("Please wait before trying again")
+		return
+	end
+	self.swapPetExpiree = ServerMod.step + 60 * 0.2
+
+	self.user.home.toolManager:tryPlacePetAtPetSpot(data)
+end
+
 function PetManager:tryPickupRelicFromPetSpot(data)
 	local petSpotName = data["petSpotName"]
 	local petSpot = self.petSpots[petSpotName]
@@ -360,7 +378,29 @@ function PetManager:tryPickupRelicFromPetSpot(data)
 		return
 	end
 
+	ServerMod:FireClient(self.user.player, "newSoundMod", {
+		soundClass = "SproutPop1",
+	})
+
 	petSpot:storeRelic()
+end
+
+function PetManager:trySwapRelicAtPetSpot(data)
+	local petSpotName = data["petSpotName"]
+	local petSpot = self.petSpots[petSpotName]
+	if not petSpot then
+		warn("NO PET SPOT TO SWAP RELIC AT: ", petSpotName)
+		return
+	end
+
+	if self.swapRelicExpiree and self.swapRelicExpiree > ServerMod.step then
+		self.user:notifyError("Please wait before trying again")
+		return
+	end
+	self.swapRelicExpiree = ServerMod.step + 60 * 0.2
+
+	self:tryPickupRelicFromPetSpot(data)
+	self.user.home.toolManager:tryPlaceRelicAtPetSpot(data)
 end
 
 function PetManager:tryLevelUpPet(data)

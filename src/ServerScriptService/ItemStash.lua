@@ -60,8 +60,8 @@ function ItemStash:addFirstItems()
 		count = 10 * 1000,
 	})
 
-	-- self:addTestPets()
-	-- self:addTestRelics()
+	self:addTestPets()
+	self:addTestRelics()
 end
 
 function ItemStash:addTestPets()
@@ -104,7 +104,7 @@ function ItemStash:addTestPets()
 	}
 
 	local mutationList = {
-		"None",
+		"Normal",
 		"Gold",
 		"Diamond",
 		"Bubblegum",
@@ -113,9 +113,6 @@ function ItemStash:addTestPets()
 		for _, mutationClass in ipairs(mutationList) do
 			local count = 1
 			for i = 1, count do
-				if mutationClass == "None" then
-					mutationClass = nil
-				end
 				self:addPet({
 					petClass = petClass,
 					mutationClass = mutationClass,

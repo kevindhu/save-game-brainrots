@@ -3,8 +3,8 @@ local Common = require(game.ReplicatedStorage.Common)
 local MutationInfo = {}
 
 MutationInfo["mutations"] = {
-	["None"] = {
-		alias = "None",
+	["Normal"] = {
+		alias = "Normal",
 		color = Color3.fromRGB(255, 255, 255),
 		colorGradient = ColorSequence.new(Color3.fromRGB(255, 255, 255)),
 	},
@@ -37,7 +37,7 @@ MutationInfo["mutations"] = {
 }
 
 MutationInfo["damageMultiplierMap"] = {
-	["None"] = 1,
+	["Normal"] = 1,
 	["Gold"] = 1,
 	["Diamond"] = 1,
 	["Bubblegum"] = 1.5,
@@ -45,7 +45,7 @@ MutationInfo["damageMultiplierMap"] = {
 }
 
 MutationInfo["attackSpeedMultiplierMap"] = {
-	["None"] = 1,
+	["Normal"] = 1,
 	["Gold"] = 1.05,
 	["Diamond"] = 1.11,
 	["Bubblegum"] = 1.13,
@@ -53,7 +53,7 @@ MutationInfo["attackSpeedMultiplierMap"] = {
 }
 
 MutationInfo["mutationProbMap"] = {
-	None = 5000, -- 1000,
+	Normal = 5000, -- 1000,
 
 	Gold = 400, -- 1000
 	Diamond = 100, -- 100
@@ -63,7 +63,7 @@ MutationInfo["mutationProbMap"] = {
 }
 
 MutationInfo["mutationProbMap_TEST"] = {
-	None = 1000, -- 1000,
+	Normal = 1000, -- 1000,
 
 	Gold = 10000, -- 1000
 	Diamond = 10000,

@@ -43,18 +43,19 @@ function IndexManager:init()
 		self:initTabList()
 
 		self:initAllPetMods({
-			mutationClass = nil,
+			mutationClass = "Normal",
 		})
 	end)
 end
 
 function IndexManager:initTabList()
 	local tabList = {
-		"None",
+		"Normal",
 		"Gold",
 		"Diamond",
-		-- "Volcanic",
 		"Bubblegum",
+
+		-- "Volcanic",
 		-- "Rainbow",
 	}
 
@@ -74,10 +75,6 @@ function IndexManager:initTabList()
 		title.Text = tabClass
 
 		ClientMod.buttonManager:addActivateCons(tabButton, function()
-			if tabClass == "None" then
-				tabClass = nil
-			end
-
 			self:initAllPetMods({
 				mutationClass = tabClass,
 			})
@@ -92,7 +89,7 @@ function IndexManager:initTabList()
 		})
 
 		local mutationClass = tabClass
-		if tabClass ~= "None" then
+		if mutationClass ~= "Normal" then
 			ClientMod.mutationManager:applyMutationColor(title, mutationClass)
 		end
 	end
@@ -184,8 +181,6 @@ function IndexManager:newPetMod(petClass, index, mutationClass)
 	local rating = petStats["rating"]
 	ClientMod.ratingManager:applyRatingColor(innerFrame.NameTitle, rating)
 	ClientMod.ratingManager:applyRatingColor(innerFrame.UnknownTitle, rating)
-
-	mutationClass = mutationClass or "None"
 
 	local mutationTitle = innerFrame.MutationTitle
 	ClientMod.mutationManager:applyMutationColor(mutationTitle, mutationClass)
@@ -293,10 +288,7 @@ function IndexManager:refreshAllPetMods()
 
 		local frame = petMod.frame
 
-		local id = petClass
-		if mutationClass and mutationClass ~= "None" then
-			id = id .. "_" .. mutationClass
-		end
+		local id = petClass .. "_" .. mutationClass
 
 		local innerFrame = frame.InnerFrame
 		local icon = innerFrame.Icon

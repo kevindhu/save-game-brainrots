@@ -63,6 +63,10 @@ function User:addRigCons()
 	end)
 end
 
+function User:newNotifyMod(data)
+	ServerMod:FireClient(self.player, "addNotify", data)
+end
+
 function User:notifySuccess(txt, duration, soundClass)
 	local data = {
 		txt = txt,

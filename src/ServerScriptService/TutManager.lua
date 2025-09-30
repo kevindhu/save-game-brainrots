@@ -95,16 +95,16 @@ function TutManager:tryChooseNewTutMod()
 end
 
 function TutManager:initFirstTutMods()
-	-- if Common.isStudio then
-	-- 	-- fake complete all tutMods
-	-- 	for _, tutName in pairs(TutInfo.funnelStepList) do
-	-- 		self.completedTutMods[tutName] = {
-	-- 			completionTime = os.time(),
-	-- 		}
-	-- 	end
-	-- 	self:sendCompletedMods()
-	-- 	return
-	-- end
+	if Common.isStudio then
+		-- fake complete all tutMods
+		for _, tutName in pairs(TutInfo.funnelStepList) do
+			self.completedTutMods[tutName] = {
+				completionTime = os.time(),
+			}
+		end
+		self:sendCompletedMods()
+		return
+	end
 
 	-- clear all existing tutMods
 	self.tutMods = {}

@@ -314,13 +314,11 @@ function SpeedManager:refreshSpeedMod(speedMod)
 end
 
 function SpeedManager:chooseNextSpeedMod()
+	local rating = "Common"
 	local currWaveMod = ClientMod.saveManager:getWaveMod(player.Name)
-	if not currWaveMod then
-		warn("!!! NO CURRENT WAVE MOD FOUND: ", player.Name)
-		return
+	if currWaveMod then
+		rating = currWaveMod["rating"]
 	end
-
-	local rating = currWaveMod["rating"]
 
 	local chosenTutMod = ClientMod.tutManager.chosenTutMod
 	if chosenTutMod then

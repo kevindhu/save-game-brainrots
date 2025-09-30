@@ -358,11 +358,15 @@ function ToolManager:tryPlacePetAtPetSpot(data)
 		return
 	end
 	if not petSpot.unlocked then
-		self.user:notifyError("This pet spot is not unlocked")
+		self.user:notifyError("This platform is not unlocked")
 		return
 	end
 	if not petSpot.initialized then
 		self.user:notifyError("Please wait before trying again")
+		return
+	end
+	if petSpot.petData then
+		self.user:notifyError("This platform is already occupied")
 		return
 	end
 

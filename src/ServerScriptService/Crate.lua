@@ -6,6 +6,7 @@ local len, routine, wait = Common.len, Common.routine, Common.wait
 local CrateInfo = require(game.ReplicatedStorage.CrateInfo)
 local RatingInfo = require(game.ReplicatedStorage.RatingInfo)
 local PetInfo = require(game.ReplicatedStorage.PetInfo)
+local RelicInfo = require(game.ReplicatedStorage.RelicInfo)
 
 local Crate = {}
 Crate.__index = Crate
@@ -84,6 +85,16 @@ function Crate:hatch()
 	-- 	itemData = itemData,
 	-- 	userName = self.user.name,
 	-- })
+
+	local relicStats = RelicInfo:getMeta(relicClass)
+	self.user:newNotifyMod({
+		txt = string.format("You unboxed a %s!", Common.addRichTextColor(relicStats["alias"], relicStats["color"])),
+		color = Color3.fromRGB(255, 255, 255),
+	})
+	ServerMod:FireClient(self.user.player, "newSoundMod", {
+		soundClass = "SuccessHatch1",
+		volume = 0.5,
+	})
 
 	local itemData = {
 		relicClass = relicClass,

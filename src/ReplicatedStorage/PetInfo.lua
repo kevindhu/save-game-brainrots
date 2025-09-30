@@ -424,7 +424,7 @@ function PetInfo:getPetImage(petClass, mutationClass)
 
 	-- print("MUTATION IMAGE MAP: ", mutationImageMap, petClass, mutationClass)
 
-	if mutationClass and mutationClass ~= "None" and mutationImageMap then
+	if mutationClass ~= "Normal" and mutationImageMap then
 		image = mutationImageMap[mutationClass]
 	end
 	return image or "rbxassetid://120444751052938"

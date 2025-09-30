@@ -1,5 +1,8 @@
 local TutInfo = {}
 
+local Common = require(game.ReplicatedStorage.Common)
+local len, routine, wait = Common.len, Common.routine, Common.wait
+
 TutInfo["enableMapping"] = {
 	["EquipBat1"] = { "PressPlay" },
 	["PressPlay"] = { "CompleteFirstWave" },
@@ -36,7 +39,7 @@ TutInfo["funnelStepList"] = {
 TutInfo["tuts"] = {
 	["EquipBat1"] = {
 		targetClass = "EquipBat1",
-		text = "Equip the bat!",
+		text = string.format("Equip the %s!", Common.addRichTextColor("Tung Bat", Color3.fromRGB(115, 255, 234))),
 
 		requireMod = {
 			count = 1,
@@ -52,7 +55,10 @@ TutInfo["tuts"] = {
 	},
 	["CompleteFirstWave"] = {
 		targetClass = "CompleteFirstWave",
-		text = "Save the Cappuccino Assassino!",
+		text = string.format(
+			"Save the %s!",
+			Common.addRichTextColor("Cappuccino Assassino", Color3.fromRGB(115, 255, 234))
+		),
 
 		requireMod = {
 			count = 1,
@@ -60,7 +66,10 @@ TutInfo["tuts"] = {
 	},
 	["EquipFirstPet"] = {
 		targetClass = "EquipFirstPet",
-		text = "Equip the Cappuccino Assassino!",
+		text = string.format(
+			"Equip the %s!",
+			Common.addRichTextColor("Cappuccino Assassino", Color3.fromRGB(115, 255, 234))
+		),
 
 		requireMod = {
 			count = 1,
@@ -76,7 +85,7 @@ TutInfo["tuts"] = {
 	},
 	["EquipBat2"] = {
 		targetClass = "EquipBat2",
-		text = "Equip the bat!",
+		text = string.format("Equip the %s!", Common.addRichTextColor("Tung Bat", Color3.fromRGB(115, 255, 234))),
 
 		requireMod = {
 			count = 1,
@@ -84,7 +93,7 @@ TutInfo["tuts"] = {
 	},
 	["CompleteSecondWave"] = {
 		targetClass = "CompleteSecondWave",
-		text = "Save the Tung Tung Sahur!",
+		text = string.format("Save the %s!", Common.addRichTextColor("Tung Tung Sahur", Color3.fromRGB(115, 255, 234))),
 
 		requireMod = {
 			count = 1,
@@ -103,7 +112,7 @@ TutInfo["tuts"] = {
 	-- TIME WIZARD TUTORIALS
 	["GoToTimeWizard"] = {
 		targetClass = "GoToTimeWizard",
-		text = "Go to the time wizard!",
+		text = string.format("Go to the %s!", Common.addRichTextColor("Time Wizard", Color3.fromRGB(115, 255, 234))),
 
 		requireMod = {
 			count = 1,
@@ -111,7 +120,7 @@ TutInfo["tuts"] = {
 	},
 	["Buy2xSpeedCommon"] = {
 		targetClass = "Buy2xSpeedCommon",
-		text = "Buy the 2x speed!",
+		text = "Buy the 2x Speed!",
 
 		requireMod = {
 			count = 1,
@@ -127,7 +136,7 @@ TutInfo["tuts"] = {
 	},
 	["Choose2xSpeedCommon"] = {
 		targetClass = "Choose2xSpeedCommon",
-		text = "Choose the 2x speed!",
+		text = "Choose the 2x Speed!",
 
 		requireMod = {
 			count = 1,
@@ -135,7 +144,10 @@ TutInfo["tuts"] = {
 	},
 	["FinishedTimeWizardTut"] = {
 		targetClass = "Nothing",
-		text = "Save the Cappuccino Assassino (2x Speed)!",
+		text = string.format(
+			"Save the %s (2x Speed)!",
+			Common.addRichTextColor("Cappuccino Assassino", Color3.fromRGB(115, 255, 234))
+		),
 
 		requireMod = {
 			timer = 3,

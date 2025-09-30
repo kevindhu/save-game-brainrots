@@ -44,16 +44,13 @@ function IndexManager:unlockAllPets()
 
 	for _, petClass in pairs(PetInfo.petOrderList) do
 		local mutationList = {
-			"None",
+			"Normal",
 			"Gold",
 			"Diamond",
 			"Bubblegum",
 			-- "Volcanic",
 		}
 		for _, mutationClass in pairs(mutationList) do
-			if mutationClass == "None" then
-				mutationClass = nil
-			end
 			self:unlockPet(petClass, mutationClass)
 		end
 	end
@@ -96,12 +93,7 @@ function IndexManager:tryClaimIndexReward()
 end
 
 function IndexManager:unlockPet(petClass, mutationClass)
-	local id = petClass
-	if mutationClass then
-		id = id .. "_" .. mutationClass
-	end
-
-	-- print("UNLOCK PET: ", petClass, mutationClass, id, self.unlockedPetMap)
+	local id = petClass .. "_" .. mutationClass
 
 	if self.unlockedPetMap[id] then
 		return

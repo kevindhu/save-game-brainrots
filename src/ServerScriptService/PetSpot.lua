@@ -46,9 +46,7 @@ function PetSpot:init()
 		wait(1)
 		self.initialized = true
 
-		-- print("PET SPOT INITIALIZED: ", self.petSpotName, self.unlocked)
-
-		self:occupyWithDevPet()
+		-- self:occupyWithDevPet()
 	end)
 end
 
@@ -189,11 +187,9 @@ function PetSpot:refreshAttackSpeedRatio()
 	local attackSpeedRatio = 1 * levelMultiplier
 
 	-- add mutation multiplier
-	local mutationMultiplier = 1
 	local mutationClass = self.petData["mutationClass"]
-	if mutationClass and mutationClass ~= "None" then
-		mutationMultiplier = MutationInfo["attackSpeedMultiplierMap"][mutationClass]
-	end
+	local mutationMultiplier = MutationInfo["attackSpeedMultiplierMap"][mutationClass]
+
 	attackSpeedRatio = attackSpeedRatio * mutationMultiplier
 
 	-- add attack speed from relics
@@ -264,7 +260,7 @@ function PetSpot:storeRelic()
 		newItemMod["forceBottom"] = true
 		newItemMod["noClick"] = false
 
-		print("STORING RELIC: ", newItemMod)
+		-- print("STORING RELIC: ", newItemMod)
 
 		self.user.home.itemStash:addItemMod(newItemMod)
 	end
@@ -382,7 +378,7 @@ function PetSpot:tickAttack(timeRatio)
 	-- add mutation multiplier
 	local mutationMultiplier = 1
 	local mutationClass = self.petData["mutationClass"]
-	if mutationClass and mutationClass ~= "None" then
+	if mutationClass and mutationClass ~= "Normal" then
 		mutationMultiplier = MutationInfo["damageMultiplierMap"][mutationClass]
 	end
 	damage = damage * mutationMultiplier

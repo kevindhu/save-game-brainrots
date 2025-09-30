@@ -11,7 +11,7 @@ local MutationManager = {
 function MutationManager:init() end
 
 function MutationManager:addMutationToRig(entity, rig, mutationClass)
-	if not mutationClass then
+	if mutationClass == "Normal" then
 		return
 	end
 
@@ -109,6 +109,10 @@ function MutationManager:addColorFromPartIndexes(rig, mutationClass, entity)
 end
 
 function MutationManager:addMutationAura(rig, mutationClass)
+	if mutationClass == "Normal" then
+		return
+	end
+
 	local baseMutationModel = game.ReplicatedStorage.Assets:FindFirstChild("Aura" .. mutationClass)
 	if not baseMutationModel then
 		-- warn("COULD NOT FIND BASE AURA MODEL FOR: ", mutationClass)
@@ -176,7 +180,7 @@ local easyVisualPresetMap = {
 }
 
 function MutationManager:applyMutationColor(title, mutationClass)
-	if not mutationClass or mutationClass == "None" then
+	if mutationClass == "Normal" then
 		title.Visible = false
 		return
 	end
@@ -185,6 +189,7 @@ function MutationManager:applyMutationColor(title, mutationClass)
 
 	local mutationStats = MutationInfo.mutations[mutationClass]
 	if not mutationStats then
+		warn(debug.traceback())
 		warn("!!! NO MUTATION STATS FOUND FOR: ", mutationClass)
 		return
 	end

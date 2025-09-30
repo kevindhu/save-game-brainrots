@@ -78,10 +78,6 @@ function Crate:initModel()
 
 	model.PrimaryPart = model:FindFirstChild("RootPart")
 
-	if self.mutationClass and self.mutationClass ~= "None" then
-		ClientMod.mutationManager:addMutationAura(model, self.mutationClass)
-	end
-
 	for _, child in pairs(model:GetDescendants()) do
 		if not child:IsA("BasePart") then
 			continue

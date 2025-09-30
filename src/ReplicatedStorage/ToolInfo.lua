@@ -6,7 +6,7 @@ ToolInfo["vendorBasicToolList"] = {}
 
 ToolInfo["tools"] = {
 	["Bat1"] = {
-		alias = "Bat",
+		alias = "Tung Bat",
 		description = "A bat for hitting",
 		price = 0,
 		image = "rbxassetid://70735417680990",

@@ -88,6 +88,8 @@ function PlaceManager:doFullPromptRefresh()
 			petSpot:removePickupPrompt()
 			petSpot:removeRelicPrompt()
 			petSpot:removePickupRelicPrompt()
+			petSpot:removeSwapPetPrompt()
+			petSpot:removeSwapRelicPrompt()
 			continue
 		end
 
@@ -105,23 +107,37 @@ function PlaceManager:doFullPromptRefresh()
 			petSpot:removePickupPrompt()
 			petSpot:removeRelicPrompt()
 			petSpot:removePickupRelicPrompt()
+			petSpot:removeSwapPetPrompt()
+			petSpot:removeSwapRelicPrompt()
 		else
-			petSpot:addPickupPrompt()
+			if petEquipped then
+				petSpot:addSwapPetPrompt()
+				petSpot:removePickupPrompt()
+			else
+				petSpot:addPickupPrompt()
+				petSpot:removeSwapPetPrompt()
+			end
+
+			local relicMods = petSpot.petData["relicMods"]
 
 			if relicEquipped then
-				local relicMods = petSpot.petData["relicMods"]
-				-- print("RELIC MODS: ", relicMods)
+				petSpot:removePickupRelicPrompt()
 
-				if len(relicMods) > 0 then
-					petSpot:addPickupRelicPrompt()
-
-					-- remove
-					petSpot:removeRelicPrompt()
-				else
+				if len(relicMods) == 0 then
 					petSpot:addRelicPrompt()
+					petSpot:removeSwapRelicPrompt()
+				else
+					petSpot:addSwapRelicPrompt()
+					petSpot:removeRelicPrompt()
+				end
+			else
+				petSpot:removeRelicPrompt()
+				petSpot:removeSwapRelicPrompt()
 
-					-- remove
+				if len(relicMods) == 0 then
 					petSpot:removePickupRelicPrompt()
+				else
+					petSpot:addPickupRelicPrompt()
 				end
 			end
 		end

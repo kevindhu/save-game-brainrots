@@ -105,8 +105,8 @@ function LoadAllModules()
 
 		{ "DamageManager", "damageManager" },
 
-		{ "ClaimOfflineManager", "claimOfflineManager" },
 		{ "AfkManager", "afkManager" },
+		{ "ClaimOfflineManager", "claimOfflineManager" },
 
 		{ "LeaveManager", "leaveManager" },
 		{ "FavoriteManager", "favoriteManager" },
@@ -132,6 +132,14 @@ function LoadAllModules()
 		local module = require(script.Parent:WaitForChild(moduleClass .. "Local"))
 		ClientMod[moduleAlias] = module
 	end
+
+	ClientMod.itemStash:newBottomMod({
+		itemName = "Bat1",
+		itemClass = "Bat1",
+		mutationClass = nil,
+		index = -1,
+	})
+	ClientMod.itemStash:refreshAllBottomModTweens()
 
 	-- print(("CLIENT LOAD MODULES: %.2f seconds"):format(os.clock() - startTime))
 end

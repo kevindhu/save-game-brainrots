@@ -106,6 +106,10 @@ function ServerEventManager:handleRequest(player, req, data)
 		petManager:tryFeedPet(data)
 	elseif req == "tryPickupFromPetSpot" then
 		petManager:tryPickupFromPetSpot(data)
+	elseif req == "trySwapPetAtPetSpot" then
+		petManager:trySwapPetAtPetSpot(data)
+	elseif req == "trySwapRelicAtPetSpot" then
+		petManager:trySwapRelicAtPetSpot(data)
 	elseif req == "tryPickupRelicFromPetSpot" then
 		petManager:tryPickupRelicFromPetSpot(data)
 	elseif req == "tryLevelUpPet" then

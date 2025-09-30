@@ -145,6 +145,10 @@ SoundInfo["sounds"] = {
 		id = 97881181065416,
 		volume = 0.2,
 	},
+	["SuccessHatch1"] = {
+		id = 8673286553,
+		volume = 0.2,
+	},
 
 	-- success obtain
 	-- ["SuccessObtainUnit"] = {

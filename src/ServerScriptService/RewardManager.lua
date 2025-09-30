@@ -114,19 +114,19 @@ function RewardManager:tryClaimGroupReward()
 	})
 
 	local petClass = "TrippiTroppi"
-	local mutationClass = nil
+	local mutationClass = "Normal"
 
 	self.user.home.itemStash:addPet({
 		petClass = petClass,
 		mutationClass = mutationClass,
 	})
 
-	-- TODO: reintroduce hatching
-	ServerMod:FireClient(self.user.player, "doHatch", {
-		userName = self.user.name,
-		petClass = petClass,
-		mutationClass = mutationClass,
-	})
+	-- -- TODO: reintroduce hatching
+	-- ServerMod:FireClient(self.user.player, "doHatch", {
+	-- 	userName = self.user.name,
+	-- 	petClass = petClass,
+	-- 	mutationClass = mutationClass,
+	-- })
 end
 
 function RewardManager:saveState()

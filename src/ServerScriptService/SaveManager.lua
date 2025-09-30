@@ -328,6 +328,15 @@ function SaveManager:completeWaveMod(waveMod)
 	-- 	launchCFrame = self.user.currFrame,
 	-- })
 
+	local waveCompletionReward = 100
+	routine(function()
+		wait(1.5)
+		self.user.home.itemStash:updateItemCount({
+			itemName = "Coins",
+			count = waveCompletionReward,
+		})
+	end)
+
 	ServerMod:FireAllClients("completeWaveMod", {
 		waveName = waveMod["waveName"],
 		userName = self.user.name,

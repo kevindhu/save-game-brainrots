@@ -96,17 +96,6 @@ function ItemStash:init()
 	})
 
 	self:chooseTab("All")
-
-	routine(function()
-		wait(1)
-		self:newBottomMod({
-			itemName = "Bat1",
-			itemClass = "Bat1",
-			mutationClass = nil,
-			index = -1,
-		})
-		self:refreshAllBottomModTweens()
-	end)
 end
 
 function ItemStash:addFavoriteCons()
@@ -260,9 +249,6 @@ function ItemStash:chooseInfoItemMod(itemMod)
 	local itemStats = self:getFullItemStats(itemMod["itemClass"])
 	itemInfoFrame.NameTitle.Text = itemStats["alias"]
 
-	local mutationClass = itemMod["mutationClass"]
-	-- ClientMod.mutationManager:applyMutationColor(itemInfoFrame.RatingTitle, mutationClass)
-
 	local rating = itemStats["rating"] or "Common"
 
 	local ratingTitle = itemInfoFrame.RatingTitle
@@ -383,6 +369,9 @@ function ItemStash:newBottomMod(itemData)
 
 	local innerFrame = frame.InnerFrame
 
+	local mutationTitle = innerFrame.Tags.MutationTitle
+	mutationTitle.Visible = false
+
 	local race = newBottomMod["race"]
 	if race == "relic" then
 		innerFrame.Icon.Image = itemStats["image"]
@@ -390,12 +379,10 @@ function ItemStash:newBottomMod(itemData)
 		innerFrame.Icon.Image = itemStats["image"]
 	elseif race == "pet" then
 		innerFrame.Icon.Image = PetInfo:getPetImage(itemClass, newBottomMod["mutationClass"])
+		ClientMod.mutationManager:applyMutationColor(mutationTitle, newBottomMod["mutationClass"])
 	else
 		innerFrame.Icon.Image = itemStats["image"]
 	end
-
-	local mutationTitle = innerFrame.Tags.MutationTitle
-	ClientMod.mutationManager:applyMutationColor(mutationTitle, newBottomMod["mutationClass"])
 
 	-- shorten to only 10 characters max
 	local alias = itemStats["alias"]
@@ -775,22 +762,20 @@ function ItemStash:newItemMod(itemData)
 		weightTitle.Visible = true
 	end
 
+	local mutationClass = newItemMod["mutationClass"]
+
+	-- add mutation title
+	local mutationTitle = buttonFrame.MutationTitle
+	mutationTitle.Visible = false
+
 	-- add power title
 	local powerTitle = buttonFrame.BottomFrame.PowerTitle
 	powerTitle.Visible = false
 	if race == "relic" then
 		powerTitle.Text = math.random(100, 1000)
 		powerTitle.Visible = true
-	end
-
-	-- add mutation title
-	local mutationTitle = buttonFrame.MutationTitle
-	local mutationClass = newItemMod["mutationClass"]
-	if not mutationClass or mutationClass == "None" then
-		mutationTitle.Visible = false
-	else
+	elseif race == "pet" then
 		ClientMod.mutationManager:applyMutationColor(mutationTitle, mutationClass)
-		mutationTitle.Visible = true
 	end
 
 	ClientMod.buttonManager:addActivateCons(buttonFrame, function()
@@ -914,7 +899,7 @@ function ItemStash:refreshGUI()
 	}
 
 	local mutationMap = {
-		None = 1,
+		Normal = 1,
 		Gold = 2,
 		Diamond = 3,
 		Bubblegum = 4,
@@ -947,8 +932,8 @@ function ItemStash:refreshGUI()
 		-- 	return itemClass < itemClassB
 		-- end
 
-		local mutationAIndex = mutationMap[a["mutationClass"] or "None"]
-		local mutationBIndex = mutationMap[b["mutationClass"] or "None"]
+		local mutationAIndex = mutationMap[a["mutationClass"] or "Normal"]
+		local mutationBIndex = mutationMap[b["mutationClass"] or "Normal"]
 		if not mutationAIndex or not mutationBIndex then
 			warn("NO MUTATION INDEX FOUND FOR: ", a["mutationClass"], b["mutationClass"], a, b)
 		end

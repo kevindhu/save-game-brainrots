@@ -167,7 +167,7 @@ function SaveManager:addWaveMod(data)
 		local petStats = PetInfo:getMeta(petClass)
 
 		local mutationPrefix = ""
-		if mutationClass and mutationClass ~= "None" then
+		if mutationClass ~= "Normal" then
 			mutationPrefix = mutationClass .. " "
 		end
 
@@ -501,7 +501,7 @@ function SaveManager:initBB(waveMod)
 	local nameTitle = bb.MainFrame.NameTitle
 
 	local mutationPrefix = ""
-	if mutationClass and mutationClass ~= "None" then
+	if mutationClass ~= "Normal" then
 		mutationPrefix = mutationClass .. " "
 	end
 	nameTitle.Text = mutationPrefix .. petStats["alias"]
