@@ -320,7 +320,7 @@ function PetSpot:addPlacePrompt()
 	end
 
 	local placePrompt = ClientMod.uiManager:createPrompt({
-		actionText = "Place",
+		actionText = "Place Brainrot",
 		objectText = "",
 		name = "InteractPetPrompt",
 		holdDuration = 0.1,
