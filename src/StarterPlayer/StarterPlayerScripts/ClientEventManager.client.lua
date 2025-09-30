@@ -117,6 +117,8 @@ function handleRequest(req, data)
 		ClientMod.saveManager:updateWaveModData(data)
 	elseif req == "updatePlaying" then
 		ClientMod.saveManager:updatePlaying(data)
+	elseif req == "doHatch" then
+		ClientMod.saveManager:doHatch(data)
 
 	-- UNITMANAGER
 	elseif req == "newUnit" then

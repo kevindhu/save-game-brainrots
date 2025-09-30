@@ -50,26 +50,26 @@ function Crate:sync(otherUser)
 	})
 end
 
-function Crate:addLuckWeights(petProbMap)
+function Crate:addLuckWeights(relicProbMap)
 	-- TODO: make this work with crates using rating!
 
 	local totalLuck = self.user.home.plotManager:getTotalLuck()
 
 	local luckDebuff = 0.05 -- 0.1
 
-	for petClass, weight in pairs(petProbMap) do
-		local petStats = PetInfo:getMeta(petClass)
-		local rating = petStats["rating"]
+	for itemClass, weight in pairs(relicProbMap) do
+		local relicStats = RelicInfo:getMeta(itemClass)
+		local rating = relicStats["rating"]
 		local luckMultiplier = totalLuck * RatingInfo.ratingLuckMultiplier[rating]
 
 		local luckWeightBuff = weight * luckMultiplier * luckDebuff
-		petProbMap[petClass] = weight + luckWeightBuff
+		relicProbMap[itemClass] = weight + luckWeightBuff
 	end
 end
 
 function Crate:hatch()
 	local relicProbMap = Common.deepCopy(self.crateStats["relicProbMap"])
-	-- self:addWeatherWeight(petProbMap)
+	-- self:addWeatherWeight(relicProbMap)
 	-- self:addLuckWeights(relicProbMap)
 
 	local relicClass = Common.rollFromProbMap(relicProbMap)
@@ -79,12 +79,11 @@ function Crate:hatch()
 		updateCount = 1,
 	})
 
-	-- ServerMod:FireAllClients("addHatchAnimation", {
-	-- 	crateName = self.crateName,
-	-- 	hatchExpiree = self.hatchExpiree,
-	-- 	itemData = itemData,
-	-- 	userName = self.user.name,
-	-- })
+	ServerMod:FireClient(self.user.player, "doHatch", {
+		userName = self.user.name,
+		itemClass = "Relic",
+		relicClass = relicClass,
+	})
 
 	local relicStats = RelicInfo:getMeta(relicClass)
 	self.user:newNotifyMod({

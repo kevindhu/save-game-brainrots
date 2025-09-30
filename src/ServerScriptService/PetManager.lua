@@ -210,7 +210,7 @@ function PetManager:tryUnlockPetSpot(data)
 	end
 
 	local index = petSpot.index
-	local unlockCost = PetBalanceInfo["unlockCostMap"][tostring(index)]
+	local unlockCost = PetBalanceInfo["petSpotUnlockCostMap"][tostring(index)]
 	local coinsCount = self.user.home.itemStash:getItemCount({
 		itemName = "Coins",
 	})

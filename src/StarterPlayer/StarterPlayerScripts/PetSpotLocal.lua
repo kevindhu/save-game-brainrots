@@ -86,7 +86,7 @@ function PetSpot:initBuyModel()
 	local buyBB = game.ReplicatedStorage.Assets.BuyPlatformBBPart.BB:Clone()
 	buyBB.Parent = buyModel.Collect.Attachment
 
-	local coinsCost = PetBalanceInfo["unlockCostMap"][tostring(self.index)]
+	local coinsCost = PetBalanceInfo["petSpotUnlockCostMap"][tostring(self.index)]
 	buyBB.MainFrame.Title.Text = "$" .. Common.abbreviateNumber(coinsCost)
 
 	self.buyBB = buyBB

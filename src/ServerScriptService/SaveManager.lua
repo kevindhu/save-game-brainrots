@@ -3,9 +3,6 @@ local ServerMod = require(game.ServerScriptService.ServerMod)
 local Common = require(game.ReplicatedStorage.Common)
 local len, routine, wait = Common.len, Common.routine, Common.wait
 
-local PetRollInfo = require(game.ReplicatedStorage.PetRollInfo)
-local MutationInfo = require(game.ReplicatedStorage.MutationInfo)
-
 local PetInfo = require(game.ReplicatedStorage.PetInfo)
 local WaveInfo = require(game.ReplicatedStorage.WaveInfo)
 

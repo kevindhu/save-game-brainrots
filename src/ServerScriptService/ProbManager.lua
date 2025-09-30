@@ -4,7 +4,7 @@ local Common = require(game.ReplicatedStorage.Common)
 local len, routine, wait = Common.len, Common.routine, Common.wait
 
 local MutationInfo = require(game.ReplicatedStorage.MutationInfo)
-local PetRollInfo = require(game.ReplicatedStorage.PetRollInfo)
+local PetBalanceInfo = require(game.ReplicatedStorage.PetBalanceInfo)
 local PetInfo = require(game.ReplicatedStorage.PetInfo)
 
 local ProbManager = {}
@@ -34,7 +34,7 @@ function ProbManager:init()
 end
 
 function ProbManager:generatePetClass(chosenRating)
-	local petProbMap = Common.deepCopy(PetRollInfo.probMap)
+	local petProbMap = Common.deepCopy(PetBalanceInfo.petProbMap)
 
 	if chosenRating ~= "None" then
 		for petClass, weight in pairs(petProbMap) do

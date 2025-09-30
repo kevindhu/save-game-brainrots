@@ -121,12 +121,12 @@ function RewardManager:tryClaimGroupReward()
 		mutationClass = mutationClass,
 	})
 
-	-- -- TODO: reintroduce hatching
-	-- ServerMod:FireClient(self.user.player, "doHatch", {
-	-- 	userName = self.user.name,
-	-- 	petClass = petClass,
-	-- 	mutationClass = mutationClass,
-	-- })
+	ServerMod:FireClient(self.user.player, "doHatch", {
+		userName = self.user.name,
+		itemClass = "Pet",
+		petClass = petClass,
+		mutationClass = mutationClass,
+	})
 end
 
 function RewardManager:saveState()

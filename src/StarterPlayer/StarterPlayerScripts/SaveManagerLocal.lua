@@ -132,6 +132,9 @@ function SaveManager:refreshCurrWaveModFrame()
 
 	if waveMod["killedUnitCount"] >= waveMod["totalUnitCount"] then
 		mainUnitBar.Title.Text = "SAVED"
+		mainUnitBar.Title.TextColor3 = Color3.fromRGB(97, 255, 102)
+	else
+		mainUnitBar.Title.TextColor3 = Color3.fromRGB(255, 255, 255)
 	end
 
 	local petClass = waveMod["petData"]["petClass"]
@@ -358,6 +361,28 @@ function SaveManager:completeWaveMod(data)
 	end)
 
 	rig:Destroy()
+end
+
+function SaveManager:doHatch(data)
+	local itemClass = data["itemClass"]
+	local petClass = data["petClass"]
+	local mutationClass = data["mutationClass"]
+	local relicClass = data["relicClass"]
+
+	local user = ClientMod:getLocalUser()
+
+	ClientMod.orbManager:newOrbMod({
+		userName = player.Name,
+		name = "ORB_" .. Common.getGUID(),
+		startPos = user.currFrame.Position,
+		direction = Common.getRandomFlatDir(),
+		value = 1,
+
+		itemClass = itemClass,
+		petClass = petClass,
+		mutationClass = mutationClass,
+		relicClass = relicClass,
+	})
 end
 
 function SaveManager:initPetRig(userName, waveMod, saveBaseFrame)

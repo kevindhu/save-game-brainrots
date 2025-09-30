@@ -11,6 +11,7 @@ local len, routine, wait = Common.len, Common.routine, Common.wait
 
 local PetInfo = require(game.ReplicatedStorage.PetInfo)
 local RatingInfo = require(game.ReplicatedStorage.RatingInfo)
+local RelicInfo = require(game.ReplicatedStorage.RelicInfo)
 
 local orbGUI = playerGui:WaitForChild("OrbGUI")
 
@@ -38,6 +39,7 @@ function OrbManager:addCons()
 	routine(function()
 		Common.setCollisionGroup(game.ReplicatedStorage.Assets.CoinsOrbModel, "Resources")
 		Common.setCollisionGroup(game.ReplicatedStorage.Assets.PetOrbModel, "Resources")
+		Common.setCollisionGroup(game.ReplicatedStorage.Assets.RelicOrbModel, "Resources")
 	end)
 end
 
@@ -84,10 +86,6 @@ function OrbManager:newOrbMod(data)
 	local value = data["value"]
 	local velMagnitude = data["velMagnitude"]
 	local itemClass = data["itemClass"]
-	local userName = data["userName"]
-
-	local petClass = data["petClass"]
-	local mutationClass = data["mutationClass"]
 
 	if not velMagnitude then
 		velMagnitude = math.random(100, 150) * 0.01 -- 100
@@ -119,7 +117,7 @@ function OrbManager:newOrbMod(data)
 	basePart.AssemblyLinearVelocity = direction * dist * velMagnitude
 
 	routine(function()
-		self:animateBB(model.DecorPart, itemClass, petClass, mutationClass, userName)
+		self:animateBB(model.DecorPart, data)
 	end)
 
 	local newOrbMod = {
@@ -134,7 +132,13 @@ function OrbManager:newOrbMod(data)
 	self.orbMods[orbName] = newOrbMod
 end
 
-function OrbManager:animateBB(decorPart, itemClass, petClass, mutationClass, userName)
+function OrbManager:animateBB(decorPart, data)
+	local itemClass = data["itemClass"]
+	local petClass = data["petClass"]
+	local mutationClass = data["mutationClass"]
+	local relicClass = data["relicClass"]
+	local userName = data["userName"]
+
 	local bb = decorPart.BB
 	local icon = bb.MainFrame.Icon
 	local uiScale = icon.UIScale
@@ -147,8 +151,11 @@ function OrbManager:animateBB(decorPart, itemClass, petClass, mutationClass, use
 		decorPart.Sparkle.Color = ColorSequence.new(ratingColor)
 
 		bb.Size = UDim2.fromScale(8, 8)
-	else
+	elseif itemClass == "Coins" then
 		icon.Image = "rbxassetid://87861169766396"
+	elseif itemClass == "Relic" then
+		local relicStats = RelicInfo:getMeta(relicClass)
+		icon.Image = relicStats["image"]
 	end
 
 	uiScale.Scale = 0
@@ -202,12 +209,17 @@ function OrbManager:animateBB(decorPart, itemClass, petClass, mutationClass, use
 	shrinkTween:Play()
 
 	if player.Name == userName then
-		self:newScreenOrb(decorPart, itemClass, petClass, mutationClass)
+		self:newScreenOrb(decorPart, data)
 	end
 end
 
 -- turn the orb position into on screen coordinate and tween to the cash position
-function OrbManager:newScreenOrb(decorPart, itemClass, petClass, mutationClass)
+function OrbManager:newScreenOrb(decorPart, data)
+	local itemClass = data["itemClass"]
+	local petClass = data["petClass"]
+	local mutationClass = data["mutationClass"]
+	local relicClass = data["relicClass"]
+
 	local screenPosition, inView = workspace.CurrentCamera:WorldToScreenPoint(decorPart.Position)
 	local screenVector = Vector2.new(screenPosition.X, screenPosition.Y)
 
@@ -229,6 +241,9 @@ function OrbManager:newScreenOrb(decorPart, itemClass, petClass, mutationClass)
 
 	if itemClass == "Pet" then
 		frame.Icon.Image = PetInfo:getPetImage(petClass, mutationClass)
+	elseif itemClass == "Relic" then
+		local relicStats = RelicInfo:getMeta(relicClass)
+		frame.Icon.Image = relicStats["image"]
 	else
 		frame.Icon.Image = "rbxassetid://87861169766396"
 	end
