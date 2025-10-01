@@ -55,13 +55,13 @@ function ItemStash:addFirstItems()
 	-- 	count = 100 * 1000 * 1000,
 	-- })
 
-	self:updateItemCount({
-		itemName = "Coins",
-		count = 10 * 1000,
-	})
+	-- self:updateItemCount({
+	-- 	itemName = "Coins",
+	-- 	count = 10 * 1000,
+	-- })
 
-	self:addTestPets()
-	self:addTestRelics()
+	-- self:addTestPets()
+	-- self:addTestRelics()
 end
 
 function ItemStash:addTestPets()
@@ -633,6 +633,13 @@ function ItemStash:saveState()
 		itemMods = self.itemMods,
 	}
 	self.user.store:set(self.moduleAlias .. "Info", managerData)
+end
+
+function ItemStash:wipe()
+	self.itemMods = {}
+
+	self:addFirstItems()
+	self:sendAllItemMods()
 end
 
 return ItemStash

@@ -160,11 +160,4 @@ function TradeManager:clearGift(gifterUserName)
 	self.giftMods[gifterUserName] = nil
 end
 
--- function TradeManager:saveState()
--- 	local managerData = {
--- 		cutRopeUserName = self.cutRopeUserName,
--- 	}
--- 	self.user.store:set(self.moduleAlias .. "Info", managerData)
--- end
-
 return TradeManager

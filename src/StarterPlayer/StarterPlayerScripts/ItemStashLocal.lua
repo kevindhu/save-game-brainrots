@@ -638,6 +638,8 @@ end
 
 function ItemStash:updateAllItemMods(data)
 	local noRefreshGUI = true
+
+	-- see if any existing itemMods are not in the new data
 	for itemName, itemMod in pairs(self.itemMods) do
 		local newItemData = data["itemMods"][itemName]
 		if not newItemData then

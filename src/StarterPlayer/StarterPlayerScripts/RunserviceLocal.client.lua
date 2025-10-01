@@ -123,6 +123,8 @@ function LoadAllModules()
 		{ "AutoSellManager", "autoSellManager" },
 
 		{ "BuyCrateManager", "buyCrateManager" },
+
+		{ "AdminManager", "adminManager" },
 	}
 
 	local startTime = os.clock()

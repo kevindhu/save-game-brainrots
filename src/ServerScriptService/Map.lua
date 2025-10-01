@@ -134,7 +134,7 @@ function Map:cleanPlotModel(plotName)
 	local plotModel = game.Workspace[plotName]
 end
 
-function Map:getRandomEmptyPlotName()
+function Map:obtainRandomPlotName()
 	local emptyPlotNames = {}
 
 	for i = 1, MapInfo.PLOT_COUNT do

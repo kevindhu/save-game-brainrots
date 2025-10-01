@@ -247,6 +247,10 @@ function SaveManager:tryTogglePlay(data)
 		end
 	end
 
+	self:togglePlay(newBool)
+end
+
+function SaveManager:togglePlay(newBool)
 	self.playing = newBool
 
 	if self.playing then
@@ -453,11 +457,19 @@ function SaveManager:saveState()
 	self.user.store:set(self.moduleAlias .. "Info", managerData)
 end
 
+function SaveManager:wipe()
+	self:destroy()
+
+	self:togglePlay(false)
+end
+
 function SaveManager:destroy()
 	local currWaveMod = self.currWaveMod
 	if currWaveMod then
 		self:failWaveMod(currWaveMod, nil)
 	end
+
+	self.waveMods = {}
 end
 
 return SaveManager

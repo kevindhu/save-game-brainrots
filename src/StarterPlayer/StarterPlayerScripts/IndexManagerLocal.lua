@@ -126,11 +126,6 @@ function IndexManager:addCons()
 	-- local rewardFrame = indexFrame.MainFrame.RewardFrame
 	-- rewardFrame.Visible = false
 
-	-- local confirmButton = rewardFrame.InnerFrame.ConfirmButton
-	-- ClientMod.buttonManager:addActivateCons(confirmButton, function()
-	-- 	ClientMod:FireServer("tryClaimIndexReward")
-	-- end)
-
 	-- self.templateRewardItem = rewardFrame.InnerFrame.ItemList.TemplateItem
 	-- self.templateRewardItem.Visible = false
 end

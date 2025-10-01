@@ -149,4 +149,9 @@ function BoostManager:saveState()
 	self.user.store:set(self.moduleAlias .. "Info", managerInfo)
 end
 
+function BoostManager:wipe()
+	self.boostMods = {}
+	self:sendBoostMods()
+end
+
 return BoostManager

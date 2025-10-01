@@ -56,4 +56,8 @@ function BadgeManager:saveState()
 	self.user.store:set(self.moduleAlias .. "Info", managerData)
 end
 
+function BadgeManager:wipe()
+	self.obtainedBadgeMap = {}
+end
+
 return BadgeManager

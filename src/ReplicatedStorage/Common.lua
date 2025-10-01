@@ -25,8 +25,8 @@ local Common = {
 	},
 	adminUserIds = {},
 
-	mainPlaceId = 140242346708175,
-	testPlaceId = 81695326161898,
+	mainPlaceId = 96761746514152,
+	testPlaceId = 96761746514152,
 
 	groupId = 338831493, -- Brainrot Atelier
 	universeId = 8458205008,

@@ -32,7 +32,6 @@ function RewardManager:addRewards(rewardData)
 	local itemMod = rewardData["itemMod"]
 	local gamepassClass = rewardData["gamepassClass"]
 	local setServerLuck = rewardData["setServerLuck"]
-	local permanentToolClass = rewardData["permanentToolClass"]
 	local potionClass = rewardData["potionClass"]
 	local offlineCoinsBoost = rewardData["offlineCoinsBoost"]
 	local premiumCrateClass = rewardData["premiumCrateClass"]
@@ -50,10 +49,6 @@ function RewardManager:addRewards(rewardData)
 
 	if potionClass then
 		boostManager:addBoostFromPotion(potionClass)
-	end
-
-	if permanentToolClass then
-		toolManager:addPermanentTool(permanentToolClass)
 	end
 
 	if offlineCoinsBoost then
@@ -134,6 +129,10 @@ function RewardManager:saveState()
 		groupRewardClaimed = self.groupRewardClaimed,
 	}
 	self.user.store:set(self.moduleAlias .. "Info", managerData)
+end
+
+function RewardManager:wipe()
+	self.groupRewardClaimed = nil
 end
 
 function RewardManager:destroy() end

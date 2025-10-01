@@ -76,6 +76,8 @@ function Home:initAllModules()
 
 		{ "PityManager", "pityManager" },
 		{ "AutoSellManager", "autoSellManager" },
+
+		{ "AdminManager", "adminManager" },
 	}
 	for _, moduleInfo in ipairs(moduleList) do
 		self:loadModule(moduleInfo[1], moduleInfo[2])
@@ -139,6 +141,7 @@ function Home:destroy()
 		"petManager",
 		"unitManager",
 		"saveManager",
+		"adminManager",
 	}
 	for _, managerClass in pairs(managerList) do
 		local manager = self[managerClass]
@@ -163,44 +166,55 @@ function Home:sync(otherUser)
 	end
 end
 
+local saveModuleList = {
+	"indexManager",
+	"shopManager",
+	"plotManager",
+	"statManager",
+
+	"badgeManager",
+	"boostManager",
+	"favoriteManager",
+
+	"crateManager",
+	"tutManager",
+
+	"petManager",
+
+	"rewardManager",
+	"testManager",
+
+	"speedManager",
+	"pityManager",
+	"autoSellManager",
+
+	"saveManager",
+
+	"itemStash",
+}
+
 function Home:saveState()
 	if self.user.destroying then
 		return
 	end
 
-	local managerList = {
-		"indexManager",
-		"shopManager",
-		"plotManager",
-		"statManager",
-
-		"toolManager",
-		"badgeManager",
-		"boostManager",
-		"favoriteManager",
-
-		"crateManager",
-
-		"tutManager",
-
-		"petManager",
-
-		"rewardManager",
-		"testManager",
-
-		"speedManager",
-		"pityManager",
-		"autoSellManager",
-
-		"itemStash",
-	}
-
-	for _, managerClass in pairs(managerList) do
+	for _, managerClass in pairs(saveModuleList) do
 		local manager = self[managerClass]
 		if not manager then
 			continue
 		end
 		manager:saveState()
+	end
+end
+
+function Home:wipeAllModules()
+	print("WIPE ALL MODULES")
+	for _, managerClass in pairs(saveModuleList) do
+		local manager = self[managerClass]
+		if not manager then
+			continue
+		end
+		manager:wipe()
 	end
 end
 

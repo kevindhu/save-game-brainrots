@@ -17,8 +17,6 @@ function ToolManager.new(owner, data)
 	u.stashToolMods = {}
 	u.foodToolMods = {}
 
-	u.permanentToolMods = {}
-
 	setmetatable(u, ToolManager)
 	return u
 end
@@ -128,16 +126,6 @@ function ToolManager:tick()
 		-- print(toolMod.toolClass)
 		toolMod:tick()
 	end
-end
-
-function ToolManager:addPermanentTool(toolClass)
-	self.permanentToolMods[toolClass] = {
-		buyTimestamp = os.time(),
-	}
-
-	self:newTool({
-		toolClass = toolClass,
-	})
 end
 
 function ToolManager:checkToolOwned(toolClass)
@@ -379,11 +367,8 @@ function ToolManager:tryPlacePetAtPetSpot(data)
 	toolMod:confirmPlacement(petSpot)
 end
 
-function ToolManager:saveState()
-	local managerData = {
-		permanentToolMods = self.permanentToolMods,
-	}
-	self.user.store:set(self.moduleAlias .. "Info", managerData)
+function ToolManager:wipe()
+	self.permanentToolMods = {}
 end
 
 return ToolManager

@@ -364,6 +364,15 @@ function ShopManager:refreshGamepasses()
 	end
 end
 
+function ShopManager:wipe()
+	self.gamepassMods = {}
+	self.receiptMods = {}
+	self.giftUserMods = {}
+
+	self:refreshGamepasses()
+	self:sync(self.user)
+end
+
 function ShopManager:saveState()
 	local managerData = {
 		gamepassMods = self.gamepassMods,

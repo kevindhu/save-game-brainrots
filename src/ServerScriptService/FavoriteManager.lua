@@ -78,4 +78,9 @@ function FavoriteManager:saveState()
 	self.user.store:set(self.moduleAlias .. "Info", managerData)
 end
 
+function FavoriteManager:wipe()
+	self.hasFavoritedGame = false
+	self:sendFavoriteData()
+end
+
 return FavoriteManager

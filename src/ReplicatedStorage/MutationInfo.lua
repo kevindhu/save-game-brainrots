@@ -23,17 +23,13 @@ MutationInfo["mutations"] = {
 		color = Color3.fromRGB(255, 92, 255),
 		colorGradient = ColorSequence.new(Color3.fromRGB(255, 182, 255)),
 	},
-	["Volcanic"] = {
-		alias = "Volcanic",
-		color = Color3.fromRGB(255, 94, 0),
-		colorGradient = ColorSequence.new(Color3.fromRGB(255, 94, 0)),
-	},
 
-	["Rainbow"] = {
-		alias = "Rainbow",
-		color = Color3.fromRGB(255, 86, 86),
-		colorGradient = ColorSequence.new(Color3.fromRGB(173, 79, 255)),
-	},
+	-- not yet added
+	-- ["Volcanic"] = {
+	-- 	alias = "Volcanic",
+	-- 	color = Color3.fromRGB(255, 94, 0),
+	-- 	colorGradient = ColorSequence.new(Color3.fromRGB(255, 94, 0)),
+	-- },
 }
 
 MutationInfo["damageMultiplierMap"] = {
@@ -41,7 +37,6 @@ MutationInfo["damageMultiplierMap"] = {
 	["Gold"] = 1,
 	["Diamond"] = 1,
 	["Bubblegum"] = 1.5,
-	["Volcanic"] = 1,
 }
 
 MutationInfo["attackSpeedMultiplierMap"] = {
@@ -49,7 +44,6 @@ MutationInfo["attackSpeedMultiplierMap"] = {
 	["Gold"] = 1.05,
 	["Diamond"] = 1.11,
 	["Bubblegum"] = 1.13,
-	["Volcanic"] = 1.15,
 }
 
 MutationInfo["mutationProbMap"] = {
@@ -61,17 +55,5 @@ MutationInfo["mutationProbMap"] = {
 	-- rarest cause best
 	Bubblegum = 50,
 }
-
-MutationInfo["mutationProbMap_TEST"] = {
-	Normal = 1000, -- 1000,
-
-	Gold = 10000, -- 1000
-	Diamond = 10000,
-	Bubblegum = 10000,
-}
-
--- if Common.isStudio then
--- 	MutationInfo.mutationProbMap = MutationInfo.mutationProbMap_TEST
--- end
 
 return MutationInfo

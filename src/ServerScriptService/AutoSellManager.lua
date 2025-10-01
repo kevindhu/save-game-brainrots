@@ -75,4 +75,10 @@ function AutoSellManager:saveState()
 	self.user.store:set(self.moduleAlias .. "Info", managerData)
 end
 
+function AutoSellManager:wipe()
+	self.ratingMods = {}
+	self:initAllRatingMods()
+	self:sendAllRatingMods()
+end
+
 return AutoSellManager

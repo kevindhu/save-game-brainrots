@@ -167,4 +167,15 @@ function CrateManager:saveState()
 	self.user.store:set(self.moduleAlias .. "Info", managerData)
 end
 
+function CrateManager:wipe()
+	self.crates = {}
+	self.shopStock = {}
+	self.restockTime = 0
+
+	self.lastPremiumCrateClass = nil
+	self.lastPremiumSkipCrateName = nil
+
+	self:sendStock()
+end
+
 return CrateManager

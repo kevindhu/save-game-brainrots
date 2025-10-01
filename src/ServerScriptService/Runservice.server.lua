@@ -115,3 +115,6 @@ routine(function()
 		wait(1)
 	end
 end)
+
+local Cmdr = require(game.ReplicatedStorage.Libraries.Cmdr)
+Cmdr:RegisterDefaultCommands()

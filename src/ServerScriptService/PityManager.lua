@@ -29,8 +29,6 @@ function PityManager:init()
 end
 
 function PityManager:initPityModel(model)
-	-- print("INIT PITY MODEL: ", model)
-
 	self.boardModel = model.PityBoardModel
 
 	local boardPart = self.boardModel.BoardPart
@@ -77,6 +75,14 @@ function PityManager:saveState()
 		mythicUnlocked = self.mythicUnlocked,
 	}
 	self.user.store:set(self.moduleAlias .. "Info", managerData)
+end
+
+function PityManager:wipe()
+	self.legendaryCount = 0
+	self.mythicCount = 0
+	self.legendaryUnlocked = false
+	self.mythicUnlocked = false
+	self:refreshBB()
 end
 
 return PityManager

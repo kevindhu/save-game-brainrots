@@ -44,11 +44,11 @@ function PetManager:init()
 				petSpotName = plotName .. "_PetSpot" .. 1,
 			})
 
-			if Common.isStudio then
-				self:tryUnlockPetSpot({
-					petSpotName = plotName .. "_PetSpot" .. 2,
-				})
-			end
+			-- if Common.isStudio then
+			-- 	self:tryUnlockPetSpot({
+			-- 		petSpotName = plotName .. "_PetSpot" .. 2,
+			-- 	})
+			-- end
 		else
 			self:loadState()
 		end
@@ -449,13 +449,32 @@ function PetManager:saveState()
 		fullPetSpotData[petSpot.petSpotName] = petSpotData
 	end
 
-	-- print("SAVE STATE: ", fullPetSpotData)
-
 	local managerData = {
 		fullPetSpotData = fullPetSpotData,
 	}
 
 	self.user.store:set(self.moduleAlias .. "Info", managerData)
+end
+
+function PetManager:wipe()
+	-- clear all pet spots
+	for _, petSpot in pairs(self.petSpots) do
+		petSpot:destroy()
+	end
+	self.petSpots = {}
+
+	self.fullPetSpotData = {}
+	self.unlockedPetSpotIndex = 1
+
+	self:addAllPetSpots()
+
+	local plotName = self.user.home.plotManager.plotName
+
+	self:tryUnlockPetSpot({
+		petSpotName = plotName .. "_PetSpot" .. 1,
+	})
+
+	self:refreshBuyModels()
 end
 
 return PetManager

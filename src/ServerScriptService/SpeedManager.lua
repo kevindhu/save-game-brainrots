@@ -23,8 +23,6 @@ function SpeedManager.new(owner, data)
 	u.owner = owner
 	u.data = data
 
-	u.speed = 1
-
 	u.speedMods = {}
 
 	setmetatable(u, SpeedManager)
@@ -282,6 +280,14 @@ function SpeedManager:saveState()
 		speedMods = self.speedMods,
 	}
 	self.user.store:set(self.moduleAlias .. "Info", managerData)
+end
+
+function SpeedManager:wipe()
+	self.speedMods = {}
+
+	self:initAllSpeedMods()
+	self:unlockBasicSpeedMods()
+	self:sendAllSpeedMods()
 end
 
 return SpeedManager

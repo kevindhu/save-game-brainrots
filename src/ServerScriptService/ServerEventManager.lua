@@ -131,10 +131,6 @@ function ServerEventManager:handleRequest(player, req, data)
 	elseif req == "tryClaimOfflineCoins" then
 		petManager:tryClaimOfflineCoins(data)
 
-	-- INDEXMANAGER
-	elseif req == "tryClaimIndexReward" then
-		indexManager:tryClaimIndexReward(data)
-
 	-- TUTMANAGER
 	elseif req == "tryUpdateTutMod" then
 		tutManager:tryUpdateTutMod(data)

@@ -24,7 +24,7 @@ function PlotManager:init()
 		self[k] = v
 	end
 
-	self:initPlotName()
+	self:obtainRandomPlotName()
 
 	routine(function()
 		self:initModel()
@@ -54,8 +54,8 @@ function PlotManager:getTotalLuck()
 	return totalLuck
 end
 
-function PlotManager:initPlotName()
-	local plotName = ServerMod.map:getRandomEmptyPlotName()
+function PlotManager:obtainRandomPlotName()
+	local plotName = ServerMod.map:obtainRandomPlotName()
 
 	-- if self.user.name == "lobotomy6612" and Common.isStudio then
 	-- 	plotName = "Plot1"
@@ -183,11 +183,17 @@ end
 
 function PlotManager:saveState()
 	local managerData = {
-		cutRopeUserName = self.cutRopeUserName,
 		likeUserList = self.likeUserList,
 		hatchedCount = self.hatchedCount,
 	}
 	self.user.store:set(self.moduleAlias .. "Info", managerData)
+end
+
+function PlotManager:wipe()
+	self.likeUserList = {}
+	self.hatchedCount = 0
+
+	self:sendPlotInfo()
 end
 
 function PlotManager:destroy()

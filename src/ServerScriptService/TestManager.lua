@@ -26,7 +26,7 @@ function TestManager:init()
 	end
 
 	if self.isNew then
-		self.robuxCount = 500 -- 5000
+		self.robuxCount = 50000 -- 5000
 	end
 
 	self:sendRobuxCount()
@@ -126,6 +126,11 @@ function TestManager:saveState()
 		robuxCount = self.robuxCount,
 	}
 	self.user.store:set(self.moduleAlias .. "Info", managerData)
+end
+
+function TestManager:wipe()
+	self.robuxCount = 50000
+	self:sendRobuxCount()
 end
 
 return TestManager

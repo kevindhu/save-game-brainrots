@@ -95,16 +95,16 @@ function TutManager:tryChooseNewTutMod()
 end
 
 function TutManager:initFirstTutMods()
-	if Common.isStudio then
-		-- fake complete all tutMods
-		for _, tutName in pairs(TutInfo.funnelStepList) do
-			self.completedTutMods[tutName] = {
-				completionTime = os.time(),
-			}
-		end
-		self:sendCompletedMods()
-		return
-	end
+	-- if Common.isStudio then
+	-- 	-- fake complete all tutMods
+	-- 	for _, tutName in pairs(TutInfo.funnelStepList) do
+	-- 		self.completedTutMods[tutName] = {
+	-- 			completionTime = os.time(),
+	-- 		}
+	-- 	end
+	-- 	self:sendCompletedMods()
+	-- 	return
+	-- end
 
 	-- clear all existing tutMods
 	self.tutMods = {}
@@ -144,10 +144,12 @@ function TutManager:newTutMod(tutName)
 end
 
 function TutManager:sendTutMods()
+	print("SENDING TUT MODS: ", self.tutMods)
 	ServerMod:FireClient(self.user.player, "updateTutMods", self.tutMods)
 end
 
 function TutManager:sendCompletedMods()
+	print("SENDING COMPLETED TUT MODS: ", self.completedTutMods)
 	ServerMod:FireClient(self.user.player, "updateCompletedTutMods", self.completedTutMods)
 end
 
@@ -311,6 +313,23 @@ function TutManager:saveState()
 		savedChosenTutModName = savedChosenTutModName,
 	}
 	self.user.store:set(self.moduleAlias .. "Info", managerData)
+end
+
+function TutManager:wipe()
+	self.tutMods = {}
+	self.completedTutMods = {}
+	self.chosenTutModName = nil
+
+	self.chosenTutMod = nil
+
+	self.savedChosenTutModName = nil
+
+	self:initFirstTutMods()
+
+	self:tryChooseNewTutMod()
+
+	self:sendTutMods()
+	self:sendCompletedMods()
 end
 
 return TutManager

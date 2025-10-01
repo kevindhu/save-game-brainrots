@@ -16,9 +16,6 @@ function IndexManager.new(owner, data)
 
 	u.unlockedPetMap = {}
 
-	u.rewardLevel = 1
-	u.coinsMultiplier = 1
-
 	setmetatable(u, IndexManager)
 	return u
 end
@@ -30,7 +27,6 @@ function IndexManager:init()
 	end
 
 	self:sendUnlockedPets()
-	self:sendRewardLevel()
 
 	-- routine(function()
 	-- 	self:unlockAllPets()
@@ -56,42 +52,6 @@ function IndexManager:unlockAllPets()
 	end
 end
 
-function IndexManager:tryClaimIndexReward()
-	local rewardLevel = self.rewardLevel
-	if rewardLevel >= IndexInfo.MAX_LEVEL then
-		self.user:notifyError("You have already claimed all rewards.")
-		return
-	end
-
-	local rewardStats = IndexInfo:getMeta("Reward" .. rewardLevel)
-	local requirePetCount = rewardStats["requirePetCount"]
-	if len(self.unlockedPetMap) < requirePetCount then
-		self.user:notifyError("You need to unlock " .. requirePetCount .. " brainrots to claim this reward.")
-		return
-	end
-
-	local rewardItems = rewardStats["rewardItems"]
-	for itemClass, itemData in pairs(rewardItems) do
-		if itemData["coinMultiplier"] then
-			self.coinsMultiplier = self.coinsMultiplier + itemData["coinMultiplier"]
-		elseif itemData["coinCount"] then
-			self.user.home.itemStash:updateItemCount({
-				itemName = "Coins",
-				count = itemData["coinCount"],
-			})
-		end
-	end
-
-	self.user:notifySuccess("You have claimed rewards for index level " .. rewardLevel .. "!")
-	ServerMod:FireClient(self.user.player, "newSoundMod", {
-		soundClass = "SuccessRebirth",
-		volume = 1,
-	})
-
-	self.rewardLevel += 1
-	self:sendRewardLevel()
-end
-
 function IndexManager:unlockPet(petClass, mutationClass)
 	local id = petClass .. "_" .. mutationClass
 
@@ -103,16 +63,16 @@ function IndexManager:unlockPet(petClass, mutationClass)
 	self:sendUnlockedPets()
 end
 
-function IndexManager:sendRewardLevel()
-	ServerMod:FireClient(self.user.player, "updateIndexRewardLevel", {
-		rewardLevel = self.rewardLevel,
-	})
-end
-
 function IndexManager:sendUnlockedPets()
 	ServerMod:FireClient(self.user.player, "updateUnlockedPets", {
 		unlockedPetMap = self.unlockedPetMap,
 	})
+end
+
+function IndexManager:wipe()
+	self.unlockedPetMap = {}
+
+	self:sendUnlockedPets()
 end
 
 function IndexManager:saveState()

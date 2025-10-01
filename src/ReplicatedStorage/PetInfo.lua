@@ -99,12 +99,6 @@ PetInfo["ratingMap"] = {
 	["GrapeSquid"] = "Secret",
 }
 
-PetInfo["attackRangeMap"] = {
-	["GooseBomber"] = 2,
-	["LiriLira"] = 2,
-	["OctopusBlueberry"] = 4,
-}
-
 PetInfo["attackDelayMap"] = {
 	["GooseBomber"] = 0.05,
 	["LiriLira"] = 0.05,

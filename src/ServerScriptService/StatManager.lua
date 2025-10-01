@@ -28,6 +28,7 @@ function StatManager:init()
 	end
 
 	self:initLeaderStats()
+
 	self:initFirstStatMods()
 	self:sendStatMods()
 
@@ -176,6 +177,13 @@ function StatManager:saveState()
 		statMods = self.statMods,
 	}
 	self.user.store:set(self.moduleAlias .. "Info", managerData)
+end
+
+function StatManager:wipe()
+	self.statMods = {}
+
+	self:initFirstStatMods()
+	self:sendStatMods()
 end
 
 return StatManager
