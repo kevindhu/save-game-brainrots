@@ -13,6 +13,8 @@ local RatingInfo = require(game.ReplicatedStorage.RatingInfo)
 local speedGUI = playerGui:WaitForChild("SpeedGUI")
 local speedFrame = speedGUI.SpeedFrame
 
+local SPEED_COUNT = SpeedInfo.SPEED_COUNT
+
 local SpeedManager = {
 	speed = 1,
 
@@ -172,7 +174,7 @@ function SpeedManager:initAllRatings()
 		}
 		self.ratingMods[rating] = newRatingMod
 
-		for i = 1, 3 do
+		for i = 1, SPEED_COUNT do
 			self:initSpeedItem(rating, i)
 		end
 	end
@@ -340,7 +342,7 @@ function SpeedManager:chooseNextSpeedMod()
 
 	-- see if any speed mods are unlocked
 	local unlockedList = {}
-	for i = 1, 3 do
+	for i = 1, SPEED_COUNT do
 		local speedName = self:getSpeedName(rating, i)
 		local speedMod = self.speedMods[speedName]
 		if speedMod["unlocked"] then
@@ -405,7 +407,7 @@ function SpeedManager:getSpeed(userName)
 	end
 
 	local chosenSpeedIndex = nil
-	for i = 1, 3 do
+	for i = 1, SPEED_COUNT do
 		local speedName = self:getSpeedName(rating, i)
 		local speedMod = speedMods[speedName]
 		if speedMod["toggled"] then
@@ -416,7 +418,12 @@ function SpeedManager:getSpeed(userName)
 
 	-- print("GOT CHOSEN SPEED INDEX: ", chosenSpeedIndex)
 
-	return chosenSpeedIndex
+	local speed = chosenSpeedIndex
+	-- if speed == 5 then
+	-- 	speed = 10
+	-- end
+
+	return speed
 
 	-- return self.speed
 end

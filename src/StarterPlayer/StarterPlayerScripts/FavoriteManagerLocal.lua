@@ -31,6 +31,10 @@ function FavoriteManager:updateFavoriteData(data)
 end
 
 function FavoriteManager:tryStartFavorite()
+	if true then
+		return
+	end
+
 	if self.hasFavoritedGame then
 		return
 	end

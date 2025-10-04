@@ -13,45 +13,33 @@ UnitInfo["animationMap"] = {
 UnitInfo["units"] = {
 	["Unit1"] = {
 		alias = "Noob",
-		health = 10,
-		moveSpeed = 0.2, -- 1.1,
-
-		attackRange = 2,
+		health = 25,
+		moveSpeed = 0.25, -- 1.1,
 	},
 	["Unit2"] = {
 		alias = "Big Noob",
-		health = 50,
-		moveSpeed = 0.3,
-
-		attackRange = 2,
+		health = 75,
+		moveSpeed = 0.2,
 	},
 	["Unit3"] = {
 		alias = "Gigantic Noob",
-		health = 10000,
-		moveSpeed = 0.4,
-
-		attackRange = 2,
+		health = 300,
+		moveSpeed = 0.18,
 	},
 	["Unit4"] = {
 		alias = "Mutated king",
-		health = 1,
-		moveSpeed = 0.4,
-
-		attackRange = 2,
+		health = 1200,
+		moveSpeed = 0.2,
 	},
 	["Unit5"] = {
 		alias = "Dominus King",
-		health = 1,
-		moveSpeed = 0.4,
-
-		attackRange = 2,
+		health = 10000,
+		moveSpeed = 0.25,
 	},
 	["Unit6"] = {
 		alias = "1x1x1x1",
-		health = 1,
-		moveSpeed = 0.4,
-
-		attackRange = 2,
+		health = 25000,
+		moveSpeed = 0.35,
 	},
 }
 

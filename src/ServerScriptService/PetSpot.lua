@@ -297,9 +297,11 @@ end
 
 function PetSpot:initBuyModel()
 	local plotModel = self.user.home.plotManager.model
-	local buyModel = plotModel:FindFirstChild("PetSpot" .. self.index)
+
+	local petSpotName = "PetSpot" .. self.index
+	local buyModel = plotModel.PetSpots:FindFirstChild(petSpotName)
 	if not buyModel then
-		warn("!! PET SPOT MODEL NOT FOUND: ", self.index, plotModel.Name)
+		warn("!! PET SPOT MODEL NOT FOUND: ", petSpotName, plotModel.Name)
 		return
 	end
 

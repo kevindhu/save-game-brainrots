@@ -5,6 +5,8 @@ local len, routine, wait = Common.len, Common.routine, Common.wait
 
 local SpeedInfo = require(game.ReplicatedStorage.SpeedInfo)
 
+local SPEED_COUNT = SpeedInfo.SPEED_COUNT
+
 local SpeedManager = {}
 SpeedManager.__index = SpeedManager
 
@@ -55,7 +57,7 @@ end
 
 function SpeedManager:initAllSpeedMods()
 	for _, rating in pairs(ratingList) do
-		for i = 1, 3 do
+		for i = 1, SPEED_COUNT do
 			self:initSpeedMod(rating, i)
 		end
 	end
@@ -155,7 +157,7 @@ function SpeedManager:toggleSpeedMod(speedMod, noSend)
 	local rating = speedMod["rating"]
 
 	-- untoggle all other speed mods
-	for otherSpeedIndex = 1, 3 do
+	for otherSpeedIndex = 1, SPEED_COUNT do
 		if otherSpeedIndex == speedIndex then
 			continue
 		end
@@ -206,7 +208,7 @@ function SpeedManager:sync(otherUser)
 end
 
 function SpeedManager:unhideNextSpeedMod(rating)
-	for i = 1, 3 do
+	for i = 1, SPEED_COUNT do
 		local speedName = self:getSpeedName(rating, i)
 		local speedMod = self.speedMods[speedName]
 		if speedMod["unlocked"] then
@@ -257,7 +259,7 @@ function SpeedManager:getSpeed()
 	local rating = currWaveMod["rating"]
 
 	local chosenSpeedIndex = nil
-	for i = 1, 3 do
+	for i = 1, SPEED_COUNT do
 		local speedName = self:getSpeedName(rating, i)
 		local speedMod = self.speedMods[speedName]
 		if speedMod["toggled"] then
@@ -268,7 +270,12 @@ function SpeedManager:getSpeed()
 
 	-- print("GOT CHOSEN SPEED INDEX: ", chosenSpeedIndex)
 
-	return chosenSpeedIndex
+	local speed = chosenSpeedIndex
+	-- if speed == 5 then
+	-- 	speed = 10
+	-- end
+
+	return speed
 end
 
 function SpeedManager:saveState()

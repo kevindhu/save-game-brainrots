@@ -119,8 +119,9 @@ function SaveManager:startNewWaveMod()
 	local musicRating = petStats["rating"]
 
 	if not Common.listContains({
-		"Secret",
+		"Legendary",
 		"Mythic",
+		"Secret",
 	}, musicRating) then
 		musicRating = "Default"
 	end

@@ -48,6 +48,8 @@ function ProbManager:generatePetClass(chosenRating)
 	-- self:addWeatherWeight(petProbMap)
 	-- self:addLuckWeights(petProbMap)
 
+	print("PET PROB MAP: ", petProbMap)
+
 	local petClass = Common.rollFromProbMap(petProbMap)
 	return petClass
 end

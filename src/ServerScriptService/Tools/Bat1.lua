@@ -17,7 +17,7 @@ function Bat.new(user, tool, data)
 	self.swingAnimationId = 90567855405019
 	self.batSwingCooldown = 0.45 -- 0.2
 
-	self.batDamage = 1000
+	self.batDamage = 70 -- 1000
 
 	setmetatable(self, Bat)
 	return self

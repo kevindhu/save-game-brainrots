@@ -14,8 +14,8 @@ function PityManager.new(owner, data)
 	u.legendaryCount = 0
 	u.mythicCount = 0
 
-	u.legendaryMax = 5 -- 20
-	u.mythicMax = 100
+	u.legendaryMax = 100 -- 20
+	u.mythicMax = 1000
 
 	setmetatable(u, PityManager)
 	return u

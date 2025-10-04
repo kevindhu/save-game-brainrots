@@ -147,7 +147,7 @@ PetInfo["aliasMap"] = {
 	["LiriLira"] = "Lirilì Larilà",
 	["Ballerina"] = "Ballerina",
 	["FrigoCamelo"] = "Frigo Camello",
-	["ChimpBanana"] = "Chimp Banana",
+	["ChimpBanana"] = "Chimpanzini",
 	["TaTaTaSahur"] = "Ta Ta Ta Sahur",
 	["CapybaraCoconut"] = "Burbaloni Lulilolli",
 	["DolphinBanana"] = "Dolphinita Bananita",
@@ -459,7 +459,7 @@ PetInfo.weightMultiplierMap = {
 }
 
 function PetInfo:getRealScale(baseWeight, level)
-	local levelMultiplier = 1 + (level - 1) * 0.01
+	local levelMultiplier = 1 + (level - 1) * 0.002
 	local finalScale = baseWeight * levelMultiplier
 
 	return finalScale

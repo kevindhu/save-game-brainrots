@@ -279,7 +279,7 @@ function TutManager:updateLocationBeam(targetClass)
 			warn("!!! COULD NOT FIND FLOOR PART FOR LOCATION BEAM")
 			return
 		end
-		endPart.Position = model.PetSpot1.BasePart.Position
+		endPart.Position = model.PetSpots.PetSpot1.BasePart.Position
 	elseif targetClass == "GoToTimeWizard" then
 		self:toggleLocationBeam(true)
 		endPart.Position = ClientMod.vendorManager.vendorMods["TimeWizardVendor"].rig.HumanoidRootPart.Position

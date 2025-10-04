@@ -60,14 +60,14 @@ function ItemStash:addFirstItems()
 	-- 	count = 10 * 1000,
 	-- })
 
-	-- self:addTestPets()
+	self:addTestPets()
 	-- self:addTestRelics()
 end
 
 function ItemStash:addTestPets()
 	local petList = {
-		-- "CappuccinoAssassino",
-		-- "TungTungSahur",
+		"CappuccinoAssassino",
+		"TungTungSahur",
 		-- "TrippiTroppi",
 
 		-- "Boneca",
@@ -75,28 +75,28 @@ function ItemStash:addTestPets()
 		-- "Ballerina",
 		-- "FrigoCamelo",
 		-- "ChimpBanana",
-		"TaTaTaSahur",
-		"CapybaraCoconut",
-		"DolphinBanana",
-		"FishCatLegs",
-		"GooseBomber",
-		"TralaleloTralala",
-		"GlorboFruttoDrillo",
+		-- "TaTaTaSahur",
+		-- "CapybaraCoconut",
+		-- "DolphinBanana",
+		-- "FishCatLegs",
+		-- "GooseBomber",
+		-- "TralaleloTralala",
+		-- "GlorboFruttoDrillo",
 		-- "RhinoToast",
 		-- "BrrBrrPatapim",
 		-- "ElephantCoconut",
 		-- "TimCheese",
 
-		"Bombardino",
+		-- "Bombardino",
 
-		"GiraffeWatermelon",
-		"MonkeyPineapple",
-		"OwlAvocado",
-		"OrangeDunDun",
-		"CowPlanet",
+		-- "GiraffeWatermelon",
+		-- "MonkeyPineapple",
+		-- "OwlAvocado",
+		-- "OrangeDunDun",
+		-- "CowPlanet",
 
-		"OctopusBlueberry",
-		"SaltCombined",
+		-- "OctopusBlueberry",
+		-- "SaltCombined",
 		"GorillaWatermelon",
 
 		"MilkShake",

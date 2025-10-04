@@ -76,7 +76,7 @@ end
 function PetSpot:initBuyModel()
 	local plotModel = game.Workspace:WaitForChild(self.plotName)
 
-	local buyModel = plotModel:FindFirstChild("PetSpot" .. self.index)
+	local buyModel = plotModel.PetSpots:FindFirstChild("PetSpot" .. self.index)
 	if not buyModel then
 		warn("!! PET SPOT MODEL NOT FOUND: ", self.petSpotName, self.index)
 		return
