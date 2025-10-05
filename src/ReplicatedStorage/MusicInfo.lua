@@ -16,7 +16,7 @@ MusicInfo["Default"] = {
 }
 
 MusicInfo["LegendarySpawn"] = {
-	{ 1841703337, 0.15 }, -- underworld
+	{ 1841703337, 0.4 }, -- dramatic
 }
 
 MusicInfo["MythicSpawn"] = {

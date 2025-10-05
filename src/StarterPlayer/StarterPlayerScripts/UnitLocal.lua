@@ -331,7 +331,12 @@ function Unit:calculateNewPos(currFrame, goalFrame, timeRatio)
 		return currPos
 	end
 
-	local travelSpeed = self.baseMoveSpeed * timeRatio * ClientMod.speedManager:getSpeed(self.userName)
+	local speedRatio = ClientMod.speedManager:getSpeed(self.userName)
+	if self.capturedSavedPet then
+		speedRatio = 1
+	end
+
+	local travelSpeed = self.baseMoveSpeed * timeRatio * speedRatio
 	travelSpeed = math.min(travelSpeed, goalDist)
 
 	local newPos = currPos + (goalPos - currPos).Unit * travelSpeed
@@ -482,9 +487,14 @@ function Unit:setStationary(newBool)
 end
 
 function Unit:refreshMoveTrackMod()
+	local speedRatio = ClientMod.speedManager:getSpeed(self.userName)
+	if self.capturedSavedPet then
+		speedRatio = 1
+	end
+
 	local moveTrackMod = self.moveTrackMod
 	if moveTrackMod then
-		moveTrackMod["track"]:AdjustSpeed(ClientMod.speedManager:getSpeed(self.userName))
+		moveTrackMod["track"]:AdjustSpeed(speedRatio)
 	end
 end
 

@@ -184,6 +184,8 @@ RunService.Heartbeat:Connect(function(deltaTime)
 		"orbManager",
 
 		"buyCrateManager",
+
+		"soundManager",
 	}
 	for _, moduleName in ipairs(moduleList) do
 		if ClientMod[moduleName] then

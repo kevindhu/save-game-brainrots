@@ -4,6 +4,7 @@ local Common = require(game.ReplicatedStorage.Common)
 local len, routine, wait = Common.len, Common.routine, Common.wait
 
 local PetInfo = require(game.ReplicatedStorage.PetInfo)
+local PetBalanceInfo = require(game.ReplicatedStorage.PetBalanceInfo)
 local WaveInfo = require(game.ReplicatedStorage.WaveInfo)
 
 local SaveManager = {}
@@ -139,7 +140,10 @@ function SaveManager:initWaveMod(petData)
 	local petStats = PetInfo:getMeta(petClass)
 	local rating = petStats["rating"]
 
-	local totalWaveData = WaveInfo["ratingWaveMap"][rating]
+	local ratingCount = WaveInfo["ratingCountMap"][rating]
+	local fullRatingClass = rating .. math.random(ratingCount)
+
+	local totalWaveData = WaveInfo["ratingWaveMap"][fullRatingClass]
 
 	-- local totalWaveData = {
 	-- 	{
@@ -330,7 +334,10 @@ function SaveManager:completeWaveMod(waveMod)
 	-- 	launchCFrame = self.user.currFrame,
 	-- })
 
-	local waveCompletionReward = 100
+	local petClass = petData["petClass"]
+	local waveCompletionReward = PetBalanceInfo["saveRewardCoinsMap"][petClass]
+
+	print("WAVE COMPLETION REWARD: ", petClass, waveCompletionReward)
 	routine(function()
 		wait(1.5)
 		self.user.home.itemStash:updateItemCount({

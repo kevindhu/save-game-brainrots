@@ -1,5 +1,38 @@
 local PetBalanceInfo = {}
 
+PetBalanceInfo["saveRewardCoinsMap"] = {
+	["CappuccinoAssassino"] = 30,
+	["TungTungSahur"] = 35,
+	["TrippiTroppi"] = 45,
+	["Boneca"] = 60,
+	["LiriLira"] = 80,
+	["Ballerina"] = 110,
+	["FrigoCamelo"] = 150,
+	["ChimpBanana"] = 200,
+	["TaTaTaSahur"] = 270,
+	["CapybaraCoconut"] = 360,
+	["DolphinBanana"] = 480,
+	["FishCatLegs"] = 650,
+	["GooseBomber"] = 870,
+	["TralaleloTralala"] = 1150,
+	["GlorboFruttoDrillo"] = 1500,
+	["RhinoToast"] = 1950,
+	["BrrBrrPatapim"] = 2500,
+	["ElephantCoconut"] = 3200,
+	["TimCheese"] = 4100,
+	["Bombardino"] = 5200,
+	["GiraffeWatermelon"] = 6600,
+	["MonkeyPineapple"] = 8400,
+	["OwlAvocado"] = 10700,
+	["OrangeDunDun"] = 13600,
+	["CowPlanet"] = 17300,
+	["OctopusBlueberry"] = 22000,
+	["SaltCombined"] = 24500,
+	["GorillaWatermelon"] = 26500,
+	["MilkShake"] = 28000,
+	["GrapeSquid"] = 30000,
+}
+
 PetBalanceInfo["coinsPerSecondMap"] = {
 	["CappuccinoAssassino"] = 1,
 	["TungTungSahur"] = 3,
@@ -109,16 +142,16 @@ PetBalanceInfo["unitHealthMultiplierMap"] = {
 }
 
 PetBalanceInfo["petProbMap"] = {
-	["CappuccinoAssassino"] = 45,
-	["TungTungSahur"] = 35,
-	["Boneca"] = 30,
-	["TrippiTroppi"] = 25,
-	["LiriLira"] = 15,
-	["Ballerina"] = 5,
-	["FrigoCamelo"] = 3,
-	["ChimpBanana"] = 2,
-	["TaTaTaSahur"] = 1.2,
-	["CapybaraCoconut"] = 1,
+	["CappuccinoAssassino"] = 26,
+	["TungTungSahur"] = 24,
+	["Boneca"] = 22,
+	["TrippiTroppi"] = 19,
+	["LiriLira"] = 18,
+	["Ballerina"] = 8,
+	["FrigoCamelo"] = 5,
+	["ChimpBanana"] = 3,
+	["TaTaTaSahur"] = 1.5,
+	["CapybaraCoconut"] = 1.3,
 	["DolphinBanana"] = 0.9,
 	["FishCatLegs"] = 0.5,
 	["GooseBomber"] = 0.4,
@@ -126,17 +159,17 @@ PetBalanceInfo["petProbMap"] = {
 	["GlorboFruttoDrillo"] = 0.3,
 	["RhinoToast"] = 0.25,
 	["BrrBrrPatapim"] = 0.2,
-	["ElephantCoconut"] = 0.18,
-	["TimCheese"] = 0.15,
-	["GiraffeWatermelon"] = 0.12,
-	["MonkeyPineapple"] = 0.1,
-	["OwlAvocado"] = 0.08,
-	["OrangeDunDun"] = 0.06,
-	["CowPlanet"] = 0.05,
+	["ElephantCoconut"] = 0.1,
+	["TimCheese"] = 0.05,
+	["GiraffeWatermelon"] = 0.02,
+	["MonkeyPineapple"] = 0.01,
+	["OwlAvocado"] = 0.008,
+	["OrangeDunDun"] = 0.006,
+	["CowPlanet"] = 0.005,
 
-	["OctopusBlueberry"] = 0.015,
-	["SaltCombined"] = 0.008,
-	["GorillaWatermelon"] = 0.005,
+	["OctopusBlueberry"] = 0.00015,
+	["SaltCombined"] = 0.0008,
+	["GorillaWatermelon"] = 0.0005,
 
 	["MilkShake"] = 0.00005,
 	["GrapeSquid"] = 0.00003,
@@ -163,6 +196,26 @@ PetBalanceInfo["petSpotUnlockCostMap"] = {
 	["18"] = 60000000,
 	["19"] = 80000000,
 	["20"] = 100000000,
+}
+
+PetBalanceInfo["ratingLuckMultiplier"] = {
+	["Secret"] = 2.5, -- 5
+	["Mythic"] = 2,
+	["Legendary"] = 1,
+	["Epic"] = 0.3,
+	["Rare"] = 0.1,
+	["Uncommon"] = 0.05,
+	["Common"] = 0.0,
+}
+
+PetBalanceInfo["ratingDebuffMultiplier"] = {
+	["Secret"] = 0.00000005, -- 5
+	["Mythic"] = 0.0001,
+	["Legendary"] = 0.0005,
+	["Epic"] = 0.002,
+	["Rare"] = 0.03,
+	["Uncommon"] = 0.2,
+	["Common"] = 0.5,
 }
 
 return PetBalanceInfo

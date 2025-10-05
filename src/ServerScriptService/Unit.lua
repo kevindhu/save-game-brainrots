@@ -37,6 +37,8 @@ function Unit:init()
 
 	self.baseMoveSpeed = self.unitStats["moveSpeed"]
 
+	-- print("UNIT CLASS: ", self.unitClass)
+
 	self.baseRig = game.ReplicatedStorage.Assets[self.unitClass]
 
 	local baseHealth = self.unitStats["health"]

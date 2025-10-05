@@ -78,6 +78,17 @@ CrateInfo["stockProbCountMap"] = {
 	["Crate3"] = 100,
 }
 
+CrateInfo["ratingLuckMultiplier"] = {
+	["Secret"] = 1.11, -- 5
+	["Cosmic"] = 1.1,
+	["Mythic"] = 1,
+	["Legendary"] = 0.5,
+	["Epic"] = 0.2,
+	["Rare"] = 0.05,
+	["Uncommon"] = 0.00005,
+	["Common"] = 0.0,
+}
+
 function CrateInfo:init()
 	for _, crateClass in pairs(self.crateList) do
 		local crateData = {

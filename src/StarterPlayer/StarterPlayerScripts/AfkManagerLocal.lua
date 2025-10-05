@@ -17,6 +17,7 @@ AfkManager.__index = AfkManager
 
 function AfkManager:init()
 	self:addCons()
+
 	self:startIdleCheck()
 end
 
@@ -48,7 +49,7 @@ function AfkManager:resetIdleTimer()
 end
 
 function AfkManager:startIdleCheck()
-	local MAX_IDLE_TIME = 60 * 15 -- 15 minutes
+	local MAX_IDLE_TIME = 60 * 14 -- 14 minutes
 	if Common.checkDeveloper(player.UserId) then
 		MAX_IDLE_TIME = 60 * 10 -- 10 minutes
 	end

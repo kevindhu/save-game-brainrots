@@ -14,9 +14,6 @@ local SoundInfo = require(game.ReplicatedStorage.SoundInfo)
 local SoundManager = {
 	soundMods = {},
 
-	expireeStep = 0,
-	expireeTimer = 10,
-
 	setRatio = 1,
 	baseVolumeMultiplier = 3.5, -- 3 (orig)
 }
@@ -32,19 +29,9 @@ function SoundManager:tick()
 end
 
 function SoundManager:tickExpirees()
-	local step = ClientMod.step
-	if self.expireeStep + self.expireeTimer > step then
-		return
-	end
-	self.expireeStep = step
-
 	for name, soundMod in pairs(self.soundMods) do
 		local expiree = soundMod["expiree"]
-		if expiree == "none" then
-			continue
-		end
-		if expiree < step then
-			-- print("REMOVING SOUNDMOD DUE TO EXPIREE: ", name)
+		if expiree < ClientMod.step then
 			self:removeSoundMod(name)
 		end
 	end
@@ -56,22 +43,15 @@ function SoundManager:addBasicSound(soundClass, volume, playbackSpeed)
 		volume = volume,
 		playbackSpeed = playbackSpeed,
 	}
-	ClientMod.soundManager:newSoundMod(soundData) -- 0.03
+	self:newSoundMod(soundData) -- 0.03
 end
 
 function SoundManager:newSoundMod(data)
 	local soundName = data["soundName"]
 	local soundClass = data["soundClass"]
-
-	if not soundName then
-		soundName = "SOUND_" .. Common.getGUID()
-	end
-
 	local pos = data["pos"]
 	local part = data["part"]
-
 	local volume = data["volume"] or 1
-	local noExpiree = data["noExpiree"]
 	local playbackSpeed = data["playbackSpeed"]
 	local isLooped = data["isLooped"]
 
@@ -79,9 +59,12 @@ function SoundManager:newSoundMod(data)
 		return
 	end
 
-	local oldSoundMod = self.soundMods[soundName]
-	if oldSoundMod then
-		self:removeSoundMod(soundName)
+	if not soundName then
+		soundName = "SOUND_" .. Common.getGUID()
+	end
+
+	if not self:checkValidBulletSound(data) then
+		return
 	end
 
 	if pos then
@@ -110,7 +93,7 @@ function SoundManager:newSoundMod(data)
 
 	sound.PlaybackSpeed = playbackSpeed
 
-	sound.RollOffMaxDistance = data["rollOffMaxDistance"] or 200 -- 200
+	sound.RollOffMaxDistance = data["rollOffMaxDistance"] or 150 -- 200
 	sound.RollOffMinDistance = data["rollOffMinDistance"] or 13
 	-- sound.RollOffMode = Enum.RollOffMode.InverseTapered
 	sound.RollOffMode = Enum.RollOffMode.Linear
@@ -137,34 +120,63 @@ function SoundManager:newSoundMod(data)
 		sound.TimePosition = soundStats["startTime"]
 	end
 
-	local expiree = ClientMod.step + 60 * 15
-	if noExpiree then
-		expiree = "none"
-	end
-
-	local soundTimer = sound.TimeLength * 60
-	-- print("GOT SOUND TIMER STEPS: ", soundTimer)
+	local expiree = Common.getCurrentDecimalTime() + sound.TimeLength * 1.5
 
 	local newSoundMod = {
 		soundName = soundName,
-		part = part,
-		sound = sound,
 		soundClass = soundClass,
+		pos = pos,
+		part = part,
+
+		sound = sound,
+
 		baseVolume = baseVolume,
 		expiree = expiree,
-		soundExpiree = ClientMod.step + soundTimer,
 
-		noDestroyPart = data["noDestroyPart"],
+		creationTimestamp = Common.getCurrentDecimalTime(),
 	}
 	self.soundMods[soundName] = newSoundMod
 
 	return newSoundMod
 end
 
+function SoundManager:checkValidBulletSound(data)
+	local soundClass = data["soundClass"]
+	local pos = data["pos"]
+
+	if soundClass ~= "Bullet1" then
+		return true
+	end
+
+	local currTimestamp = Common.getCurrentDecimalTime()
+
+	local closeBulletSoundMods = {}
+	for _, soundMod in pairs(self.soundMods) do
+		if soundMod["soundClass"] ~= "Bullet1" then
+			continue
+		end
+		local otherPos = soundMod["pos"]
+		local distance = (otherPos - pos).Magnitude
+		if distance > 100 then
+			continue
+		end
+		local timestampDiff = currTimestamp - soundMod["creationTimestamp"]
+		if timestampDiff > 0.15 then
+			continue
+		end
+
+		if distance < 100 then
+			table.insert(closeBulletSoundMods, soundMod)
+		end
+	end
+
+	-- print("CLOSE BULLET SOUND MODS: ", len(closeBulletSoundMods))
+
+	return len(closeBulletSoundMods) <= 3 -- 5
+end
+
 function SoundManager:updateSetRatio(newRatio)
 	self.setRatio = newRatio
-
-	-- print("UPDATED SET RATIO: ", self.setRatio)
 
 	-- adjust current sounds to this volume
 	for _, soundMod in pairs(self.soundMods) do
@@ -176,17 +188,19 @@ function SoundManager:updateSetRatio(newRatio)
 	end
 end
 
-function SoundManager:removeSoundMod(name)
-	local soundMod = self.soundMods[name]
+function SoundManager:removeSoundMod(soundName)
+	local soundMod = self.soundMods[soundName]
 	local part = soundMod["part"]
 	local sound = soundMod["sound"]
 
-	sound:Destroy()
-	if part and not soundMod["noDestroyPart"] then
+	if sound then
+		sound:Destroy()
+	end
+	if part then
 		part:Destroy()
 	end
 
-	self.soundMods[name] = nil
+	self.soundMods[soundName] = nil
 end
 
 function SoundManager:toggle(data)

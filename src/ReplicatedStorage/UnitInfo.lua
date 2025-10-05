@@ -11,32 +11,63 @@ UnitInfo["animationMap"] = {
 }
 
 UnitInfo["units"] = {
-	["Unit1"] = {
+	["Unit1x1"] = {
 		alias = "Noob",
 		health = 25,
 		moveSpeed = 0.25, -- 1.1,
 	},
-	["Unit2"] = {
+	["Unit2x1"] = {
 		alias = "Big Noob",
 		health = 75,
 		moveSpeed = 0.2,
 	},
-	["Unit3"] = {
+	["Unit3x1"] = {
 		alias = "Gigantic Noob",
 		health = 300,
 		moveSpeed = 0.18,
 	},
-	["Unit4"] = {
+	["Unit4x1"] = {
 		alias = "Mutated king",
 		health = 1200,
 		moveSpeed = 0.2,
 	},
-	["Unit5"] = {
+	["Unit5x1"] = {
 		alias = "Dominus King",
 		health = 10000,
 		moveSpeed = 0.25,
 	},
-	["Unit6"] = {
+	["Unit6x1"] = {
+		alias = "1x1x1x1",
+		health = 25000,
+		moveSpeed = 0.35,
+	},
+
+	["Unit1x2"] = {
+		alias = "Noob",
+		health = 25,
+		moveSpeed = 0.25, -- 1.1,
+	},
+	["Unit2x2"] = {
+		alias = "Big Noob",
+		health = 75,
+		moveSpeed = 0.2,
+	},
+	["Unit3x2"] = {
+		alias = "Gigantic Noob",
+		health = 300,
+		moveSpeed = 0.18,
+	},
+	["Unit4x2"] = {
+		alias = "Mutated king",
+		health = 1200,
+		moveSpeed = 0.2,
+	},
+	["Unit5x2"] = {
+		alias = "Dominus King",
+		health = 10000,
+		moveSpeed = 0.25,
+	},
+	["Unit6x2"] = {
 		alias = "1x1x1x1",
 		health = 25000,
 		moveSpeed = 0.35,
@@ -44,7 +75,7 @@ UnitInfo["units"] = {
 }
 
 UnitInfo["chatPhraseMap"] = {
-	["Unit1"] = {
+	["Unit1x1"] = {
 		"pls free stuff!",
 		"pls brainrot plsss",
 		"give brainrot pls 🥺",
@@ -53,24 +84,47 @@ UnitInfo["chatPhraseMap"] = {
 		"give me brainrots!",
 		"😡 MY BRAINROTS NOW!",
 	},
-	["Unit2"] = {
+	["Unit1x2"] = {
+		"pls free stuff!",
+		"pls brainrot plsss",
+		"give brainrot pls 🥺",
+		"donate pls",
+		"brainrot donate pls 🥺",
+		"give me brainrots!",
+		"😡 MY BRAINROTS NOW!",
+	},
+
+	["Unit2x1"] = {
 		"i want your brainrots!!!",
 	},
-	["Unit3"] = {
+	["Unit2x2"] = {
+		"i want your brainrots!!!",
+	},
+
+	["Unit3x1"] = {
 		"i want your brainrots!",
 		"give me brainrots!",
 		"😡 MY BRAINROTS NOW!",
 	},
-	["Unit4"] = {
+	["Unit3x2"] = {
+		"i want your brainrots!!!",
+	},
+
+	["Unit4x1"] = {
 		"😡 give me brainrots!",
 		"this is mine 😈",
 		"😡 MY BRAINROTS NOW!",
 	},
-	["Unit5"] = {
+	["Unit4x2"] = {
+		"i want your brainrots!!!",
+	},
+
+	["Unit5x1"] = {
 		"THIS IS MINE THIS IS MINE THIS IS MINE",
 		"01101000 01101001 00001010",
 	},
-	["Unit6"] = {
+
+	["Unit6x1"] = {
 		"01101000 01101001 00001010",
 		"01101001 00100000 01110111 01101001 01101100 01101100 00100000 01101000 01100001 01111000 00100000 01110101 00001010",
 	},

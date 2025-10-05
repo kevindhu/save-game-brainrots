@@ -20,17 +20,6 @@ RatingInfo["ratingColorMap"] = {
 	["Common"] = Color3.fromRGB(242, 242, 242), -- Dark Gray (Poor)
 }
 
-RatingInfo["ratingLuckMultiplier"] = {
-	["Secret"] = 1.11, -- 5
-	["Cosmic"] = 1.1,
-	["Mythic"] = 1,
-	["Legendary"] = 0.5,
-	["Epic"] = 0.2,
-	["Rare"] = 0.05,
-	["Uncommon"] = 0.00005,
-	["Common"] = 0.0,
-}
-
 RatingInfo["laserThicknessMap"] = {
 	["Secret"] = 0.5, -- 5
 	["Cosmic"] = 0.4,

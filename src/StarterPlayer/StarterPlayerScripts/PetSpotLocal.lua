@@ -660,7 +660,9 @@ function PetSpot:addLaser(petFrame, unitFrame)
 		end
 
 		line.Transparency = 1
-		Debris:AddItem(line, 3)
+		line:Destroy()
+		-- line.CFrame = CFrame.new(0, -10, 0)
+		-- Debris:AddItem(line, 3)
 	end)
 
 	return line
