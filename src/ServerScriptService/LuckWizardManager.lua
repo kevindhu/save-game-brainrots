@@ -98,6 +98,9 @@ end
 
 function LuckWizardManager:upgradeLuck()
 	self.user:notifySuccess("Upgraded luck to " .. self.maxLuck .. "!")
+	ServerMod:FireClient(self.user.player, "newSoundMod", {
+		soundClass = "CashBuy",
+	})
 
 	self.maxLuck += 1
 

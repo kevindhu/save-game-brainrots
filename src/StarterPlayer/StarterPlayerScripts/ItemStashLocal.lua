@@ -256,13 +256,59 @@ function ItemStash:chooseInfoItemMod(itemMod)
 	ClientMod.ratingManager:applyRatingColor(ratingTitle, rating)
 
 	local descriptionTitle = itemInfoFrame.DescriptionTitle
-	if itemStats["description"] then
-		descriptionTitle.Text = itemStats["description"]
+
+	local descriptionText = self:getDescriptionText(itemMod)
+	if descriptionText then
+		descriptionTitle.Text = descriptionText
 		descriptionTitle.Visible = true
 	else
 		descriptionTitle.Visible = false
 		descriptionTitle.Text = ""
 	end
+end
+
+function ItemStash:getDescriptionText(itemMod)
+	local itemClass = itemMod["itemClass"]
+	local race = itemMod["race"]
+
+	local itemStats = self:getFullItemStats(itemClass)
+
+	if race ~= "relic" then
+		return itemStats["description"]
+	end
+
+	local coins = itemMod["coins"]
+	local damage = itemMod["damage"]
+	local attackSpeed = itemMod["attackSpeed"]
+	local attackCount = itemMod["attackCount"]
+
+	-- Mapping from stat keys to display names
+	local statMapping = {
+		coins = "Coins",
+		damage = "Damage",
+		attackSpeed = "Atk Speed",
+		attackCount = "Atk Count",
+	}
+
+	-- Order for display
+	local orderList = { "coins", "damage", "attackSpeed", "attackCount" }
+
+	local descriptionParts = {}
+
+	for _, statKey in pairs(orderList) do
+		local statValue = itemMod[statKey]
+
+		if statValue == 1 then
+			continue
+		end
+		if statValue and statValue > 0 then
+			local displayName = statMapping[statKey]
+			table.insert(descriptionParts, "x" .. Common.abbreviateNumber(statValue, 1) .. " " .. displayName)
+		end
+	end
+	-- print(descriptionParts)
+
+	return table.concat(descriptionParts, ", ")
 end
 
 function ItemStash:tick()
@@ -774,7 +820,7 @@ function ItemStash:newItemMod(itemData)
 	local powerTitle = buttonFrame.BottomFrame.PowerTitle
 	powerTitle.Visible = false
 	if race == "relic" then
-		powerTitle.Text = math.random(100, 1000)
+		powerTitle.Text = RelicInfo:getTotalPower(newItemMod)
 		powerTitle.Visible = true
 	elseif race == "pet" then
 		ClientMod.mutationManager:applyMutationColor(mutationTitle, mutationClass)

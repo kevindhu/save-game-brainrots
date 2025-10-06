@@ -273,7 +273,7 @@ function User:preventMemoryLeak()
 end
 
 function User:getWalkspeed()
-	local newWalkspeed = 50 -- 42 -- 30
+	local newWalkspeed = 30 -- 50 (orig for awhile)
 
 	-- finally add the multiplier at the end, so it stacks
 	if self.home.shopManager:checkOwnsGamepass("VIP") then

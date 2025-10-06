@@ -869,7 +869,7 @@ function PetSpot:newRelicMod(relicData)
 
 	frame.InnerFrame.Icon.Image = relicStats["image"]
 
-	frame.InnerFrame.PowerTitle.Text = math.random(100, 10000)
+	frame.InnerFrame.PowerTitle.Text = RelicInfo:getTotalPower(relicData)
 
 	self.fullRelicMods[relicName] = newRelicMod
 

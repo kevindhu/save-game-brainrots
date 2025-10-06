@@ -126,7 +126,7 @@ function ProbManager:generatePetClass(chosenRating)
 	-- totalLuck = self.testLuck
 	-- self.testLuck += 10 -- 10000
 
-	print("GOT TOTAL LUCK: ", totalLuck)
+	-- print("GOT TOTAL LUCK: ", totalLuck)
 
 	self:addLuckWeights(petProbMap, totalLuck, "pet")
 

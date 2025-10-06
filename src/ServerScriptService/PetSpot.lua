@@ -16,6 +16,9 @@ function PetSpot.new(owner, data)
 
 	u.eventsList = {}
 
+	u.attackCount = 0
+	u.maxAttackCount = 1 -- 3
+
 	u.leaveTimestamp = os.time()
 
 	setmetatable(u, PetSpot)
@@ -368,7 +371,12 @@ function PetSpot:tickAttack(timeRatio)
 	if self.attackExpiree and self.attackExpiree > ServerMod.step then
 		return
 	end
-	self.attackExpiree = ServerMod.step + 60 * 1 / attackSpeedRatio
+
+	self.attackCount -= 1
+	if self.attackCount <= 0 then
+		self.attackExpiree = ServerMod.step + 60 * 1 / attackSpeedRatio
+		self.attackCount = self:getMaxAttackCount()
+	end
 
 	local damage = self.petStats["attackDamage"]
 
@@ -401,6 +409,17 @@ function PetSpot:tickAttack(timeRatio)
 	self.user.home.damageManager:addDamage(damage)
 
 	self.attackEvent:FireAllClients(targetUnit.unitName, damage, targetUnit.health)
+end
+
+function PetSpot:getMaxAttackCount()
+	local maxAttackCount = 1
+	-- add attack speed from relics
+	local relicMods = self.petData["relicMods"]
+	for _, relicData in pairs(relicMods) do
+		local relicAttackCount = relicData["attackCount"]
+		maxAttackCount = maxAttackCount + (relicAttackCount - 1)
+	end
+	return maxAttackCount
 end
 
 function PetSpot:tryLevelUp()

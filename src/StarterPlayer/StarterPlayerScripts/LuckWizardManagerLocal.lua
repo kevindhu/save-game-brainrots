@@ -189,6 +189,10 @@ function LuckWizardManager:refreshRequirements()
 	self.petMods = {}
 
 	local luckRequirementData = LuckInfo.luckRequirementMap[tostring(self.maxLuck)]
+	if not luckRequirementData then
+		return
+	end
+
 	local petClasses = luckRequirementData["petClasses"]
 
 	print("REFRESH REQUIREMENTS: ", petClasses)
@@ -282,6 +286,13 @@ function LuckWizardManager:refreshProgressBar()
 	local progressBar = requirementsFrame.ProgressBar
 
 	local luckRequirementData = LuckInfo.luckRequirementMap[tostring(self.maxLuck)]
+	if not luckRequirementData then
+		progressBar.Visible = false
+		return
+	end
+
+	progressBar.Visible = true
+
 	local requiredCoins = luckRequirementData["coins"]
 
 	local currentCoins = ClientMod.currManager.itemMods["Coins"] or 0

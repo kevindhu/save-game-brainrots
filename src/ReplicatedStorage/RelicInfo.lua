@@ -10,10 +10,15 @@ RelicInfo["relicList"] = {
 
 RelicInfo["damageMap"] = {
 	["Fist1"] = { 2, 2.5 },
+	["Angel1"] = { 1, 1.5 },
 }
 
 RelicInfo["coinsMap"] = {
 	["Rich1"] = { 1, 1.5 },
+}
+
+RelicInfo["attackCountMap"] = {
+	["Angel1"] = 10, -- 2,
 }
 
 RelicInfo["attackSpeedMap"] = {
@@ -38,11 +43,11 @@ RelicInfo["colorMap"] = {
 }
 
 RelicInfo["imageMap"] = {
-	["Fist1"] = "rbxassetid://60422237", -- fist
-	["Speed1"] = "rbxassetid://14825379863", -- fist
-	["Rich1"] = "rbxassetid://14957838175", -- fist
-	["Titan1"] = "rbxassetid://14782788955", -- fist
-	["Angel1"] = "rbxassetid://14782792065", -- fist
+	["Fist1"] = "rbxassetid://128681941127773",
+	["Speed1"] = "rbxassetid://94894821715777",
+	["Rich1"] = "rbxassetid://89899072506076",
+	["Titan1"] = "rbxassetid://14782788955",
+	["Angel1"] = "rbxassetid://95871347822807",
 }
 
 RelicInfo["sellPriceMap"] = {
@@ -53,17 +58,33 @@ RelicInfo["sellPriceMap"] = {
 	["Angel1"] = 500,
 }
 
+function RelicInfo:getTotalPower(data)
+	-- local relicClass = data["relicClass"]
+
+	local coins = data["coins"]
+	local damage = data["damage"]
+	local attackSpeed = data["attackSpeed"]
+	local attackCount = data["attackCount"]
+
+	local total = coins + damage + attackSpeed + attackCount
+
+	return math.floor(total * 100)
+end
+
 function RelicInfo:init()
 	self.relics = {}
 
 	for _, relicClass in pairs(self.relicList) do
 		local relicData = {
 			alias = self.aliasMap[relicClass],
+			image = self.imageMap[relicClass],
+			color = self.colorMap[relicClass],
+
+			-- stats
 			damageRange = self.damageMap[relicClass],
 			coinsRange = self.coinsMap[relicClass],
 			attackSpeedRange = self.attackSpeedMap[relicClass],
-			image = self.imageMap[relicClass],
-			color = self.colorMap[relicClass],
+			attackCount = self.attackCountMap[relicClass],
 		}
 		self.relics[relicClass] = relicData
 	end

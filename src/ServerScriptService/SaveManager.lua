@@ -337,7 +337,8 @@ function SaveManager:completeWaveMod(waveMod)
 	local petClass = petData["petClass"]
 	local waveCompletionReward = PetBalanceInfo["saveRewardCoinsMap"][petClass]
 
-	print("WAVE COMPLETION REWARD: ", petClass, waveCompletionReward)
+	-- print("WAVE COMPLETION REWARD: ", petClass, waveCompletionReward)
+
 	routine(function()
 		wait(1.5)
 		self.user.home.itemStash:updateItemCount({

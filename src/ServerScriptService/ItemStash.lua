@@ -61,7 +61,7 @@ function ItemStash:addFirstItems()
 	-- })
 
 	self:addTestPets()
-	-- self:addTestRelics()
+	self:addTestRelics()
 end
 
 function ItemStash:addTestPets()
@@ -177,6 +177,7 @@ function ItemStash:generateRelicData(data)
 	itemData["damage"] = Common.randomBetween(damageRange[1], damageRange[2])
 	itemData["coins"] = Common.randomBetween(coinsRange[1], coinsRange[2])
 	itemData["attackSpeed"] = Common.randomBetween(attackSpeedRange[1], attackSpeedRange[2])
+	itemData["attackCount"] = relicStats["attackCount"] or 1
 
 	itemData["race"] = "relic"
 

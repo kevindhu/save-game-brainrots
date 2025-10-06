@@ -241,16 +241,16 @@ WaveInfo["ratingWaveMap"] = {
 		-- Wave 1: Unit1 (7 units)
 		{
 			unitClass = "Unit1x1",
-			count = 7,
-			spawnTimer = 0.6,
+			count = 5,
+			spawnTimer = 0.75,
 		},
 	},
 	["Common2"] = {
 		-- Wave 1: Unit1 (7 units)
 		{
 			unitClass = "Unit1x2",
-			count = 7,
-			spawnTimer = 0.6,
+			count = 5,
+			spawnTimer = 0.75,
 		},
 	},
 }
