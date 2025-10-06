@@ -190,6 +190,7 @@ local saveModuleList = {
 	"autoSellManager",
 
 	"saveManager",
+	"luckWizardManager",
 
 	"itemStash",
 }

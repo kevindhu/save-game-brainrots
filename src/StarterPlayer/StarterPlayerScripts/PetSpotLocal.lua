@@ -470,7 +470,7 @@ function PetSpot:updateData(data)
 
 		ClientMod.placeManager:refreshAllPrompts()
 
-		if not oldPetName or oldPetName ~= self.petData["petName"] then
+		if not self.petData or self.petData["petName"] ~= oldPetName then
 			ClientMod.luckWizardManager:refreshPetMods()
 		end
 	end

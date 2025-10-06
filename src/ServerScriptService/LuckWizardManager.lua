@@ -47,6 +47,7 @@ function LuckWizardManager:saveState()
 
 	local managerData = {
 		currentLuck = self.currentLuck,
+		maxLuck = self.maxLuck,
 	}
 	self.user.store:set(self.moduleAlias .. "Info", managerData)
 end
