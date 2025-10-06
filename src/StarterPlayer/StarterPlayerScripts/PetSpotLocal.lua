@@ -469,6 +469,10 @@ function PetSpot:updateData(data)
 		self:removeSwapRelicPrompt()
 
 		ClientMod.placeManager:refreshAllPrompts()
+
+		if not oldPetName or oldPetName ~= self.petData["petName"] then
+			ClientMod.luckWizardManager:refreshPetMods()
+		end
 	end
 end
 

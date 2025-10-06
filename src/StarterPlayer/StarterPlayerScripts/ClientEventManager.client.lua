@@ -162,6 +162,10 @@ function handleRequest(req, data)
 	elseif req == "updateServerLuck" then
 		ClientMod.luckManager:updateServerLuck(data)
 
+	-- LUCKWIZARDMANAGER
+	elseif req == "updateWizardLuck" then
+		ClientMod.luckWizardManager:updateLuck(data)
+
 	-- WEATHERMANAGER
 	elseif req == "updateWeather" then
 		ClientMod.weatherManager:updateWeather(data)

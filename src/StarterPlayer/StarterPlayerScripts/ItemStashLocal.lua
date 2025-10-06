@@ -825,6 +825,10 @@ function ItemStash:newItemMod(itemData)
 	self.itemMods[itemName] = newItemMod
 	table.insert(self.itemModsList, newItemMod)
 
+	if race == "pet" then
+		ClientMod.luckWizardManager:refreshPetMods()
+	end
+
 	return newItemMod
 end
 
@@ -878,6 +882,8 @@ function ItemStash:removeItemMod(itemData, noRefreshGUI)
 		return
 	end
 
+	local race = itemMod["race"]
+
 	local frame = itemMod.frame
 	if frame then
 		frame:Destroy()
@@ -890,6 +896,10 @@ function ItemStash:removeItemMod(itemData, noRefreshGUI)
 
 	if not noRefreshGUI then
 		self:refreshGUI()
+	end
+
+	if race == "pet" then
+		ClientMod.luckWizardManager:refreshPetMods()
 	end
 end
 

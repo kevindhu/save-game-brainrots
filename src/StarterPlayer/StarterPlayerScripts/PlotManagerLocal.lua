@@ -111,6 +111,7 @@ function PlotManager:updateGlobalPlot(data)
 
 		routine(function()
 			ClientMod.speedManager:initModel(self.model)
+			ClientMod.luckWizardManager:initModel(self.model)
 		end)
 	end
 

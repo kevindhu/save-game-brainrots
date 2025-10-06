@@ -43,17 +43,17 @@ UnitInfo["units"] = {
 	},
 
 	["Unit1x2"] = {
-		alias = "Noob",
+		alias = "Bacon",
 		health = 25,
 		moveSpeed = 0.25, -- 1.1,
 	},
 	["Unit2x2"] = {
-		alias = "Big Noob",
+		alias = "Hobo",
 		health = 75,
 		moveSpeed = 0.2,
 	},
 	["Unit3x2"] = {
-		alias = "Gigantic Noob",
+		alias = "Gigantic Bacon",
 		health = 300,
 		moveSpeed = 0.18,
 	},

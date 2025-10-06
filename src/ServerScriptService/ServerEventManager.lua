@@ -64,6 +64,7 @@ function ServerEventManager:handleRequest(player, req, data)
 	local saveManager = home.saveManager
 	local crateManager = home.crateManager
 	local autoSellManager = home.autoSellManager
+	local luckWizardManager = home.luckWizardManager
 
 	-- USER
 	if req == "userDied" then
@@ -138,6 +139,12 @@ function ServerEventManager:handleRequest(player, req, data)
 	-- CODEMANAGER
 	elseif req == "tryCode" then
 		codeManager:tryCode(data)
+
+	-- LUCKWIZARDMANAGER
+	elseif req == "tryAdjustLuckWizard" then
+		luckWizardManager:tryAdjustLuck(data)
+	elseif req == "tryUpgradeLuckWizard" then
+		luckWizardManager:tryUpgradeLuck()
 
 	-- TOOLMANAGER
 	elseif req == "tryBuyTool" then

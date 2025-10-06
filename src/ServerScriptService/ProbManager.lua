@@ -34,7 +34,7 @@ function ProbManager:init()
 		wait(0.5)
 		self.initialized = true
 
-		self:simulateLuckRuns()
+		-- self:simulateLuckRuns()
 	end)
 end
 
@@ -44,10 +44,13 @@ function ProbManager:getTotalLuck()
 		totalUserLuck += 2
 	end
 
+	local wizardLuck = self.user.home.luckWizardManager.currentLuck
+	totalUserLuck += wizardLuck
+
 	local serverLuck = ServerMod.luckManager.serverLuck - 1
 	local totalLuck = totalUserLuck * 50 + serverLuck * 100
 
-	totalLuck = 10 -- 10000
+	-- totalLuck = 10 -- 10000
 
 	return totalLuck
 end
@@ -70,36 +73,6 @@ function ProbManager:addLuckWeights(probMap, totalLuck, race)
 
 		weight = weight * finalDebuff
 		probMap[itemClass] = weight
-	end
-end
-
--- using old buff algorithm (with exponential formula)
-function ProbManager:addLuckWeights2(probMap, totalLuck, race)
-	for itemClass, weight in pairs(probMap) do
-		local luckMultiplier = 0
-
-		local rating = "None"
-		if race == "pet" then
-			local relicStats = PetInfo:getMeta(itemClass)
-			rating = relicStats["rating"]
-			luckMultiplier = PetBalanceInfo.ratingLuckMultiplier[rating]
-		end
-
-		local debuff = 0.0005 -- 0.02
-
-		local luckExponent = 1 + luckMultiplier * totalLuck * debuff
-
-		local luckFactor = 1.01
-		local luckValue = luckFactor ^ luckExponent
-
-		local luckWeight = 0.001 * luckValue
-
-		print("ADDED LUCK WEIGHT: ", luckWeight, totalLuck)
-
-		local finalWeight = weight + luckWeight
-		probMap[itemClass] = finalWeight
-
-		-- print("LUCK EXPONENT: ", rating, totalLuck, luckExponent, luckValue)
 	end
 end
 
@@ -152,6 +125,8 @@ function ProbManager:generatePetClass(chosenRating)
 	-- TOGGLE FOR TESTING LUCK
 	-- totalLuck = self.testLuck
 	-- self.testLuck += 10 -- 10000
+
+	print("GOT TOTAL LUCK: ", totalLuck)
 
 	self:addLuckWeights(petProbMap, totalLuck, "pet")
 

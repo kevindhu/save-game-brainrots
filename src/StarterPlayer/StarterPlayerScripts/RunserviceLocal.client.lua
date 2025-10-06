@@ -123,6 +123,7 @@ function LoadAllModules()
 		{ "AutoSellManager", "autoSellManager" },
 
 		{ "BuyCrateManager", "buyCrateManager" },
+		{ "LuckWizardManager", "luckWizardManager" },
 
 		{ "AdminManager", "adminManager" },
 	}

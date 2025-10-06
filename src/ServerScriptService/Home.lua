@@ -76,6 +76,7 @@ function Home:initAllModules()
 
 		{ "PityManager", "pityManager" },
 		{ "AutoSellManager", "autoSellManager" },
+		{ "LuckWizardManager", "luckWizardManager" },
 
 		{ "AdminManager", "adminManager" },
 	}

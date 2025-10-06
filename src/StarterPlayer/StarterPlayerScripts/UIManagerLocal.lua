@@ -192,6 +192,8 @@ local managerList = {
 	"shopManager",
 	"basicManager",
 	"indexManager",
+	"luckWizardManager",
+	"speedManager",
 	"itemStash",
 }
 

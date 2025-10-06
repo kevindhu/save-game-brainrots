@@ -98,7 +98,7 @@ function SpeedManager:initModel(model)
 
 	local torso = rig:WaitForChild("Torso")
 
-	local promptText = "Open Time Wizard"
+	local promptText = "Adjust Speed"
 
 	local prompt = ClientMod.uiManager:createPrompt({
 		actionText = promptText,

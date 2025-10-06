@@ -106,6 +106,10 @@ function CurrManager:updateItemMod(data)
 
 	self.itemMods[itemClass] = count
 
+	if itemClass == "Coins" then
+		ClientMod.luckWizardManager:refreshProgressBar()
+	end
+
 	-- ClientMod.basicManager:refreshItemMods()
 end
 
