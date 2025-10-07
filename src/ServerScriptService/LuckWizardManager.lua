@@ -146,6 +146,9 @@ function LuckWizardManager:removeFirstPet(petClass)
 	end
 
 	for _, petSpot in pairs(self.user.home.petManager.petSpots) do
+		if not petSpot.petData then
+			continue
+		end
 		if petSpot.petData["favorited"] then
 			continue
 		end

@@ -18,7 +18,7 @@ function HintManager:init()
 end
 
 function HintManager:addCons()
-	hintFrame.Visible = true
+	hintFrame.Visible = false
 end
 
 function HintManager:tick()

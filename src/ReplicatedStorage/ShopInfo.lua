@@ -7,22 +7,25 @@ ShopInfo["gamepassList"] = {
 	"2xCoins",
 	"SuperLuck",
 	"2xDamage",
-	-- "BigLuck",
+
 	-- "SmallLuck",
 }
 
 ShopInfo["gamepasses"] = {
 	["VIP"] = {
-		id = 1441235390,
+		id = 1522290454,
 	},
 	["2xCoins"] = {
-		id = 1438643814,
+		id = 1521918513,
 	},
 	["SuperLuck"] = {
-		id = 1442739646,
+		id = 1522080496,
 	},
 	["2xDamage"] = {
-		id = 1462499604,
+		id = 1520574579,
+	},
+	["NoSafeZone"] = {
+		id = 1521282552,
 	},
 }
 

@@ -14,6 +14,8 @@ function PlotManager.new(owner, data)
 	u.likeUserList = {}
 	u.hatchedCount = 0
 
+	u.safeZoneToggled = true
+
 	setmetatable(u, PlotManager)
 	return u
 end
@@ -34,6 +36,8 @@ function PlotManager:init()
 		wait(1)
 		self.user.home.saveManager:initSaveModel(self.saveModel)
 		self.user.home.pityManager:initPityModel(self.model)
+
+		self:refreshSafeZone()
 	end)
 end
 
@@ -131,6 +135,22 @@ function PlotManager:initModel()
 	self:initPlotOverhead()
 end
 
+function PlotManager:refreshSafeZone()
+	local safeZoneDisabled = self.user.home.shopManager:checkOwnsGamepass("NoSafeZone")
+
+	self:toggleSafeZone(not safeZoneDisabled)
+end
+
+function PlotManager:toggleSafeZone(safeZoneEnabled)
+	if safeZoneEnabled then
+		self.safeZone.Transparency = 0
+		self.safeZone.Texture.Transparency = 0.9
+	else
+		self.safeZone.Transparency = 1
+		self.safeZone.Texture.Transparency = 1
+	end
+end
+
 function PlotManager:getMaxPetCount()
 	local count = 12
 	if self.user.home.shopManager:checkOwnsGamepass("10MorePets") then
@@ -207,6 +227,8 @@ function PlotManager:destroy()
 	ServerMod:FireAllClients("clearPlotMod", {
 		plotName = self.plotName,
 	})
+
+	self:toggleSafeZone(true)
 end
 
 return PlotManager

@@ -109,6 +109,8 @@ function PlotManager:updateGlobalPlot(data)
 		self.saveModel = plotMod.saveModel
 		self.unitStartPart = plotMod.unitStartPart
 
+		self:initBuyRemoveSafeZone()
+
 		routine(function()
 			ClientMod.speedManager:initModel(self.model)
 			ClientMod.luckWizardManager:initModel(self.model)
@@ -116,6 +118,44 @@ function PlotManager:updateGlobalPlot(data)
 	end
 
 	self:refreshPlotMod(plotMod)
+end
+
+function PlotManager:initBuyRemoveSafeZone()
+	local removeSafeZoneModel = self.model.RemoveSafeZone
+	removeSafeZoneModel.Collect.Touched:Connect(function(hit)
+		local touchPlayer = game.Players:GetPlayerFromCharacter(hit.Parent)
+		if touchPlayer ~= player then
+			return
+		end
+
+		if self.tryBuySafeZoneExpiree and self.tryBuySafeZoneExpiree > ClientMod.step then
+			return
+		end
+		self.tryBuySafeZoneExpiree = ClientMod.step + 60 * 1
+
+		ClientMod:FireServer("tryBuyGamepass", {
+			gamepassClass = "NoSafeZone",
+		})
+	end)
+
+	self.removeSafeZoneModel = removeSafeZoneModel
+	self:refreshBuyRemoveSafeZone()
+end
+
+function PlotManager:refreshBuyRemoveSafeZone()
+	local removeSafeZoneModel = self.removeSafeZoneModel
+
+	if not ClientMod.shopManager:checkOwnsGamepass("NoSafeZone") then
+		return
+	end
+
+	for _, child in pairs(removeSafeZoneModel:GetDescendants()) do
+		if child:IsA("BasePart") then
+			child.Transparency = 1
+			child.CanCollide = false
+			child.CanTouch = false
+		end
+	end
 end
 
 function PlotManager:refreshPlotMod(plotMod)

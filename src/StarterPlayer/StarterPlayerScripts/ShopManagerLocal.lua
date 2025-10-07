@@ -331,6 +331,8 @@ end
 function ShopManager:updateOwnedGamepassMods(data)
 	self.ownedGamepassMods = data["gamepassMods"]
 	self:refreshAllGamepassMods()
+
+	ClientMod.plotManager:refreshBuyRemoveSafeZone()
 end
 
 function ShopManager:checkOwnsGamepass(gamepassClass)

@@ -259,6 +259,12 @@ end
 function Unit:checkSafeZone()
 	local safeZone = self.user.home.plotManager.safeZone
 
+	local safeZoneDisabled = self.user.home.shopManager:checkOwnsGamepass("NoSafeZone")
+	if safeZoneDisabled then
+		self.inSafeZone = false
+		return
+	end
+
 	local currPosition = self.currFrame.Position
 	local rayOrigin = Vector3.new(currPosition.X, safeZone.Position.Y + 10, currPosition.Z)
 	local rayDirection = Vector3.new(0, -20, 0)

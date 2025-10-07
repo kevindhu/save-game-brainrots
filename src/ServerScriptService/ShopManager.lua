@@ -314,9 +314,7 @@ function ShopManager:addGamepassBenefits(gamepassClass)
 	-- TODO: add all benefits here
 	self.user:refreshWalkspeed()
 
-	-- if gamepassClass == "VIP" then
-	-- 	self.user:refreshBB()
-	-- end
+	self.user.home.plotManager:refreshSafeZone()
 end
 
 function ShopManager:tryBuyNextServerLuck()

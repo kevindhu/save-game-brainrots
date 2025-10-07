@@ -401,6 +401,11 @@ function PetSpot:tickAttack(timeRatio)
 		damage = damage * damageMultiplier
 	end
 
+	-- gamepass multiplier
+	if self.user.home.shopManager:checkOwnsGamepass("2xDamage") then
+		damage = damage * 2
+	end
+
 	local totalDelay = 0.3 + (self.petStats["attackDelay"] or 0)
 	totalDelay = totalDelay / attackSpeedRatio
 
