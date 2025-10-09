@@ -114,7 +114,9 @@ function StashTool:addCrateModel()
 	end
 
 	local crateClass = self.toolClass
-	local crateModel = game.ReplicatedStorage.Assets.BaseCrateModel:Clone()
+
+	local crateModel = game.ReplicatedStorage.Assets[crateClass]:Clone()
+	-- local crateModel = game.ReplicatedStorage.Assets.BaseCrateModel:Clone()
 
 	local anchorPart = self.user.rig.Torso
 

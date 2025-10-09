@@ -38,9 +38,9 @@ CrateInfo["relicProbMapMapping"] = {
 }
 
 CrateInfo["imageMap"] = {
-	["Crate1"] = "rbxassetid://105347365894761",
-	["Crate2"] = "rbxassetid://77670058674209",
-	["Crate3"] = "rbxassetid://116080005450512",
+	["Crate1"] = "rbxassetid://88974090917907",
+	["Crate2"] = "rbxassetid://130048882530706",
+	["Crate3"] = "rbxassetid://81519367488402",
 
 	["LuckyBlockCrate"] = "rbxassetid://95448593603129",
 }

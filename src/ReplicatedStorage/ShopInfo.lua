@@ -44,19 +44,19 @@ ShopInfo["products"] = {
 	},
 
 	["BuyCrate1"] = {
-		id = 3378332057,
+		id = 3424425318,
 		rewards = {
 			premiumCrateClass = "Crate1",
 		},
 	},
 	["BuyCrate2"] = {
-		id = 3378332143,
+		id = 3424425370,
 		rewards = {
 			premiumCrateClass = "Crate2",
 		},
 	},
 	["BuyCrate3"] = {
-		id = 3378332206,
+		id = 3424425425,
 		rewards = {
 			premiumCrateClass = "Crate3",
 		},

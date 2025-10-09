@@ -139,6 +139,15 @@ function PlotManager:initBuyRemoveSafeZone()
 	end)
 
 	self.removeSafeZoneModel = removeSafeZoneModel
+
+	self.removeSafeZoneBB = removeSafeZoneModel.Collect.BB
+
+	ClientMod.uiScaleManager:addDistStrokeModsFromBB({
+		bb = self.removeSafeZoneBB,
+		adornee = removeSafeZoneModel.Collect,
+		baseDistance = 30,
+	})
+
 	self:refreshBuyRemoveSafeZone()
 end
 
@@ -156,6 +165,7 @@ function PlotManager:refreshBuyRemoveSafeZone()
 			child.CanTouch = false
 		end
 	end
+	self.removeSafeZoneBB.Enabled = false
 end
 
 function PlotManager:refreshPlotMod(plotMod)

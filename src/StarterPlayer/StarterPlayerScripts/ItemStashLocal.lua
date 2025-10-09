@@ -287,7 +287,7 @@ function ItemStash:getDescriptionText(itemMod)
 		coins = "Coins",
 		damage = "Damage",
 		attackSpeed = "Atk Speed",
-		attackCount = "Atk Count",
+		attackCount = "Bullet Count",
 	}
 
 	-- Order for display

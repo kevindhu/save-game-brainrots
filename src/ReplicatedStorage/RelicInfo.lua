@@ -46,7 +46,7 @@ RelicInfo["imageMap"] = {
 	["Fist1"] = "rbxassetid://128681941127773",
 	["Speed1"] = "rbxassetid://94894821715777",
 	["Rich1"] = "rbxassetid://89899072506076",
-	["Titan1"] = "rbxassetid://14782788955",
+	["Titan1"] = "rbxassetid://100897107067509",
 	["Angel1"] = "rbxassetid://95871347822807",
 }
 
