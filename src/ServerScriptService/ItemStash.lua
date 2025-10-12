@@ -60,8 +60,8 @@ function ItemStash:addFirstItems()
 	-- 	count = 10 * 1000,
 	-- })
 
-	self:addTestPets()
-	self:addTestRelics()
+	-- self:addTestPets()
+	-- self:addTestRelics()
 end
 
 function ItemStash:addTestPets()

@@ -195,7 +195,7 @@ function LuckWizardManager:refreshRequirements()
 
 	local petClasses = luckRequirementData["petClasses"]
 
-	print("REFRESH REQUIREMENTS: ", petClasses)
+	-- print("REFRESH REQUIREMENTS: ", petClasses)
 
 	for _, petClass in pairs(petClasses) do
 		self:newPetMod(petClass)

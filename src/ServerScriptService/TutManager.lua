@@ -43,6 +43,7 @@ function TutManager:init()
 				end
 			end
 		end
+
 		if not self.completedTutMods["Buy2xSpeedCommon"] then
 			-- clear all the time wizard tutMods
 			local timeWizardTutMods = {
@@ -105,10 +106,10 @@ function TutManager:fakeCompleteAllTutMods()
 end
 
 function TutManager:initFirstTutMods()
-	if Common.isStudio then
-		self:fakeCompleteAllTutMods()
-		return
-	end
+	-- if Common.isStudio then
+	-- 	self:fakeCompleteAllTutMods()
+	-- 	return
+	-- end
 
 	-- clear all existing tutMods
 	self.tutMods = {}
@@ -148,12 +149,12 @@ function TutManager:newTutMod(tutName)
 end
 
 function TutManager:sendTutMods()
-	print("SENDING TUT MODS: ", self.tutMods)
+	-- print("SENDING TUT MODS: ", self.tutMods)
 	ServerMod:FireClient(self.user.player, "updateTutMods", self.tutMods)
 end
 
 function TutManager:sendCompletedMods()
-	print("SENDING COMPLETED TUT MODS: ", self.completedTutMods)
+	-- print("SENDING COMPLETED TUT MODS: ", self.completedTutMods)
 	ServerMod:FireClient(self.user.player, "updateCompletedTutMods", self.completedTutMods)
 end
 
