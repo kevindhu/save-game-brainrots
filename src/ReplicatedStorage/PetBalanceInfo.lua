@@ -133,35 +133,37 @@ PetBalanceInfo["unitHealthMultiplierMap"] = {
 }
 
 PetBalanceInfo["petProbMap"] = {
-	["CappuccinoAssassino"] = 8.588298,
-	["TungTungSahur"] = 8.158883,
-	["TrippiTroppi"] = 7.750939,
-	["Boneca"] = 7.363392,
-	["LiriLira"] = 6.995222,
-	["Ballerina"] = 6.645461,
-	["FrigoCamelo"] = 6.313188,
-	["ChimpBanana"] = 5.997529,
-	["TaTaTaSahur"] = 5.697652,
-	["CapybaraCoconut"] = 5.41277,
-	["DolphinBanana"] = 5.142131,
-	["FishCatLegs"] = 4.885025,
-	["GooseBomber"] = 4.640774,
-	["TralaleloTralala"] = 4.408735,
-	["GlorboFruttoDrillo"] = 1.505534,
-	["RhinoToast"] = 1.385092,
-	["BrrBrrPatapim"] = 1.274284,
-	["ElephantCoconut"] = 1.172342,
-	["TimCheese"] = 1.078554,
-	["GiraffeWatermelon"] = 0.99227,
-	["MonkeyPineapple"] = 0.912888,
-	["OwlAvocado"] = 0.839857,
-	["OrangeDunDun"] = 0.772669,
-	["CowPlanet"] = 0.710855,
-	["OctopusBlueberry"] = 0.653987,
-	["SaltCombined"] = 0.601668,
-	["GorillaWatermelon"] = 0.0369,
-	["MilkShake"] = 0.03321,
-	["GrapeSquid"] = 0.029889,
+	["CappuccinoAssassino"] = 26,
+	["TungTungSahur"] = 24,
+	["Boneca"] = 22,
+	["TrippiTroppi"] = 19,
+	["LiriLira"] = 18,
+	["Ballerina"] = 8,
+	["FrigoCamelo"] = 5,
+	["ChimpBanana"] = 3,
+	["TaTaTaSahur"] = 1.5,
+	["CapybaraCoconut"] = 1.3,
+	["DolphinBanana"] = 0.9,
+	["FishCatLegs"] = 0.5,
+	["GooseBomber"] = 0.4,
+	["TralaleloTralala"] = 0.35,
+	["GlorboFruttoDrillo"] = 0.3,
+	["RhinoToast"] = 0.25,
+	["BrrBrrPatapim"] = 0.2,
+	["ElephantCoconut"] = 0.1,
+	["TimCheese"] = 0.05,
+	["GiraffeWatermelon"] = 0.02,
+	["MonkeyPineapple"] = 0.01,
+	["OwlAvocado"] = 0.008,
+	["OrangeDunDun"] = 0.006,
+	["CowPlanet"] = 0.005,
+
+	["OctopusBlueberry"] = 0.00015,
+	["SaltCombined"] = 0.0008,
+	["GorillaWatermelon"] = 0.0005,
+
+	["MilkShake"] = 0.00005,
+	["GrapeSquid"] = 0.00003,
 }
 
 PetBalanceInfo["petSpotUnlockCostMap"] = {
@@ -187,24 +189,14 @@ PetBalanceInfo["petSpotUnlockCostMap"] = {
 	["20"] = 55000000,
 }
 
-PetBalanceInfo["ratingLuckMultiplier"] = {
-	["Secret"] = 2.5, -- 5
-	["Mythic"] = 2,
-	["Legendary"] = 1,
-	["Epic"] = 0.3,
-	["Rare"] = 0.1,
-	["Uncommon"] = 0.05,
-	["Common"] = 0.0,
-}
-
 PetBalanceInfo["ratingDebuffMultiplier"] = {
 	["Secret"] = 0.00000005, -- 5
 	["Mythic"] = 0.0001,
 	["Legendary"] = 0.0005,
 	["Epic"] = 0.002,
-	["Rare"] = 0.03,
-	["Uncommon"] = 0.2,
-	["Common"] = 0.5,
+	["Rare"] = 0.02,
+	["Uncommon"] = 0.03,
+	["Common"] = 0.05,
 }
 
 return PetBalanceInfo

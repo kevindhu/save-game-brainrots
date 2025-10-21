@@ -29,10 +29,10 @@ function SoundManager:tick()
 end
 
 function SoundManager:tickExpirees()
-	for name, soundMod in pairs(self.soundMods) do
+	for soundName, soundMod in pairs(self.soundMods) do
 		local expiree = soundMod["expiree"]
-		if expiree < ClientMod.step then
-			self:removeSoundMod(name)
+		if expiree < Common.getCurrentDecimalTime() then
+			self:removeSoundMod(soundName)
 		end
 	end
 end
@@ -122,6 +122,11 @@ function SoundManager:newSoundMod(data)
 
 	local expiree = Common.getCurrentDecimalTime() + sound.TimeLength * 1.5
 
+	if soundStats["maxTime"] then
+		expiree = Common.getCurrentDecimalTime() + soundStats["maxTime"]
+		print("MAX TIME: ", soundStats["maxTime"])
+	end
+
 	local newSoundMod = {
 		soundName = soundName,
 		soundClass = soundClass,
@@ -192,6 +197,8 @@ function SoundManager:removeSoundMod(soundName)
 	local soundMod = self.soundMods[soundName]
 	local part = soundMod["part"]
 	local sound = soundMod["sound"]
+
+	-- print("REMOVING SOUND MOD: ", soundName)
 
 	if sound then
 		sound:Destroy()

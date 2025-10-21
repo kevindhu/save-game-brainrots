@@ -49,7 +49,7 @@ function PetSpot:init()
 		wait(1)
 		self.initialized = true
 
-		-- self:occupyWithDevPet()
+		self:occupyWithDevPet()
 	end)
 end
 

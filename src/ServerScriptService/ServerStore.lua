@@ -45,8 +45,8 @@ function ServerStore:getPlayerProfile(user, profileKey, addUserId, viewOnly)
 		})
 	end
 
-	if ServerMod:checkDeveloper(user) then
-		print("LOAD PROFILE (NEW): ", os.clock() - startTime)
+	if Common.checkDeveloper(user.userId) then
+		print("LOAD PROFILE: ", os.clock() - startTime)
 	end
 
 	local player = user.player

@@ -48,6 +48,30 @@ function User:init()
 
 		self.home.analyticsManager:logFunnelStepEvent("UserSession", 1, "Joined", {})
 	end)
+
+	routine(function()
+		self:initGroupRank()
+	end)
+end
+
+function User:initGroupRank()
+	-- if Common.isStudio then
+	-- 	return
+	-- end
+
+	local player = self.player
+
+	local role
+	local startTime = os.clock()
+	local success, err = pcall(function()
+		role = player:GetRoleInGroup(Common.groupId)
+	end)
+	if not success then
+		role = "Unknown"
+	end
+	print("INIT GROUP RANK: ", role)
+
+	self.groupRole = role
 end
 
 function User:addRigCons()

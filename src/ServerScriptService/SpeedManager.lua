@@ -45,6 +45,11 @@ function SpeedManager:init()
 
 	self:sendAllSpeedMods()
 
+	if Common.isStudio then
+		-- try unlock everything
+		self:unlockAllSpeedMods()
+	end
+
 	routine(function()
 		wait(1)
 
@@ -53,6 +58,19 @@ function SpeedManager:init()
 
 		wait(10)
 	end)
+end
+
+function SpeedManager:unlockAllSpeedMods()
+	for _, rating in pairs(ratingList) do
+		for i = 1, SPEED_COUNT do
+			self:unlockSpeedMod(rating, i, true)
+
+			local speedName = self:getSpeedName(rating, i)
+			local speedMod = self.speedMods[speedName]
+			self:toggleSpeedMod(speedMod, true)
+		end
+	end
+	self:sendAllSpeedMods()
 end
 
 function SpeedManager:initAllSpeedMods()

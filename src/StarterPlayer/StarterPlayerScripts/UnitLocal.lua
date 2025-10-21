@@ -687,7 +687,7 @@ function Unit:captureSavePet(data)
 		soundClass = laughClass,
 		pos = self.currFrame.Position,
 		playbackSpeed = Common.randomBetween(0.8, 1),
-		volume = 0.5,
+		volume = 0.1,
 	})
 
 	local obtainedStringList = {

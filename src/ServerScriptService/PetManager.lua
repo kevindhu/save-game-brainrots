@@ -42,13 +42,8 @@ function PetManager:init()
 
 			self:tryUnlockPetSpot({
 				petSpotName = plotName .. "_PetSpot" .. 1,
+				noSound = true,
 			})
-
-			-- if Common.isStudio then
-			-- 	self:tryUnlockPetSpot({
-			-- 		petSpotName = plotName .. "_PetSpot" .. 2,
-			-- 	})
-			-- end
 		else
 			self:loadState()
 		end
@@ -185,6 +180,7 @@ end
 
 function PetManager:tryUnlockPetSpot(data)
 	local petSpotName = data["petSpotName"]
+	local noSound = data["noSound"]
 
 	local nextUnlockPetSpotName = nil
 	for index = 1, PET_SPOT_COUNT do
@@ -225,6 +221,13 @@ function PetManager:tryUnlockPetSpot(data)
 		itemName = "Coins",
 		count = -unlockCost,
 	})
+
+	if not noSound then
+		ServerMod:FireClient(self.user.player, "newSoundMod", {
+			soundClass = "CashBuy",
+			volume = 0.5,
+		})
+	end
 
 	self:refreshBuyModels()
 end

@@ -106,10 +106,10 @@ function TutManager:fakeCompleteAllTutMods()
 end
 
 function TutManager:initFirstTutMods()
-	-- if Common.isStudio then
-	-- 	self:fakeCompleteAllTutMods()
-	-- 	return
-	-- end
+	if Common.isStudio then
+		self:fakeCompleteAllTutMods()
+		return
+	end
 
 	-- clear all existing tutMods
 	self.tutMods = {}

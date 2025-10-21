@@ -39,7 +39,6 @@ function User:init()
 
 	routine(function()
 		if self:isPlayerUser() then
-			self:initGroupRank()
 			-- make the server user
 			ClientMod:FireServer("makeUser")
 		end
@@ -182,36 +181,6 @@ function User:toggleControls(data)
 	end
 
 	ClientMod:toggleControls(newBool)
-end
-
-function User:initGroupRank()
-	if Common.isStudio then
-		return
-	end
-
-	local player = self.player
-
-	local role
-	local startTime = os.clock()
-	local success, err = pcall(function()
-		role = player:GetRoleInGroup(Common.groupId)
-	end)
-	if not success then
-		role = "Unknown"
-	end
-
-	-- local validRoleList = {
-	-- 	"Tester",
-	-- 	"Developer",
-	-- 	"Asset",
-	-- 	"Admin",
-	-- 	"Owner",
-	-- }
-	-- if not Common.listContains(validRoleList, role) then
-	-- 	player:Kick("You are not authorized to play on this game.")
-	-- end
-
-	-- print("GOT ROLE: ", role, " IN ", os.clock() - startTime, " SECONDS")
 end
 
 function User:refreshInvertedCamera()

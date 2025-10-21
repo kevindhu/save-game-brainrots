@@ -23,7 +23,6 @@ local Common = {
 		-1, -- Player1
 		-2, -- Player2
 	},
-	adminUserIds = {},
 
 	mainPlaceId = 96761746514152,
 	testPlaceId = 96761746514152,
@@ -46,11 +45,6 @@ local Common = {
 	usernameMap = {},
 	userIdMap = {},
 }
-
--- all developers are admins
-for _, userId in pairs(Common.developerUserIds) do
-	Common.adminUserIds[userId] = true
-end
 
 function Common.applyDescription(humanoid, description)
 	local success, err = pcall(function()
@@ -371,10 +365,6 @@ end
 function Common.checkDeveloper(userId)
 	-- return false
 	return Common.listContains(Common.developerUserIds, userId)
-end
-
-function Common.checkAdmin(userId)
-	return Common.listContains(Common.adminUserIds, userId)
 end
 
 function Common.len(lst)

@@ -102,6 +102,12 @@ SoundInfo["sounds"] = {
 		volume = 0.5,
 	},
 
+	["Yippee"] = {
+		id = 18843924331,
+		volume = 0.25,
+		maxTime = 0.9,
+	},
+
 	["EvilLaugh"] = {
 		id = 99037509129849,
 		volume = 0.1, -- 0.15

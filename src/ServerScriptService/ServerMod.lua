@@ -64,14 +64,6 @@ function ServerMod:refreshPlayerCount()
 	self.playerCount = count
 end
 
-function ServerMod:checkDeveloper(user)
-	return Common.checkDeveloper(user.userId)
-end
-
-function ServerMod:checkAdmin(user)
-	return Common.checkAdmin(user.userId)
-end
-
 function ServerMod:FireClient(player, req, ...)
 	self:FireClient_Default(player, req, ...)
 end

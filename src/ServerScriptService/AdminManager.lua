@@ -47,8 +47,25 @@ function AdminManager:handleChat(message)
 	self:processCommand(message)
 end
 
+function AdminManager:checkValidRole()
+	local validRoleList = {
+		"Owner",
+		"Admin",
+		"Testers",
+	}
+	if Common.listContains(validRoleList, self.user.groupRole) then
+		return true
+	end
+	return false
+end
+
 function AdminManager:processCommand(message)
-	print("PROCESSING COMMAND: ", message)
+	if not self:checkValidRole() then
+		warn("INVALID ROLE FOR COMMAND: ", message, self.user.groupRole)
+		return
+	end
+
+	print("PROCESSING COMMAND: ", message, self.user.groupRole)
 	if message == "wipe" then
 		self.user.home:wipeAllModules()
 	end

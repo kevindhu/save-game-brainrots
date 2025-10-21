@@ -40,15 +40,16 @@ end
 
 function ProbManager:getTotalLuck()
 	local totalUserLuck = 0
-	if self.user.home.shopManager:checkOwnsGamepass("SuperLuck") then
-		totalUserLuck += 2
-	end
 
-	local wizardLuck = self.user.home.luckWizardManager.currentLuck
+	-- if self.user.home.shopManager:checkOwnsGamepass("SuperLuck") then
+	-- 	totalUserLuck += 2
+	-- end
+
+	local wizardLuck = self.user.home.luckWizardManager.currentLuck - 1
 	totalUserLuck += wizardLuck
 
 	local serverLuck = ServerMod.luckManager.serverLuck - 1
-	local totalLuck = totalUserLuck * 50 + serverLuck * 100
+	local totalLuck = totalUserLuck * 10 + serverLuck * 50
 
 	-- totalLuck = 10 -- 10000
 
@@ -126,7 +127,7 @@ function ProbManager:generatePetClass(chosenRating)
 	-- totalLuck = self.testLuck
 	-- self.testLuck += 10 -- 10000
 
-	print("GOT TOTAL LUCK: ", totalLuck)
+	-- print("GOT TOTAL LUCK: ", totalLuck)
 
 	self:addLuckWeights(petProbMap, totalLuck, "pet")
 

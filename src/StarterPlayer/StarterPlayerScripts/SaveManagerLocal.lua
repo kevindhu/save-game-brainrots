@@ -288,6 +288,13 @@ function SaveManager:completeWaveMod(data)
 		playbackSpeed = playbackSpeed,
 	})
 
+	ClientMod.soundManager:newSoundMod({
+		soundClass = "Yippee",
+		volume = 0.05,
+		pos = pos,
+		playbackSpeed = Common.randomBetween(0.91, 0.96),
+	})
+
 	local petStats = PetInfo:getMeta(petClass)
 	local ratingColor = RatingInfo["ratingColorMap"][petStats["rating"]]
 

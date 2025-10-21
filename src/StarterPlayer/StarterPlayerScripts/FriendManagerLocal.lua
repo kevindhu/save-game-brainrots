@@ -23,16 +23,6 @@ function FriendManager:init()
 	-- self:doFakeFriendRequestLoop()
 end
 
-function FriendManager:doFakeFriendRequestLoop()
-	routine(function()
-		wait(15)
-		while true do
-			self:addFakeFriendRequest()
-			wait(math.random(60 * 5, 60 * 8))
-		end
-	end)
-end
-
 function FriendManager:addCons()
 	local inviteOptions = Instance.new("ExperienceInviteOptions")
 	inviteOptions.PromptMessage = "Get +10% Strength if your friend joins!"
@@ -50,17 +40,21 @@ function FriendManager:addCons()
 	ClientMod.buttonManager:addBasicButtonCons(buttonFrame)
 end
 
+function FriendManager:doFakeFriendRequestLoop()
+	routine(function()
+		wait(15)
+		while true do
+			self:addFakeFriendRequest()
+			wait(math.random(60 * 5, 60 * 8))
+		end
+	end)
+end
+
 function FriendManager:updateFriends(data)
 	local friendMap = data["friendMap"]
 	local friendCount = data["friendCount"]
 
 	self.currFriendMap = friendMap
-
-	-- local friendCount = len(friendMap)
-	-- if friendCount == 0 then
-	-- 	friendsFrame.Visible = false
-	-- 	return
-	-- end
 
 	friendsFrame.Visible = true
 
