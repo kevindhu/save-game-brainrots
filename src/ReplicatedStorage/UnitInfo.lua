@@ -13,63 +13,63 @@ UnitInfo["animationMap"] = {
 UnitInfo["units"] = {
 	["Unit1x1"] = {
 		alias = "Noob",
-		health = 25,
-		moveSpeed = 0.25, -- 1.1,
+		health = 28,
+		moveSpeed = 0.25,
 	},
 	["Unit2x1"] = {
 		alias = "Big Noob",
-		health = 75,
+		health = 82,
 		moveSpeed = 0.2,
 	},
 	["Unit3x1"] = {
 		alias = "Gigantic Noob",
-		health = 300,
+		health = 330,
 		moveSpeed = 0.18,
 	},
 	["Unit4x1"] = {
 		alias = "Mutated king",
-		health = 1200,
+		health = 1380,
 		moveSpeed = 0.2,
 	},
 	["Unit5x1"] = {
 		alias = "Dominus King",
-		health = 10000,
+		health = 11500,
 		moveSpeed = 0.25,
 	},
 	["Unit6x1"] = {
 		alias = "1x1x1x1",
-		health = 25000,
+		health = 29500,
 		moveSpeed = 0.35,
 	},
 
 	["Unit1x2"] = {
 		alias = "Bacon",
-		health = 25,
-		moveSpeed = 0.25, -- 1.1,
+		health = 28,
+		moveSpeed = 0.25,
 	},
 	["Unit2x2"] = {
 		alias = "Hobo",
-		health = 75,
+		health = 82,
 		moveSpeed = 0.2,
 	},
 	["Unit3x2"] = {
 		alias = "Gigantic Bacon",
-		health = 300,
+		health = 330,
 		moveSpeed = 0.18,
 	},
 	["Unit4x2"] = {
 		alias = "Mutated king",
-		health = 1200,
+		health = 1380,
 		moveSpeed = 0.2,
 	},
 	["Unit5x2"] = {
 		alias = "Dominus King",
-		health = 10000,
+		health = 11500,
 		moveSpeed = 0.25,
 	},
 	["Unit6x2"] = {
 		alias = "1x1x1x1",
-		health = 25000,
+		health = 29500,
 		moveSpeed = 0.35,
 	},
 }
@@ -78,20 +78,20 @@ UnitInfo["chatPhraseMap"] = {
 	["Unit1x1"] = {
 		"pls free stuff!",
 		"pls brainrot plsss",
-		"give brainrot pls 🥺",
+		"give brainrot pls ðŸ¥º",
 		"donate pls",
-		"brainrot donate pls 🥺",
+		"brainrot donate pls ðŸ¥º",
 		"give me brainrots!",
-		"😡 MY BRAINROTS NOW!",
+		"ðŸ˜¡ MY BRAINROTS NOW!",
 	},
 	["Unit1x2"] = {
 		"pls free stuff!",
 		"pls brainrot plsss",
-		"give brainrot pls 🥺",
+		"give brainrot pls ðŸ¥º",
 		"donate pls",
-		"brainrot donate pls 🥺",
+		"brainrot donate pls ðŸ¥º",
 		"give me brainrots!",
-		"😡 MY BRAINROTS NOW!",
+		"ðŸ˜¡ MY BRAINROTS NOW!",
 	},
 
 	["Unit2x1"] = {
@@ -104,16 +104,16 @@ UnitInfo["chatPhraseMap"] = {
 	["Unit3x1"] = {
 		"i want your brainrots!",
 		"give me brainrots!",
-		"😡 MY BRAINROTS NOW!",
+		"ðŸ˜¡ MY BRAINROTS NOW!",
 	},
 	["Unit3x2"] = {
 		"i want your brainrots!!!",
 	},
 
 	["Unit4x1"] = {
-		"😡 give me brainrots!",
-		"this is mine 😈",
-		"😡 MY BRAINROTS NOW!",
+		"ðŸ˜¡ give me brainrots!",
+		"this is mine ðŸ˜ˆ",
+		"ðŸ˜¡ MY BRAINROTS NOW!",
 	},
 	["Unit4x2"] = {
 		"i want your brainrots!!!",
@@ -130,9 +130,7 @@ UnitInfo["chatPhraseMap"] = {
 	},
 }
 
-function UnitInfo:init()
-	-- do nothing
-end
+function UnitInfo:init() end
 
 function UnitInfo:getMeta(itemClass, noWarn)
 	self.categoryList = {
