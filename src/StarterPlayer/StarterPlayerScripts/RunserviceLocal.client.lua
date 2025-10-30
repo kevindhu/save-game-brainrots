@@ -47,8 +47,6 @@ function LoadAllModules()
 
 		{ "DeleteManager", "deleteManager" },
 
-		-- { "Satchel", "satchel" },
-
 		{ "UIManager", "uiManager" },
 		{ "UIScaleManager", "uiScaleManager" },
 		{ "VPManager", "vpManager" },

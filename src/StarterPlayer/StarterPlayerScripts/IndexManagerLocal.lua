@@ -108,6 +108,7 @@ function IndexManager:addCons()
 			newBool = not self.toggled,
 		})
 	end)
+
 	ClientMod.buttonManager:addBasicButtonCons(indexButton)
 
 	local closeButton = indexFrame.MainFrame.CloseButton

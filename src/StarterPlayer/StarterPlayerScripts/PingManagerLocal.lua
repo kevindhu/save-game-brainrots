@@ -1,5 +1,3 @@
-local TeleportService = game:GetService("TeleportService")
-
 local player = game.Players.LocalPlayer
 local playerGui = player.PlayerGui
 local playerScripts = player.PlayerScripts

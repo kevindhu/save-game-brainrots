@@ -173,14 +173,9 @@ function UIManager:handleBlur(data)
 end
 
 function UIManager:interactMainFrame(frame, data)
-	local newBool = data["newBool"]
-
-	-- ClientMod.satchel:toggleGui(not newBool)
-
 	self:tryAnimateClose(frame, data)
 	self:handleBlur(data)
 	self:handleFOV(data)
-	-- ClientMod.buttonManager:toggleButtonFrame(not newBool)
 end
 
 function UIManager:toggleHUD(newBool)
