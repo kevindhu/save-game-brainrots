@@ -447,7 +447,7 @@ end
 
 function TutManager:tickLocationBeamModel()
 	local locationBeamModel = self.locationBeamModel
-	if not locationBeamModel then
+	if not locationBeamModel or not locationBeamModel.Parent then
 		return
 	end
 

@@ -125,7 +125,10 @@ function LoadAllModules()
 		{ "BuyCrateManager", "buyCrateManager" },
 		{ "LuckWizardManager", "luckWizardManager" },
 
-		{ "AdminManager", "adminManager" },
+		{ "CircleManager", "circleManager" },
+
+		-- { "AdminManager", "adminManager" },
+		-- { "PingManager", "pingManager" },
 	}
 
 	local startTime = os.clock()
@@ -187,6 +190,7 @@ RunService.Heartbeat:Connect(function(deltaTime)
 		"buyCrateManager",
 
 		"soundManager",
+		"pingManager",
 	}
 	for _, moduleName in ipairs(moduleList) do
 		if ClientMod[moduleName] then

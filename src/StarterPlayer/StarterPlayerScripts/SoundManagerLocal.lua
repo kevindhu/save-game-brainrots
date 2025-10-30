@@ -103,6 +103,8 @@ function SoundManager:newSoundMod(data)
 	local finalVolume = baseVolume * self.setRatio * self.baseVolumeMultiplier * volume
 	sound.Volume = finalVolume
 
+	-- print("FINAL VOLUME: ", finalVolume, soundClass)
+
 	if not part then
 		sound.Parent = game.Workspace.GlobalSounds
 	else
@@ -120,12 +122,14 @@ function SoundManager:newSoundMod(data)
 		sound.TimePosition = soundStats["startTime"]
 	end
 
-	local expiree = Common.getCurrentDecimalTime() + sound.TimeLength * 1.5
+	local expiree = Common.getCurrentDecimalTime() + sound.TimeLength * 5
 
 	if soundStats["maxTime"] then
 		expiree = Common.getCurrentDecimalTime() + soundStats["maxTime"]
 		-- print("MAX TIME: ", soundStats["maxTime"])
 	end
+
+	-- print("EXPIREE: ", expiree)
 
 	local newSoundMod = {
 		soundName = soundName,

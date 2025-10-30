@@ -52,8 +52,10 @@ end)
 local ServerStore = require(game.ServerScriptService.ServerStore)
 ServerMod.serverStore = ServerStore
 
-game.Players.PlayerRemoving:Connect(function(player)
+game.Players.PlayerRemoving:Connect(function(player, exitReason)
 	local userName = player.Name
+
+	print(`{userName} REMOVING: {exitReason}`)
 
 	local user = ServerMod.users[userName]
 	if user then

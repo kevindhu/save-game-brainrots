@@ -15,6 +15,19 @@ function ServerEventManager:addMainEvent()
 	event.Name = "MainEvent"
 	event.Parent = game.ReplicatedStorage.Events
 	self.mainEvent = event
+
+	local pingRemoteFunction = Instance.new("RemoteFunction")
+	pingRemoteFunction.Name = "PingRemoteFunction"
+	pingRemoteFunction.Parent = game.ReplicatedStorage.Events
+	self.pingRemoteFunction = pingRemoteFunction
+
+	pingRemoteFunction.OnServerInvoke = function(player)
+		return tick()
+	end
+end
+
+function ServerEventManager:getPing(player)
+	return self.pingRemoteFunction:InvokeClient(player)
 end
 
 function ServerEventManager:addCons()
