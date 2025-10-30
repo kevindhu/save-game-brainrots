@@ -2,15 +2,27 @@ local RelicInfo = {}
 
 RelicInfo["relicList"] = {
 	"Fist1",
+	"Fist2",
+	"Fist3",
 	"Speed1",
+	"Speed2",
+	"Speed3",
 	"Rich1",
+	"Rich2",
+	"Rich3",
 	"Titan1",
+	"Titan2",
+	"Titan3",
 	"Angel1",
+	"Angel2",
+	"Angel3",
 }
 
 RelicInfo["damageMap"] = {
-	["Fist1"] = { 2, 2.5 },
-	["Angel1"] = { 1, 1.5 },
+	["Fist1"] = { 1.1, 1.15 },
+	["Fist2"] = { 1.2, 1.3 },
+	["Fist3"] = { 1.35, 1.45 },
+	["Angel1"] = { 0.8, 1 },
 }
 
 RelicInfo["coinsMap"] = {
@@ -18,7 +30,7 @@ RelicInfo["coinsMap"] = {
 }
 
 RelicInfo["attackCountMap"] = {
-	["Angel1"] = 10, -- 2,
+	["Angel1"] = 2, -- 2,
 }
 
 RelicInfo["attackSpeedMap"] = {
@@ -26,8 +38,16 @@ RelicInfo["attackSpeedMap"] = {
 	["Titan1"] = { 5, 10 },
 }
 
+RelicInfo["critChanceMap"] = {
+	["Fist1"] = 0,
+	["Fist2"] = 0.02,
+	["Fist3"] = 0.05,
+}
+
 RelicInfo["aliasMap"] = {
 	["Fist1"] = "Fist I",
+	["Fist2"] = "Fist II",
+	["Fist3"] = "Fist III",
 	["Speed1"] = "Speed I",
 	["Rich1"] = "Rich I",
 	["Titan1"] = "Titan I",
@@ -36,6 +56,8 @@ RelicInfo["aliasMap"] = {
 
 RelicInfo["colorMap"] = {
 	["Fist1"] = Color3.fromRGB(255, 0, 0),
+	["Fist2"] = Color3.fromRGB(255, 0, 0),
+	["Fist3"] = Color3.fromRGB(255, 0, 0),
 	["Speed1"] = Color3.fromRGB(0, 255, 0),
 	["Rich1"] = Color3.fromRGB(0, 0, 255),
 	["Titan1"] = Color3.fromRGB(255, 255, 0),
@@ -44,6 +66,8 @@ RelicInfo["colorMap"] = {
 
 RelicInfo["imageMap"] = {
 	["Fist1"] = "rbxassetid://128681941127773",
+	["Fist2"] = "rbxassetid://128681941127773",
+	["Fist3"] = "rbxassetid://128681941127773",
 	["Speed1"] = "rbxassetid://94894821715777",
 	["Rich1"] = "rbxassetid://89899072506076",
 	["Titan1"] = "rbxassetid://100897107067509",
@@ -52,6 +76,8 @@ RelicInfo["imageMap"] = {
 
 RelicInfo["sellPriceMap"] = {
 	["Fist1"] = 100,
+	["Fist2"] = 250,
+	["Fist3"] = 400,
 	["Speed1"] = 200,
 	["Rich1"] = 300,
 	["Titan1"] = 400,
@@ -85,6 +111,7 @@ function RelicInfo:init()
 			coinsRange = self.coinsMap[relicClass],
 			attackSpeedRange = self.attackSpeedMap[relicClass],
 			attackCount = self.attackCountMap[relicClass],
+			critChance = self.critChanceMap[relicClass],
 		}
 		self.relics[relicClass] = relicData
 	end
