@@ -124,7 +124,7 @@ function SoundManager:newSoundMod(data)
 
 	if soundStats["maxTime"] then
 		expiree = Common.getCurrentDecimalTime() + soundStats["maxTime"]
-		print("MAX TIME: ", soundStats["maxTime"])
+		-- print("MAX TIME: ", soundStats["maxTime"])
 	end
 
 	local newSoundMod = {

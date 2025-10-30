@@ -277,17 +277,13 @@ function ItemStash:getDescriptionText(itemMod)
 		return itemStats["description"]
 	end
 
-	local coins = itemMod["coins"]
-	local damage = itemMod["damage"]
-	local attackSpeed = itemMod["attackSpeed"]
-	local attackCount = itemMod["attackCount"]
-
 	-- Mapping from stat keys to display names
 	local statMapping = {
 		coins = "Coins",
 		damage = "Damage",
 		attackSpeed = "Atk Speed",
 		attackCount = "Bullet Count",
+		critChance = "Crit Chance",
 	}
 
 	-- Order for display

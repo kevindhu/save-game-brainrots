@@ -422,11 +422,13 @@ function Unit:animateHit(data)
 	local hitPos = data["hitPos"]
 	local newHealth = data["newHealth"]
 	local damage = data["damage"]
+	local isCritical = data["isCritical"]
 
 	if self.userName == player.Name then
 		ClientMod.damageManager:addDamageHit({
 			pos = damagePos + Vector3.new(0, 3, 0),
 			damage = damage,
+			isCritical = isCritical,
 		})
 	end
 

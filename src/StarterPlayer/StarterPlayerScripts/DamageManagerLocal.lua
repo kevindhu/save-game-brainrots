@@ -27,6 +27,7 @@ local MAX_CAMERA_DISTANCE = 100
 function DamageManager:addDamageHit(data)
 	local pos = data["pos"]
 	local damage = data["damage"]
+	local isCritical = data["isCritical"]
 
 	local cameraPos = camera.CFrame.Position
 	if (pos - cameraPos).Magnitude > MAX_CAMERA_DISTANCE then
@@ -48,6 +49,8 @@ function DamageManager:addDamageHit(data)
 	local damageTitle = bb.Frame.Title
 	damage = math.floor(damage)
 	damageTitle.Text = Common.abbreviateNumber(damage, 1)
+
+	bb.Frame.Title.CriticalHit.Visible = isCritical
 
 	local uiScale = damageTitle.UIScale
 	uiScale.Scale = 1.5
@@ -95,6 +98,14 @@ function DamageManager:addDamageHit(data)
 			easingStyle = "Linear",
 			easingDirection = "Out",
 			goal = { Transparency = 1 },
+		})
+
+		ClientMod.tweenManager:createTween({
+			target = bb.Frame.Title.CriticalHit,
+			timer = secondFadeTimer,
+			easingStyle = "Linear",
+			easingDirection = "Out",
+			goal = { ImageTransparency = 1 },
 		})
 	end)
 

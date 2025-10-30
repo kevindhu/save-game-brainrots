@@ -14,14 +14,20 @@ CrateInfo["crateList"] = {
 
 CrateInfo["relicProbMapMapping"] = {
 	["Crate1"] = {
-		Fist1 = 1,
+		Fist1 = 10,
+		Fist2 = 10,
+		Fist3 = 10,
 	},
 	["Crate2"] = {
 		Fist1 = 10,
+		Fist2 = 10,
+		Fist3 = 10,
 		Speed1 = 10,
 	},
 	["Crate3"] = {
-		Fist1 = 5,
+		Fist1 = 10,
+		Fist2 = 10,
+		Fist3 = 10,
 		Speed1 = 10,
 		Rich1 = 10,
 		Titan1 = 10,
@@ -29,7 +35,9 @@ CrateInfo["relicProbMapMapping"] = {
 	},
 
 	["LuckyBlockCrate"] = {
-		Fist1 = 5,
+		Fist1 = 10,
+		Fist2 = 10,
+		Fist3 = 10,
 		Speed1 = 10,
 		Rich1 = 10,
 		Titan1 = 10,

@@ -406,6 +406,15 @@ function PetSpot:tickAttack(timeRatio)
 		damage = damage * 2
 	end
 
+	local isCritical = nil
+	if Common.randomBetween(0, 1) < self:getCritChance() then
+		-- got critical hit
+		isCritical = true
+		damage = damage * 3
+
+		-- print("GOT CRITICAL HIT: ", damage)
+	end
+
 	local totalDelay = 0.3 + (self.petStats["attackDelay"] or 0)
 	totalDelay = totalDelay / attackSpeedRatio
 
@@ -413,7 +422,23 @@ function PetSpot:tickAttack(timeRatio)
 
 	self.user.home.damageManager:addDamage(damage)
 
-	self.attackEvent:FireAllClients(targetUnit.unitName, damage, targetUnit.health)
+	self.attackEvent:FireAllClients(targetUnit.unitName, damage, targetUnit.health, isCritical)
+end
+
+function PetSpot:getCritChance()
+	local critChance = 0
+	-- add crit chance from relics
+	local relicMods = self.petData["relicMods"]
+	for _, relicData in pairs(relicMods) do
+		critChance = critChance + relicData["critChance"]
+	end
+
+	-- print("GOT CRIT CHANCE: ", critChance)
+
+	-- -- for testing
+	-- critChance = 10000
+
+	return critChance
 end
 
 function PetSpot:getMaxAttackCount()

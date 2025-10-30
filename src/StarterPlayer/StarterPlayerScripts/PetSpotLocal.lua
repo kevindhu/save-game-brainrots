@@ -51,11 +51,12 @@ function PetSpot:init()
 end
 
 function PetSpot:initAllEvents()
-	self:initEventReceiver("attack", "ATTACK", function(unitName, damage, newUnitHealth)
+	self:initEventReceiver("attack", "ATTACK", function(unitName, damage, newUnitHealth, isCritical)
 		self:addAttack({
 			unitName = unitName,
 			damage = damage,
 			newUnitHealth = newUnitHealth,
+			isCritical = isCritical,
 		})
 	end)
 end
@@ -550,13 +551,14 @@ function PetSpot:refreshLevelBB()
 end
 
 function PetSpot:addAttack(data)
-	if not self.petData then
-		return
-	end
-
 	local unitName = data["unitName"]
 	local newUnitHealth = data["newUnitHealth"]
 	local damage = data["damage"]
+	local isCritical = data["isCritical"]
+
+	if not self.petData then
+		return
+	end
 
 	-- animate
 	local animationId = PetInfo.attackAnimationMap[self.petClass]
@@ -613,6 +615,7 @@ function PetSpot:addAttack(data)
 			damagePos = damagePos,
 
 			damage = damage,
+			isCritical = isCritical,
 		})
 	end)
 end
