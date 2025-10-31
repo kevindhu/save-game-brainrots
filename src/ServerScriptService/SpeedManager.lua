@@ -313,6 +313,11 @@ function SpeedManager:wipe()
 	self:initAllSpeedMods()
 	self:unlockBasicSpeedMods()
 	self:sendAllSpeedMods()
+
+	-- if Common.isStudio then
+	-- 	-- try unlock everything
+	-- 	self:unlockAllSpeedMods()
+	-- end
 end
 
 return SpeedManager
