@@ -65,7 +65,6 @@ function RewardManager:addRewards(rewardData)
 		for i = 1, count do
 			itemStash:addCrate({
 				crateClass = lastPremiumCrateClass,
-				mutationClass = nil,
 			})
 		end
 	end

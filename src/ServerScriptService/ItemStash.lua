@@ -62,6 +62,7 @@ function ItemStash:addFirstItems()
 
 	-- self:addTestPets()
 	self:addTestRelics()
+	self:addTestCrates()
 end
 
 function ItemStash:addTestPets()
@@ -118,6 +119,22 @@ function ItemStash:addTestPets()
 					mutationClass = mutationClass,
 				})
 			end
+		end
+	end
+end
+
+function ItemStash:addTestCrates()
+	local crateList = {
+		"Crate1",
+		"Crate2",
+		"Crate3",
+		-- "LuckyBlockCrate",
+	}
+	for _, crateClass in ipairs(crateList) do
+		for i = 1, 10 do
+			self:addCrate({
+				crateClass = crateClass,
+			})
 		end
 	end
 end
