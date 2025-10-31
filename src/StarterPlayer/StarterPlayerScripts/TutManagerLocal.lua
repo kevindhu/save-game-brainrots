@@ -116,11 +116,14 @@ end
 
 function TutManager:addLocationBeamModel()
 	local locationBeamModel = game.ReplicatedStorage.Assets:WaitForChild("LocationArrowModel"):Clone()
-	locationBeamModel.Name = "LocationBeamModel"
+	-- locationBeamModel.Name = "LocationBeamModel"
 	locationBeamModel.Parent = game.Workspace.HitBoxes
 
 	local startPart = locationBeamModel:FindFirstChild("Start")
 	local endPart = locationBeamModel:FindFirstChild("End")
+
+	startPart.Anchored = true
+	endPart.Anchored = true
 
 	startPart.Transparency = 1
 	endPart.Transparency = 1

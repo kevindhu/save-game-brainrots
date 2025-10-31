@@ -129,9 +129,17 @@ function ItemStash:addTestRelics()
 		"Fist3",
 
 		"Speed1",
+		"Speed2",
+		"Speed3",
 		"Rich1",
+		"Rich2",
+		"Rich3",
 		"Titan1",
+		"Titan2",
+		"Titan3",
 		"Angel1",
+		"Angel2",
+		"Angel3",
 	}
 	for _, relicClass in ipairs(relicList) do
 		self:addRelic({
