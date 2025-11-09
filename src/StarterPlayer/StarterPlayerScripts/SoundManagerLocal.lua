@@ -103,6 +103,8 @@ function SoundManager:newSoundMod(data)
 	local finalVolume = baseVolume * self.setRatio * self.baseVolumeMultiplier * volume
 	sound.Volume = finalVolume
 
+	sound.Name = soundClass
+
 	-- print("FINAL VOLUME: ", finalVolume, soundClass)
 
 	if not part then
@@ -118,11 +120,13 @@ function SoundManager:newSoundMod(data)
 
 	sound:Play()
 
+	-- print(sound.Volume, soundClass, sound.Parent, sound.Parent.Parent)
+
 	if soundStats["startTime"] then
 		sound.TimePosition = soundStats["startTime"]
 	end
 
-	local expiree = Common.getCurrentDecimalTime() + sound.TimeLength * 5
+	local expiree = Common.getCurrentDecimalTime() + 6 -- sound.TimeLength * 5
 
 	if soundStats["maxTime"] then
 		expiree = Common.getCurrentDecimalTime() + soundStats["maxTime"]
@@ -201,8 +205,6 @@ function SoundManager:removeSoundMod(soundName)
 	local soundMod = self.soundMods[soundName]
 	local part = soundMod["part"]
 	local sound = soundMod["sound"]
-
-	-- print("REMOVING SOUND MOD: ", soundName)
 
 	if sound then
 		sound:Destroy()

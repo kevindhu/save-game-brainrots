@@ -50,17 +50,7 @@ function ItemStash:addFirstItems()
 		return
 	end
 
-	-- self:updateItemCount({
-	-- 	itemName = "Coins",
-	-- 	count = 100 * 1000 * 1000,
-	-- })
-
-	-- self:updateItemCount({
-	-- 	itemName = "Coins",
-	-- 	count = 10 * 1000,
-	-- })
-
-	-- self:addTestPets()
+	self:addTestPets()
 	self:addTestRelics()
 	self:addTestCrates()
 end
@@ -73,7 +63,7 @@ function ItemStash:addTestPets()
 
 		-- "Boneca",
 		-- "LiriLira",
-		-- "Ballerina",
+		"Ballerina",
 		-- "FrigoCamelo",
 		-- "ChimpBanana",
 		-- "TaTaTaSahur",

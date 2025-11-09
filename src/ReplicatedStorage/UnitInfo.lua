@@ -22,12 +22,12 @@ UnitInfo["units"] = {
 		moveSpeed = 0.2,
 	},
 	["Unit3x1"] = {
-		alias = "Gigantic Noob",
+		alias = "Guest",
 		health = 330,
 		moveSpeed = 0.18,
 	},
 	["Unit4x1"] = {
-		alias = "Mutated king",
+		alias = "Richy Rich",
 		health = 1380,
 		moveSpeed = 0.2,
 	},
@@ -53,12 +53,12 @@ UnitInfo["units"] = {
 		moveSpeed = 0.2,
 	},
 	["Unit3x2"] = {
-		alias = "Gigantic Bacon",
+		alias = "John Doe",
 		health = 330,
 		moveSpeed = 0.18,
 	},
 	["Unit4x2"] = {
-		alias = "Mutated king",
+		alias = "Alien",
 		health = 1380,
 		moveSpeed = 0.2,
 	},

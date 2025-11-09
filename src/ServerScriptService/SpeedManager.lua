@@ -45,10 +45,10 @@ function SpeedManager:init()
 
 	self:sendAllSpeedMods()
 
-	if Common.isStudio then
-		-- try unlock everything
-		self:unlockAllSpeedMods()
-	end
+	-- if Common.isStudio then
+	-- 	-- try unlock everything
+	-- 	self:unlockAllSpeedMods()
+	-- end
 
 	routine(function()
 		wait(1)
