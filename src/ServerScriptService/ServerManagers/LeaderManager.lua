@@ -14,6 +14,8 @@ local LeaderManager = {
 	sendExpirees = {},
 	getExpirees = {},
 	getPageMap = {},
+
+	leaders = {},
 }
 
 function LeaderManager:init()
@@ -42,7 +44,7 @@ function LeaderManager:newLeader(leaderClass)
 	}
 	local leader = Leader.new(self, leaderData)
 	leader:init()
-	ServerMod.leaders[leader.name] = leader
+	self.leaders[leader.name] = leader
 end
 
 function LeaderManager:getOrderedStore(itemClass)
@@ -114,7 +116,7 @@ function LeaderManager:getItemPages(itemClass)
 end
 
 function LeaderManager:tickSecond()
-	for _, leader in pairs(ServerMod.leaders) do
+	for _, leader in pairs(self.leaders) do
 		leader:tickSecond()
 	end
 end

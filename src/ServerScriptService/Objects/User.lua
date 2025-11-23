@@ -305,7 +305,7 @@ function User:syncAllGlobalMods()
 		self:sync(otherUser)
 	end
 
-	for _, leader in pairs(ServerMod.leaders) do
+	for _, leader in pairs(ServerMod.leaderManager.leaders) do
 		leader:sync(self)
 	end
 

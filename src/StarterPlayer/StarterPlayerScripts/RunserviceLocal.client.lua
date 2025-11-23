@@ -6,149 +6,13 @@ local playerGui = player:WaitForChild("PlayerGui")
 
 local ClientMod = require(playerScripts:WaitForChild("ClientMod"))
 
+local ClientConfig = require(playerScripts.Configs.ClientConfig)
+
 local Common = require(game.ReplicatedStorage.Common)
 local len, routine, wait = Common.len, Common.routine, Common.wait
 
--- first load replicated modules
-local REPLICATED_MODULES_LIST = {
-	{ "AnimUtils", "animUtils" },
-	{ "MutationManager", "mutationManager" },
-	{ "WeldPetManager", "weldPetManager" },
-	{ "RatingManager", "ratingManager" },
-	{ "RainbowManager", "rainbowManager" },
-}
-
-local CLIENT_MODULES_LIST = {
-	{ "ContentManager", "contentManager" },
-	{ "DeviceManager", "deviceManager" },
-
-	{ "HintManager", "hintManager" },
-
-	{ "DeleteManager", "deleteManager" },
-
-	{ "UIManager", "uiManager" },
-	{ "UIScaleManager", "uiScaleManager" },
-	{ "VPManager", "vpManager" },
-
-	{ "PlaceManager", "placeManager" },
-
-	-- required for effects
-	{ "SpellManager", "spellManager" },
-	{ "SpellUtils", "spellUtils" },
-
-	{ "ButtonManager", "buttonManager" },
-	{ "TweenManager", "tweenManager" },
-
-	{ "Map", "map" },
-	{ "NotifyManager", "notifyManager" },
-
-	{ "UserManager", "userManager" },
-
-	{ "PetManager", "petManager" },
-
-	{ "ItemStash", "itemStash" },
-	{ "CurrManager", "currManager" },
-	{ "PlotManager", "plotManager" },
-	{ "WeatherManager", "weatherManager" },
-
-	{ "BasicManager", "basicManager" },
-
-	{ "SellPetManager", "sellPetManager" },
-	{ "SellRelicManager", "sellRelicManager" },
-
-	{ "IndexManager", "indexManager" },
-
-	{ "LeaderManager", "leaderManager" },
-
-	{ "SoundManager", "soundManager" },
-
-	{ "ShopManager", "shopManager" },
-	{ "CodeManager", "codeManager" },
-	{ "GlobalChatManager", "globalChatManager" },
-	{ "LuckManager", "luckManager" },
-
-	{ "MusicManager", "musicManager" },
-	{ "VendorManager", "vendorManager" },
-
-	{ "ToolManager", "toolManager" },
-	{ "TutManager", "tutManager" },
-	{ "FriendManager", "friendManager" },
-
-	{ "TradeManager", "tradeManager" },
-	{ "BoostManager", "boostManager" },
-	{ "TestManager", "testManager" },
-
-	{ "UnitManager", "unitManager" },
-
-	{ "DamageManager", "damageManager" },
-
-	{ "AfkManager", "afkManager" },
-	{ "ClaimOfflineManager", "claimOfflineManager" },
-
-	{ "LeaveManager", "leaveManager" },
-	{ "FavoriteManager", "favoriteManager" },
-	{ "FireworksManager", "fireworksManager" },
-	{ "AlertManager", "alertManager" },
-
-	{ "RagdollManager", "ragdollManager" },
-	{ "SaveManager", "saveManager" },
-	{ "OrbManager", "orbManager" },
-
-	-- speed manager
-	{ "SpeedManager", "speedManager" },
-
-	{ "AutoSellManager", "autoSellManager" },
-
-	{ "BuyCrateManager", "buyCrateManager" },
-	{ "LuckWizardManager", "luckWizardManager" },
-
-	{ "CircleManager", "circleManager" },
-}
-
-local TICK_LIST = {
-
-	"itemStash",
-
-	"luckManager",
-	"tutManager",
-	"plotManager",
-
-	"uiScaleManager",
-	"musicManager",
-	"vendorManager",
-
-	"deleteManager",
-
-	"buyEggManager",
-
-	"hintManager",
-
-	"tradeManager",
-
-	"petManager",
-	"orbManager",
-
-	"buyCrateManager",
-
-	"soundManager",
-}
-
-local TICK_RENDER_LIST = {
-	"currManager",
-	"weatherManager",
-	"tweenManager",
-	"vpManager",
-	"rainbowManager",
-	"placeManager",
-
-	"petManager",
-	"unitManager",
-
-	"saveManager",
-}
-
 function LoadAllModules()
-	for _, moduleInfo in ipairs(REPLICATED_MODULES_LIST) do
+	for _, moduleInfo in ipairs(ClientConfig.REPLICATED_MODULES_LIST) do
 		local moduleClass, moduleAlias = moduleInfo[1], moduleInfo[2]
 		local modulePath = game.ReplicatedStorage:WaitForChild("SharedManagers"):WaitForChild(moduleClass, 2)
 		if not modulePath then
@@ -160,7 +24,7 @@ function LoadAllModules()
 
 	local startTime = os.clock()
 
-	for _, moduleInfo in ipairs(CLIENT_MODULES_LIST) do
+	for _, moduleInfo in ipairs(ClientConfig.CLIENT_MODULES_LIST) do
 		local moduleClass, moduleAlias = moduleInfo[1], moduleInfo[2]
 		local module = require(playerScripts:WaitForChild("ClientManagers"):WaitForChild(moduleClass .. "Local"))
 		ClientMod[moduleAlias] = module
@@ -192,7 +56,7 @@ RunService.Heartbeat:Connect(function(deltaTime)
 
 	ClientMod:tick(timeRatio)
 
-	for _, moduleName in ipairs(TICK_LIST) do
+	for _, moduleName in ipairs(ClientConfig.TICK_LIST) do
 		if ClientMod[moduleName] then
 			-- print("TICKING MODULE: ", moduleName)
 			ClientMod[moduleName]:tick(timeRatio)
@@ -207,7 +71,7 @@ end)
 RunService.RenderStepped:Connect(function(deltaTime)
 	local timeRatio = deltaTime / (1 / 60)
 
-	for _, moduleName in ipairs(TICK_RENDER_LIST) do
+	for _, moduleName in ipairs(ClientConfig.TICK_RENDER_LIST) do
 		if ClientMod[moduleName] then
 			ClientMod[moduleName]:tickRender(timeRatio)
 		end

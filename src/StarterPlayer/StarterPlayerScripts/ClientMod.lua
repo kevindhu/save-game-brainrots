@@ -1,10 +1,9 @@
-local ContextActionService = game:GetService("ContextActionService")
-
 local player = game.Players.LocalPlayer
 local playerScripts = player:WaitForChild("PlayerScripts")
 local playerGui = player:WaitForChild("PlayerGui")
 
 local Common = require(game.ReplicatedStorage.Common)
+local len, routine, wait = Common.len, Common.routine, Common.wait
 
 local ClientMod = {
 	step = 0,
@@ -12,9 +11,7 @@ local ClientMod = {
 	-- MEMORY STORAGE
 	users = {},
 	leaders = {},
-
 	units = {},
-
 	petSpots = {},
 }
 

@@ -1,4 +1,3 @@
-local PhysicsService = game:GetService("PhysicsService")
 local players = game:GetService("Players")
 
 local Common = require(game.ReplicatedStorage.Common)
@@ -6,9 +5,6 @@ local len, routine, wait = Common.len, Common.routine, Common.wait
 
 local ServerMod = {
 	step = 0,
-
-	------ GLOBAL TABLES --------
-	leaders = {},
 }
 
 function ServerMod:tick(timeRatio)
