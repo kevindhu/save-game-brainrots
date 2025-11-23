@@ -417,6 +417,69 @@ function PetManager:tryLevelUpPet(data)
 	petSpot:tryLevelUp()
 end
 
+function PetManager:getPetValue(itemMod)
+	local petClass = itemMod["itemClass"]
+	local petStats = PetInfo:getMeta(petClass)
+
+	-- TODO: add equipped relic value
+
+	return petStats["attackDamage"] / (petStats["attackDelay"] or 0.05)
+end
+
+function PetManager:tryEquipBestPets(data)
+	-- pickup all pets
+	for _, petSpot in pairs(self.petSpots) do
+		if not petSpot.petData then
+			continue
+		end
+
+		self:tryPickupFromPetSpot({
+			petSpotName = petSpot.petSpotName,
+		})
+	end
+
+	local bestItemModList = {}
+	for _, itemMod in pairs(self.user.home.itemStash.itemMods) do
+		if itemMod["race"] ~= "pet" then
+			continue
+		end
+		table.insert(bestItemModList, itemMod)
+	end
+
+	table.sort(bestItemModList, function(a, b)
+		local aValue = self:getPetValue(a)
+		local bValue = self:getPetValue(b)
+		return aValue > bValue
+	end)
+
+	for i = 1, PET_SPOT_COUNT do
+		local petSpotName = self.user.home.plotManager.plotName .. "_PetSpot" .. i
+		local petSpot = self.petSpots[petSpotName]
+		if not petSpot or not petSpot.unlocked then
+			continue
+		end
+
+		local itemMod = bestItemModList[i]
+
+		self:placePetFromItemStash(itemMod, petSpot)
+	end
+end
+
+function PetManager:placePetFromItemStash(itemMod, petSpot)
+	local petData = {
+		petClass = itemMod["itemClass"],
+	}
+	for k, v in pairs(itemMod) do
+		petData[k] = v
+	end
+
+	self:occupyPetSpot(petSpot, petData)
+
+	self.user.home.itemStash:removeItemMod({
+		itemName = itemMod["itemName"],
+	})
+end
+
 function PetManager:storePet(petSpot)
 	local itemData = Common.deepCopy(petSpot.petData)
 	itemData["noClick"] = false

@@ -63,7 +63,7 @@ end
 function PlaceManager:refreshAllPrompts()
 	routine(function()
 		self:doFullPromptRefresh()
-		wait(0.1)
+		wait(0.15)
 		self:doFullPromptRefresh()
 	end)
 end

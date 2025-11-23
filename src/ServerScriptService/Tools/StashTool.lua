@@ -274,18 +274,7 @@ function StashTool:confirmPlacement(petSpot)
 	local race = self.race
 
 	if race == "pet" then
-		local petData = {
-			petClass = toolClass,
-		}
-		for k, v in pairs(itemMod) do
-			petData[k] = v
-		end
-
-		self.user.home.petManager:occupyPetSpot(petSpot, petData)
-
-		self.user.home.itemStash:removeItemMod({
-			itemName = self.toolName,
-		})
+		self.user.home.petManager:placePetFromItemStash(itemMod, petSpot)
 	elseif race == "relic" then
 		local newItemMod = Common.deepCopy(itemMod)
 		petSpot:addRelicMod(newItemMod)

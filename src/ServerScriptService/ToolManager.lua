@@ -269,8 +269,6 @@ function ToolManager:newStashTool(data)
 
 		self.user.humanoid:EquipTool(tool)
 	end)
-
-	-- print("EQUIPPED STASH TOOL: ", toolName)
 end
 
 function ToolManager:removeStashTool(data)

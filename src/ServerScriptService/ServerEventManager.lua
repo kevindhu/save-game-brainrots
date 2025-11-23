@@ -132,6 +132,8 @@ function ServerEventManager:handleRequest(player, req, data)
 		petManager:tryCollectCoins(data)
 	elseif req == "tryUnlockPetSpot" then
 		petManager:tryUnlockPetSpot(data)
+	elseif req == "tryEquipBestPets" then
+		petManager:tryEquipBestPets(data)
 
 	-- BUYCRATEMANAGER
 	elseif req == "tryBuyCrate" then
