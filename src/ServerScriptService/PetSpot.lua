@@ -220,6 +220,8 @@ function PetSpot:createEvent(key, alias)
 end
 
 function PetSpot:toggleBuyModel(newBool)
+	-- print("TOGGLE BUY MODEL: ", self.petSpotName, newBool)
+
 	for _, child in pairs(self.buyModel:GetChildren()) do
 		if child:IsA("BasePart") then
 			child.Transparency = newBool and 0 or 1
@@ -274,6 +276,8 @@ function PetSpot:storeRelic()
 end
 
 function PetSpot:toggleRealModel(newBool)
+	-- print("TOGGLE REAL MODEL: ", self.petSpotName, newBool)
+
 	for _, child in pairs(self.realModel:GetDescendants()) do
 		if child:GetAttribute("Transparent") then
 			continue
@@ -302,7 +306,7 @@ function PetSpot:initBuyModel()
 	local plotModel = self.user.home.plotManager.model
 
 	local petSpotName = "PetSpot" .. self.index
-	local buyModel = plotModel.PetSpots:FindFirstChild(petSpotName)
+	local buyModel = plotModel.PetSpots:WaitForChild(petSpotName)
 	if not buyModel then
 		warn("!! PET SPOT MODEL NOT FOUND: ", petSpotName, plotModel.Name)
 		return
