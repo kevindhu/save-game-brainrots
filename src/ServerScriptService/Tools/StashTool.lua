@@ -276,12 +276,7 @@ function StashTool:confirmPlacement(petSpot)
 	if race == "pet" then
 		self.user.home.petManager:placePetFromItemStash(itemMod, petSpot)
 	elseif race == "relic" then
-		local newItemMod = Common.deepCopy(itemMod)
-		petSpot:addRelicMod(newItemMod)
-
-		self.user.home.itemStash:removeItemMod({
-			itemName = self.toolName,
-		})
+		self.user.home.petManager:placeRelicFromItemStash(itemMod, petSpot)
 	else
 		warn("UNKNOWN RACE TO ACTIVATE: ", self.race)
 	end

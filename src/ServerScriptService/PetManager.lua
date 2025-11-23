@@ -480,6 +480,15 @@ function PetManager:placePetFromItemStash(itemMod, petSpot)
 	})
 end
 
+function PetManager:placeRelicFromItemStash(itemMod, petSpot)
+	local newItemMod = Common.deepCopy(itemMod)
+	petSpot:addRelicMod(newItemMod)
+
+	self.user.home.itemStash:removeItemMod({
+		itemName = itemMod["itemName"],
+	})
+end
+
 function PetManager:storePet(petSpot)
 	local itemData = Common.deepCopy(petSpot.petData)
 	itemData["noClick"] = false

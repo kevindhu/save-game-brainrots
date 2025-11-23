@@ -578,7 +578,9 @@ function PetSpot:addAttack(data)
 		local totalDelay = 0.3 + (self.petStats["attackDelay"] or 0)
 		totalDelay = totalDelay / attackSpeedRatio
 
-		wait(totalDelay)
+		if totalDelay > 0 then
+			wait(totalDelay)
+		end
 
 		local unit = ClientMod.units[unitName]
 		if not unit or not unit.rig or not unit.rig.Parent then

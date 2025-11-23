@@ -102,7 +102,10 @@ function Unit:die(totalDelay)
 	self.dead = true
 
 	routine(function()
-		wait(totalDelay)
+		if totalDelay and totalDelay > 0 then
+			wait(totalDelay)
+		end
+
 		self:destroy({
 			waitTimer = 1,
 		})
