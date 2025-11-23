@@ -78,7 +78,7 @@ function Home:initAllModules()
 		{ "AutoSellManager", "autoSellManager" },
 		{ "LuckWizardManager", "luckWizardManager" },
 
-		{ "AdminManager", "adminManager" },
+		{ "CommandManager", "commandManager" },
 	}
 	for _, moduleInfo in ipairs(moduleList) do
 		self:loadModule(moduleInfo[1], moduleInfo[2])
@@ -142,7 +142,7 @@ function Home:destroy()
 		"petManager",
 		"unitManager",
 		"saveManager",
-		"adminManager",
+		"commandManager",
 	}
 	for _, managerClass in pairs(managerList) do
 		local manager = self[managerClass]

@@ -6,19 +6,19 @@ local Cmdr = require(game.ReplicatedStorage.Libraries.Cmdr)
 local Common = require(game.ReplicatedStorage.Common)
 local len, routine, wait = Common.len, Common.routine, Common.wait
 
-local AdminManager = {}
-AdminManager.__index = AdminManager
+local CommandManager = {}
+CommandManager.__index = CommandManager
 
-function AdminManager.new(owner, data)
+function CommandManager.new(owner, data)
 	local u = {}
 	u.owner = owner
 	u.data = data
 
-	setmetatable(u, AdminManager)
+	setmetatable(u, CommandManager)
 	return u
 end
 
-function AdminManager:init()
+function CommandManager:init()
 	self.user = self.owner.user
 	for k, v in pairs(self.data) do
 		self[k] = v
@@ -27,13 +27,13 @@ function AdminManager:init()
 	self:addCons()
 end
 
-function AdminManager:addCons()
+function CommandManager:addCons()
 	self.chattedConnection = self.user.player.Chatted:Connect(function(message)
 		self:handleChat(message)
 	end)
 end
 
-function AdminManager:handleChat(message)
+function CommandManager:handleChat(message)
 	-- see if there is / before the message
 	if message:sub(1, 1) ~= "/" then
 		warn("NO / BEFORE MESSAGE: ", message)
@@ -47,7 +47,7 @@ function AdminManager:handleChat(message)
 	self:processCommand(message)
 end
 
-function AdminManager:checkValidRole()
+function CommandManager:checkValidRole()
 	local validRoleList = {
 		"Owner",
 		"Admin",
@@ -59,7 +59,7 @@ function AdminManager:checkValidRole()
 	return false
 end
 
-function AdminManager:processCommand(message)
+function CommandManager:processCommand(message)
 	if not self:checkValidRole() then
 		warn("INVALID ROLE FOR COMMAND: ", message, self.user.groupRole)
 		return
@@ -71,7 +71,7 @@ function AdminManager:processCommand(message)
 	end
 end
 
-function AdminManager:destroy()
+function CommandManager:destroy()
 	-- prevent memory leak
 	if self.chattedConnection then
 		self.chattedConnection:Disconnect()
@@ -79,4 +79,4 @@ function AdminManager:destroy()
 	end
 end
 
-return AdminManager
+return CommandManager

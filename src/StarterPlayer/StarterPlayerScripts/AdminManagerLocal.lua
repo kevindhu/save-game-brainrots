@@ -14,16 +14,16 @@ local CmdrClient = require(game.ReplicatedStorage:WaitForChild("CmdrClient"))
 
 CmdrClient:SetActivationKeys({ Enum.KeyCode.F2 })
 
-local AdminManager = {
+local CommandManager = {
 	idleTimer = 0,
 }
-AdminManager.__index = AdminManager
+CommandManager.__index = CommandManager
 
-function AdminManager:init()
+function CommandManager:init()
 	self:addCons()
 end
 
-function AdminManager:addCons()
+function CommandManager:addCons()
 	-- Cmdr:Register(function(args)
 	-- 	local command = args[1]
 	-- 	local target = args[2]
@@ -35,6 +35,6 @@ function AdminManager:addCons()
 	-- end)
 end
 
-AdminManager:init()
+CommandManager:init()
 
-return AdminManager
+return CommandManager

@@ -125,7 +125,6 @@ function LoadAllModules()
 
 		{ "CircleManager", "circleManager" },
 
-		-- { "AdminManager", "adminManager" },
 		-- { "PingManager", "pingManager" },
 	}
 
