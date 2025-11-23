@@ -142,6 +142,12 @@ function ItemStash:addCons()
 		})
 	end)
 	ClientMod.buttonManager:addBasicButtonCons(autoSellButton)
+
+	local equipBestButton = stashFrame.InnerFrame.EquipBestButton
+	ClientMod.buttonManager:addActivateCons(equipBestButton, function()
+		ClientMod:FireServer("tryEquipBestPets", {})
+	end)
+	ClientMod.buttonManager:addBasicButtonCons(equipBestButton)
 end
 
 function ItemStash:addTabCons()
