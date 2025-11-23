@@ -61,7 +61,7 @@ end
 function PetManager:loadState()
 	local fullPetSpotData = self.fullPetSpotData
 
-	print("LOAD STATE: ", fullPetSpotData)
+	-- print("LOAD STATE: ", fullPetSpotData)
 
 	for _, petSpotData in pairs(fullPetSpotData) do
 		local petData = petSpotData.petData
@@ -103,15 +103,15 @@ function PetManager:sendOfflineCoinsData()
 		totalSeconds = math.max(totalSeconds, os.time() - petSpot.leaveTimestamp)
 	end
 
-	-- -- less than 30 minutes
-	-- if totalSeconds < 60 * 30 then
-	-- 	-- immediately just claim without boost
-	-- 	print("CLAIMING WITHOUT BOOST")
-	-- 	self:claimOfflineCoins({
-	-- 		boost = false,
-	-- 	})
-	-- 	return
-	-- end
+	-- less than 30 minutes
+	if totalSeconds < 60 * 30 then
+		-- immediately just claim without boost
+		print("CLAIMING WITHOUT BOOST")
+		self:claimOfflineCoins({
+			boost = false,
+		})
+		return
+	end
 
 	ServerMod:FireClient(self.user.player, "updateCoinsOfflineData", {
 		totalOfflineCoins = totalOfflineCoins,

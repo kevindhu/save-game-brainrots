@@ -96,4 +96,6 @@ function UserManager:getAllInitUsers()
 	return users
 end
 
+UserManager:init()
+
 return UserManager

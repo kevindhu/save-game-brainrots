@@ -6,7 +6,7 @@ local SaveInfo = {
 	STUDIO_ODS_VERSION = "10.0.1",
 
 	-- only enabled in studio!
-	NO_SAVE = true,
+	NO_SAVE = false,
 
 	-- update this with every update
 	GAME_VERSION = "0.0.5",
