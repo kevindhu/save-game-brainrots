@@ -7,8 +7,6 @@ local ClientMod = require(playerScripts:WaitForChild("ClientMod"))
 local Common = require(game.ReplicatedStorage.Common)
 local len, routine, wait = Common.len, Common.routine, Common.wait
 
-local MapInfo = require(game.ReplicatedStorage.MapInfo)
-
 local BaseTool = require(game.ReplicatedStorage.ClientTools.BaseToolLocal)
 
 local StashTool = {}

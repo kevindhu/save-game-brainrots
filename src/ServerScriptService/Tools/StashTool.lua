@@ -5,9 +5,9 @@ local len, routine, wait = Common.len, Common.routine, Common.wait
 
 local BaseTool = require(game.ServerScriptService.Tools.BaseTool)
 
-local PetInfo = require(game.ReplicatedStorage.PetInfo)
-local RelicInfo = require(game.ReplicatedStorage.RelicInfo)
-local CrateInfo = require(game.ReplicatedStorage.CrateInfo)
+local PetInfo = require(game.ReplicatedStorage.Data.PetInfo)
+local RelicInfo = require(game.ReplicatedStorage.Data.RelicInfo)
+local CrateInfo = require(game.ReplicatedStorage.Data.CrateInfo)
 
 local StashTool = {}
 StashTool.__index = StashTool
@@ -255,14 +255,14 @@ function StashTool:raycastPlaceModel(frame, whiteList)
 		return false, CFrame.new(0, -100, 0)
 	end
 
-	local floorPart = self.user.home.plotManager.floorPart
+	local floorPart = self.user.plotManager.floorPart
 
 	local finalFrame = CFrame.new(raycastResult.Position) * Common.getCAngle(floorPart.CFrame)
 	return true, finalFrame
 end
 
 function StashTool:confirmPlacement(petSpot)
-	local itemMod = self.user.home.itemStash:getItemMod(self.toolName)
+	local itemMod = self.user.itemStash:getItemMod(self.toolName)
 
 	ServerMod:FireClient(self.user.player, "newSoundMod", {
 		soundClass = "ItemPlacement2",
@@ -274,9 +274,9 @@ function StashTool:confirmPlacement(petSpot)
 	local race = self.race
 
 	if race == "pet" then
-		self.user.home.petManager:placePetFromItemStash(itemMod, petSpot)
+		self.user.petManager:placePetFromItemStash(itemMod, petSpot)
 	elseif race == "relic" then
-		self.user.home.petManager:placeRelicFromItemStash(itemMod, petSpot)
+		self.user.petManager:placeRelicFromItemStash(itemMod, petSpot)
 	else
 		warn("UNKNOWN RACE TO ACTIVATE: ", self.race)
 	end
@@ -291,7 +291,7 @@ function StashTool:confirmCratePlacement()
 		return
 	end
 
-	local itemMod = self.user.home.itemStash:getItemMod(itemName)
+	local itemMod = self.user.itemStash:getItemMod(itemName)
 
 	local crateData = {
 		crateClass = crateClass,
@@ -300,16 +300,16 @@ function StashTool:confirmCratePlacement()
 		crateData[k] = v
 	end
 
-	self.user.home.crateManager:addCrate(crateData)
+	self.user.crateManager:addCrate(crateData)
 
 	local count = itemMod["count"]
 	if count > 1 then
-		self.user.home.itemStash:updateItemCount({
+		self.user.itemStash:updateItemCount({
 			itemName = itemName,
 			count = -1,
 		})
 	else
-		self.user.home.itemStash:removeItemMod({
+		self.user.itemStash:removeItemMod({
 			itemName = itemName,
 		})
 		self:destroy()
@@ -325,7 +325,7 @@ function StashTool:destroy()
 
 	self:removeAllToolModels()
 
-	self.user.home.toolManager:removeStashTool({
+	self.user.toolManager:removeStashTool({
 		toolName = self.toolName,
 	})
 end

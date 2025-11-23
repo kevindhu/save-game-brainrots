@@ -33,23 +33,8 @@ function ClientMod:getLocalUser()
 end
 
 function ClientMod:FireServer(...)
-	self:FireServer_Default(...)
-end
-
-function ClientMod:FireServer_Default(...)
 	local userEvent = game.ReplicatedStorage:WaitForChild("Events"):WaitForChild("MainEvent")
 	userEvent:FireServer(...)
-end
-
-local FREEZE_ACTION = "freezeMovement"
-function ClientMod:toggleControls(bool)
-	if not bool then
-		ContextActionService:BindAction(FREEZE_ACTION, function()
-			return Enum.ContextActionResult.Sink
-		end, false, unpack(Enum.PlayerActions:GetEnumItems()))
-	else
-		ContextActionService:UnbindAction(FREEZE_ACTION)
-	end
 end
 
 function ClientMod:tick(timeRatio)

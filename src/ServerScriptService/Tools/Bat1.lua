@@ -42,7 +42,7 @@ function Bat:tryBatHit()
 	end
 
 	local closestUnitDistance = math.huge
-	for _, unit in pairs(self.user.home.unitManager.units) do
+	for _, unit in pairs(self.user.unitManager.units) do
 		local dist = (unit.currFrame.Position - self.user.rig.HumanoidRootPart.Position).Magnitude
 		if dist < closestUnitDistance then
 			closestUnitDistance = dist

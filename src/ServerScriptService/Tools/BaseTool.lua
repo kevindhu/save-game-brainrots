@@ -3,8 +3,6 @@ local Players = game:GetService("Players")
 
 local ServerMod = require(game.ServerScriptService.ServerMod)
 
-local ToolInfo = require(game.ReplicatedStorage.ToolInfo)
-
 local Common = require(game.ReplicatedStorage.Common)
 local len, routine, wait = Common.len, Common.routine, Common.wait
 
@@ -90,11 +88,11 @@ function BaseTool:onEquip()
 
 	if self.toolClass == "Bat1" then
 		-- print("EQUIPPED BAT1")
-		self.user.home.tutManager:updateTutMod({
+		self.user.tutManager:updateTutMod({
 			targetClass = "EquipBat1",
 			updateCount = 1,
 		})
-		self.user.home.tutManager:updateTutMod({
+		self.user.tutManager:updateTutMod({
 			targetClass = "EquipBat2",
 			updateCount = 1,
 		})
@@ -135,7 +133,7 @@ function BaseTool:getHitUsers(hitPart, currentUser)
 			continue
 		end
 
-		local otherUser = ServerMod.users[player.Name]
+		local otherUser = ServerMod.userManager:getUser(player.Name)
 		if otherUser == currentUser then
 			continue
 		end
@@ -146,29 +144,6 @@ function BaseTool:getHitUsers(hitPart, currentUser)
 	end
 
 	return hitUsers
-end
-
-function BaseTool:flingHitUsers(hitUsers, hitPosition, hitForce, ragdollTimer)
-	for _, otherUser in pairs(hitUsers) do
-		local userPos = otherUser.rootPart.Position
-		local hitDirection = (userPos - hitPosition)
-		hitDirection += Vector3.new(0, 3, 0)
-
-		-- add sound
-		ServerMod:FireAllClients("newSoundMod", {
-			soundClass = "Punch2",
-			volume = 1,
-			pos = hitPosition,
-		})
-
-		if hitDirection.Magnitude == 0 then
-			hitDirection = Vector3.new(0, 0, 0)
-		end
-
-		hitDirection = hitDirection.Unit
-
-		otherUser:flingRig(hitDirection, hitForce, ragdollTimer)
-	end
 end
 
 function BaseTool:destroy()
@@ -186,14 +161,14 @@ function BaseTool:destroy()
 		connection:Disconnect()
 	end
 
-	self.user.home.toolManager.toolMods[self.toolName] = nil
+	self.user.toolManager.toolMods[self.toolName] = nil
 end
 
 function BaseTool:doBatHit()
 	if self.batHitExpiree and self.batHitExpiree > ServerMod.step then
 		return
 	end
-	local batSwingCooldown = self.batSwingCooldown / self.user.home.speedManager:getSpeed()
+	local batSwingCooldown = self.batSwingCooldown / self.user.speedManager:getSpeed()
 	self.batHitExpiree = ServerMod.step + 60 * batSwingCooldown
 
 	local rig = self.user.rig
@@ -237,7 +212,7 @@ function BaseTool:doBatHit()
 			unit.health,
 		}
 
-		self.user.home.damageManager:addDamage(damage)
+		self.user.damageManager:addDamage(damage)
 	end
 
 	ServerMod:FireAllClients("bulkUpdateUnitDamage", {
@@ -245,7 +220,7 @@ function BaseTool:doBatHit()
 	})
 
 	self.track:Play()
-	self.track:AdjustSpeed(self.user.home.speedManager:getSpeed())
+	self.track:AdjustSpeed(self.user.speedManager:getSpeed())
 end
 
 function isPointInVolume(point: Vector3, volumeCenter: CFrame, volumeSize: Vector3): boolean
@@ -260,7 +235,7 @@ end
 
 function BaseTool:getHitUnits(hitPart)
 	local hitUnits = {}
-	for _, unit in pairs(self.user.home.unitManager.units) do
+	for _, unit in pairs(self.user.unitManager.units) do
 		if unit.dead or unit.capturedSavedPet or unit.destroyed then
 			continue
 		end

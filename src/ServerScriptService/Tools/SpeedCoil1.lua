@@ -5,7 +5,7 @@ local len, routine, wait = Common.len, Common.routine, Common.wait
 
 local BaseTool = require(game.ServerScriptService.Tools.BaseTool)
 
-local ToolInfo = require(game.ReplicatedStorage.ToolInfo)
+local ToolInfo = require(game.ReplicatedStorage.Data.ToolInfo)
 
 local SpeedCoil = {}
 SpeedCoil.__index = SpeedCoil

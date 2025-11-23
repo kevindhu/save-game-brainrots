@@ -3,120 +3,63 @@ local ServerMod = require(game.ServerScriptService.ServerMod)
 local Common = require(game.ReplicatedStorage.Common)
 local len, routine, wait = Common.len, Common.routine, Common.wait
 
-local modulesToLoad = {
-	{ "ProxyManager", "proxyManager" },
-	{ "TweenManager", "tweenManager" },
-	{ "TeleportManager", "teleportManager" },
+local ServerConfig = require(game.ServerScriptService.Configs.ServerConfig)
 
-	{ "Map", "map" },
-	{ "ServerEventManager", "serverEventManager" },
-
-	{ "LeaderManager", "leaderManager" },
-
-	-- { "LikeManager", "likeManager" },
-
-	{ "MarketManager", "marketManager" },
-	{ "RagdollManager", "ragdollManager" },
-
-	{ "WeatherManager", "weatherManager" },
-
-	{ "LuckManager", "luckManager" },
-
-	{ "BuyCrateManager", "buyCrateManager" },
-}
-for _, moduleData in pairs(modulesToLoad) do
-	local moduleClass, moduleAlias = moduleData[1], moduleData[2]
-	local module = require(game.ServerScriptService[moduleClass])
-	ServerMod[moduleAlias] = module
-end
-
-local replicatedModulesToLoad = {
-	{ "AnimUtils", "animUtils" },
-	{ "MutationManager", "mutationManager" },
-	{ "WeldPetManager", "weldPetManager" },
-	{ "RatingManager", "ratingManager" },
-	{ "RainbowManager", "rainbowManager" },
-}
-for _, moduleData in pairs(replicatedModulesToLoad) do
-	local moduleClass, moduleAlias = moduleData[1], moduleData[2]
-	local module = require(game.ReplicatedStorage[moduleClass])
-	ServerMod[moduleAlias] = module
-end
-
-game.Players.PlayerAdded:Connect(function(player)
-	-- have to load their character immediately because CharacterAutoLoads is false in game.Players
-	player:LoadCharacter()
-	ServerMod:refreshPlayerCount()
-end)
-
-local ServerStore = require(game.ServerScriptService.ServerStore)
-ServerMod.serverStore = ServerStore
-
-game.Players.PlayerRemoving:Connect(function(player, exitReason)
-	local userName = player.Name
-
-	-- print(`{userName} REMOVING: {exitReason}`)
-
-	local user = ServerMod.users[userName]
-	if user then
-		user:destroy()
-	else
-		-- warn("NO USER FOUND WHEN REMOVING PLAYER: ", userName)
+function LoadAllModules()
+	for _, moduleData in pairs(ServerConfig.SERVERMANAGERS_LIST) do
+		local moduleClass, moduleAlias = moduleData[1], moduleData[2]
+		local module = require(game.ServerScriptService.ServerManagers[moduleClass])
+		ServerMod[moduleAlias] = module
 	end
 
-	ServerMod:refreshPlayerCount()
-end)
-
--- SERVER TICK EVENTS
-game:GetService("RunService").Heartbeat:Connect(function(deltaTime)
-	local timeRatio = deltaTime / (1 / 60)
-
-	ServerMod:tick(timeRatio)
-
-	-- first tick users to check for cheating
-	for name, user in pairs(ServerMod.users) do
-		user:tick(timeRatio)
+	local replicatedModulesToLoad = ServerConfig.REPLICATED_LIST
+	for _, moduleData in pairs(replicatedModulesToLoad) do
+		local moduleClass, moduleAlias = moduleData[1], moduleData[2]
+		local module = require(game.ReplicatedStorage.SharedManagers[moduleClass])
+		ServerMod[moduleAlias] = module
 	end
+end
 
-	ServerMod.map:tick(timeRatio)
-	ServerMod.weatherManager:tick(timeRatio)
-	ServerMod.luckManager:tick(timeRatio)
-
-	ServerMod.buyCrateManager:tick(timeRatio)
-
-	-- ServerMod.likeManager:tick(timeRatio)
-
-	ServerMod.rainbowManager:tickRender(timeRatio)
-end)
-
-function tickSecond()
+function TickSecond()
 	-- tick users
-	for _, user in pairs(ServerMod.users) do
-		if not user.initialized then
-			continue
-		end
-		user.home:tickSecond()
-	end
-
-	-- tick leaders
-	for _, leader in pairs(ServerMod.leaders) do
-		leader:tickSecond()
-	end
+	ServerMod.userManager:tickSecond()
+	ServerMod.leaderManager:tickSecond()
 end
 
-routine(function()
-	while true do
-		routine(function()
-			local success, err = pcall(function()
-				tickSecond()
-			end)
-			if not success then
-				warn("############# TICK SECOND FAILED: ", err)
-			end
-		end)
-		wait(1)
-	end
-end)
+function StartAllEvents()
+	-- SERVER TICK EVENTS
+	game:GetService("RunService").Heartbeat:Connect(function(deltaTime)
+		local timeRatio = deltaTime / (1 / 60)
+		ServerMod:tick(timeRatio)
 
-local Cmdr = require(game.ReplicatedStorage.Libraries.Cmdr)
-Cmdr:RegisterDefaultCommands()
+		for _, managerClass in pairs(ServerConfig.TICK_LIST) do
+			local manager = ServerMod[managerClass]
+			if not manager or not manager.tick then
+				warn("NO TICK FUNCTION FOR MANAGER: ", managerClass)
+				continue
+			end
+			manager:tick(timeRatio)
+		end
+	end)
+
+	routine(function()
+		while true do
+			routine(function()
+				local success, err = pcall(function()
+					TickSecond()
+				end)
+				if not success then
+					warn("############# TICK SECOND FAILED: ", err)
+				end
+			end)
+			wait(1)
+		end
+	end)
+end
+
+function Run()
+	LoadAllModules()
+	StartAllEvents()
+end
+
+Run()
