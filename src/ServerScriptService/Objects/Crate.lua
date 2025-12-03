@@ -79,7 +79,7 @@ function Crate:hatch()
 	local itemData = {
 		relicClass = relicClass,
 	}
-	self.user.itemStash:addRelic(itemData)
+	self.user.stashManager:addRelic(itemData)
 
 	self:destroy()
 end

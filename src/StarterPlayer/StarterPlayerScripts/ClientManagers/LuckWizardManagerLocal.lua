@@ -255,7 +255,7 @@ function LuckWizardManager:refreshPetMods()
 end
 
 function LuckWizardManager:checkHasPet(petClass)
-	for _, itemMod in pairs(ClientMod.itemStash.itemMods) do
+	for _, itemMod in pairs(ClientMod.stashManager.itemMods) do
 		if itemMod["itemClass"] == petClass and not itemMod["favorited"] then
 			return true
 		end

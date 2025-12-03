@@ -8,21 +8,21 @@ local PetInfo = require(game.ReplicatedStorage.Data.PetInfo)
 local RelicInfo = require(game.ReplicatedStorage.Data.RelicInfo)
 local CrateInfo = require(game.ReplicatedStorage.Data.CrateInfo)
 
-local ItemStash = {}
-ItemStash.__index = ItemStash
+local StashManager = {}
+StashManager.__index = StashManager
 
-function ItemStash.new(user, data)
+function StashManager.new(user, data)
 	local u = {}
 	u.user = user
 	u.data = data
 
 	u.itemMods = {}
 
-	setmetatable(u, ItemStash)
+	setmetatable(u, StashManager)
 	return u
 end
 
-function ItemStash:init()
+function StashManager:init()
 	for k, v in pairs(self.data) do
 		self[k] = v
 	end
@@ -39,7 +39,7 @@ function ItemStash:init()
 	end)
 end
 
-function ItemStash:addFirstItems()
+function StashManager:addFirstItems()
 	self:updateItemCount({
 		itemName = "Coins",
 		count = 100,
@@ -54,7 +54,7 @@ function ItemStash:addFirstItems()
 	self:addTestCrates()
 end
 
-function ItemStash:addTestPets()
+function StashManager:addTestPets()
 	local petList = {
 		"CappuccinoAssassino",
 		"TungTungSahur",
@@ -112,7 +112,7 @@ function ItemStash:addTestPets()
 	end
 end
 
-function ItemStash:addTestCrates()
+function StashManager:addTestCrates()
 	local crateList = {
 		"Crate1",
 		"Crate2",
@@ -128,7 +128,7 @@ function ItemStash:addTestCrates()
 	end
 end
 
-function ItemStash:addTestRelics()
+function StashManager:addTestRelics()
 	local relicList = {
 		"Fist1",
 		"Fist2",
@@ -154,7 +154,7 @@ function ItemStash:addTestRelics()
 	end
 end
 
-function ItemStash:generatePetData(data)
+function StashManager:generatePetData(data)
 	local itemData = Common.deepCopy(data)
 
 	itemData["itemName"] = "STASH_ITEM_" .. Common.getGUID()
@@ -169,12 +169,12 @@ function ItemStash:generatePetData(data)
 	return itemData
 end
 
-function ItemStash:checkFullPets()
+function StashManager:checkFullPets()
 	local totalPetCount = self:getPetItemCount()
 	return totalPetCount >= 1000
 end
 
-function ItemStash:generateRelicData(data)
+function StashManager:generateRelicData(data)
 	local itemData = Common.deepCopy(data)
 
 	itemData["itemName"] = "STASHTOOL_" .. Common.getGUID()
@@ -205,17 +205,17 @@ function ItemStash:generateRelicData(data)
 	return itemData
 end
 
-function ItemStash:addPet(data)
+function StashManager:addPet(data)
 	local itemData = self:generatePetData(data)
 	self:addItemMod(itemData)
 end
 
-function ItemStash:addRelic(data)
+function StashManager:addRelic(data)
 	local itemData = self:generateRelicData(data)
 	self:addItemMod(itemData)
 end
 
-function ItemStash:addCrate(data)
+function StashManager:addCrate(data)
 	local crateClass = data["crateClass"]
 
 	for _, currItemMod in pairs(self.itemMods) do
@@ -247,7 +247,7 @@ function ItemStash:addCrate(data)
 	})
 end
 
-function ItemStash:sanityCheckForSoftLock()
+function StashManager:sanityCheckForSoftLock()
 	-- see if coins is less than 100
 	local coinsCount = self:getItemCount({
 		itemName = "Coins",
@@ -261,7 +261,7 @@ function ItemStash:sanityCheckForSoftLock()
 	end
 end
 
-function ItemStash:getRelicItemCount()
+function StashManager:getRelicItemCount()
 	local totalCount = 0
 	for _, itemMod in pairs(self.itemMods) do
 		local race = itemMod["race"]
@@ -272,7 +272,7 @@ function ItemStash:getRelicItemCount()
 	return totalCount
 end
 
-function ItemStash:getPetItemCount()
+function StashManager:getPetItemCount()
 	local totalCount = 0
 	for _, itemMod in pairs(self.itemMods) do
 		local race = itemMod["race"]
@@ -286,7 +286,7 @@ function ItemStash:getPetItemCount()
 end
 
 -- this should only be called for currency items
-function ItemStash:updateItemCount(data)
+function StashManager:updateItemCount(data)
 	local itemName = data["itemName"]
 	local count = data["count"]
 
@@ -308,14 +308,14 @@ function ItemStash:updateItemCount(data)
 			-- self:tryStartBuySpeedTutorial()
 		else
 			self.user.alertManager:incrementAlertCount({
-				moduleName = "itemStash",
+				moduleName = "stashManager",
 				count = count,
 			})
 		end
 	end
 end
 
-function ItemStash:tryStartBuySpeedTutorial()
+function StashManager:tryStartBuySpeedTutorial()
 	local tutManager = self.user.tutManager
 	if not tutManager.completedTutMods["CompleteTutorial"] then
 		return
@@ -338,7 +338,7 @@ function ItemStash:tryStartBuySpeedTutorial()
 	tutManager:tryChooseNewTutMod()
 end
 
-function ItemStash:setItemCount(itemName, newCount)
+function StashManager:setItemCount(itemName, newCount)
 	local itemMod = self.itemMods[itemName]
 	if not itemMod then
 		return
@@ -359,11 +359,11 @@ function ItemStash:setItemCount(itemName, newCount)
 	})
 end
 
-function ItemStash:getItemMod(itemName)
+function StashManager:getItemMod(itemName)
 	return self.itemMods[itemName]
 end
 
-function ItemStash:getItemCount(data)
+function StashManager:getItemCount(data)
 	local itemName = data["itemName"]
 	local itemMod = self.itemMods[itemName]
 	if not itemMod then
@@ -373,7 +373,7 @@ function ItemStash:getItemCount(data)
 	return itemMod["count"]
 end
 
-function ItemStash:getFullItemStats(itemClass)
+function StashManager:getFullItemStats(itemClass)
 	local itemStats = ItemInfo:getMeta(itemClass, true)
 		or PetInfo:getMeta(itemClass, true)
 		or RelicInfo:getMeta(itemClass, true)
@@ -386,7 +386,7 @@ function ItemStash:getFullItemStats(itemClass)
 	return itemStats
 end
 
-function ItemStash:addItemMod(data)
+function StashManager:addItemMod(data)
 	local itemName = data["itemName"]
 	local itemClass = data["itemClass"]
 	local noSend = data["noSend"]
@@ -406,7 +406,7 @@ function ItemStash:addItemMod(data)
 
 	if Common.listContains({ "pet", "relic", "crate" }, data["race"]) then
 		self.user.alertManager:incrementAlertCount({
-			moduleName = "itemStash",
+			moduleName = "stashManager",
 			count = 1,
 		})
 	end
@@ -427,7 +427,7 @@ function ItemStash:addItemMod(data)
 	return newItemMod
 end
 
-function ItemStash:removeItemMod(data)
+function StashManager:removeItemMod(data)
 	local itemName = data["itemName"]
 	local noSend = data["noSend"]
 
@@ -453,7 +453,7 @@ function ItemStash:removeItemMod(data)
 	self.itemMods[itemName] = nil
 end
 
-function ItemStash:toggleItemFavorite(data)
+function StashManager:toggleItemFavorite(data)
 	local itemName = data["itemName"]
 
 	local itemMod = self.itemMods[itemName]
@@ -468,7 +468,7 @@ function ItemStash:toggleItemFavorite(data)
 	})
 end
 
-function ItemStash:trySellAllToolItems(data)
+function StashManager:trySellAllToolItems(data)
 	local chosenRace = data["race"]
 
 	if not Common.listContains({ "pet", "relic" }, chosenRace) then
@@ -525,7 +525,7 @@ function ItemStash:trySellAllToolItems(data)
 	self:sendAllItemMods()
 end
 
-function ItemStash:trySellItem(data)
+function StashManager:trySellItem(data)
 	local itemName = data["itemName"]
 
 	local itemMod = self.itemMods[itemName]
@@ -573,7 +573,7 @@ function ItemStash:trySellItem(data)
 	})
 end
 
-function ItemStash:newItemMod(data)
+function StashManager:newItemMod(data)
 	local itemName = data["itemName"]
 	local itemClass = data["itemClass"]
 	local race = data["race"]
@@ -603,7 +603,7 @@ function ItemStash:newItemMod(data)
 	return newItemMod
 end
 
-function ItemStash:tryUseItem(data)
+function StashManager:tryUseItem(data)
 	local itemName = data["itemName"]
 
 	local itemMod = self.itemMods[itemName]
@@ -638,28 +638,28 @@ function ItemStash:tryUseItem(data)
 	})
 end
 
-function ItemStash:sendAllItemMods()
+function StashManager:sendAllItemMods()
 	ServerMod:FireClient(self.user.player, "updateAllItemMods", {
 		itemMods = self.itemMods,
 	})
 end
 
-function ItemStash:sendItemMod(data)
+function StashManager:sendItemMod(data)
 	ServerMod:FireClient(self.user.player, "updateItemMod", data)
 end
 
-function ItemStash:saveState()
+function StashManager:saveState()
 	local managerData = {
 		itemMods = self.itemMods,
 	}
 	self.user.store:set(self.moduleAlias .. "Info", managerData)
 end
 
-function ItemStash:wipe()
+function StashManager:wipe()
 	self.itemMods = {}
 
 	self:addFirstItems()
 	self:sendAllItemMods()
 end
 
-return ItemStash
+return StashManager

@@ -44,7 +44,6 @@ function ButtonManager:addActivateCons(button, activateMethod)
 		local mouse = player:GetMouse()
 		local position = Vector2.new(mouse.X, mouse.Y)
 		if ClientMod.circleManager then
-			-- print("ADDING CIRCLE")
 			ClientMod.circleManager:addExpandCircle(position)
 		end
 	end)

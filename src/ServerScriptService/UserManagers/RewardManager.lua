@@ -35,7 +35,7 @@ function RewardManager:addRewards(rewardData)
 
 	local user = self.user
 	local boostManager = user.boostManager
-	local itemStash = user.itemStash
+	local stashManager = user.stashManager
 	local shopManager = user.shopManager
 
 	if gamepassClass then
@@ -58,14 +58,14 @@ function RewardManager:addRewards(rewardData)
 		local count = rewardData["count"] or 1
 
 		for i = 1, count do
-			itemStash:addCrate({
+			stashManager:addCrate({
 				crateClass = lastPremiumCrateClass,
 			})
 		end
 	end
 
 	if itemMod then
-		itemStash:updateItemCount({
+		stashManager:updateItemCount({
 			itemName = itemMod["itemName"],
 			count = itemMod["count"],
 		})
@@ -105,7 +105,7 @@ function RewardManager:tryClaimGroupReward()
 	local petClass = "TrippiTroppi"
 	local mutationClass = "Normal"
 
-	self.user.itemStash:addPet({
+	self.user.stashManager:addPet({
 		petClass = petClass,
 		mutationClass = mutationClass,
 	})

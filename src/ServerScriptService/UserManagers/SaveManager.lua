@@ -49,7 +49,7 @@ function SaveManager:initSaveModel(saveModel)
 end
 
 function SaveManager:startNewWaveMod()
-	self.user.itemStash:tryStartBuySpeedTutorial()
+	self.user.stashManager:tryStartBuySpeedTutorial()
 
 	local probManager = self.user.probManager
 	local pityManager = self.user.pityManager
@@ -110,7 +110,7 @@ function SaveManager:startNewWaveMod()
 
 	-- self.user.indexManager:unlockPet(petClass, mutationClass)
 
-	local petData = self.user.itemStash:generatePetData({
+	local petData = self.user.stashManager:generatePetData({
 		petClass = petClass,
 		mutationClass = mutationClass,
 	})
@@ -302,13 +302,13 @@ function SaveManager:completeWaveMod(waveMod)
 			petClass = petData["petClass"],
 			mutationClass = petData["mutationClass"],
 		})
-		self.user.itemStash:updateItemCount({
+		self.user.stashManager:updateItemCount({
 			itemName = "Coins",
 			count = sellPrice,
 		})
 		-- print("SOLD PET IMMEDIATELY FOR: ", sellPrice)
 	else
-		self.user.itemStash:addItemMod(petData)
+		self.user.stashManager:addItemMod(petData)
 	end
 
 	self.user.unitManager:clearAllWaveUnits(waveMod)
@@ -340,7 +340,7 @@ function SaveManager:completeWaveMod(waveMod)
 
 	routine(function()
 		wait(1.5)
-		self.user.itemStash:updateItemCount({
+		self.user.stashManager:updateItemCount({
 			itemName = "Coins",
 			count = waveCompletionReward,
 		})
@@ -428,7 +428,7 @@ function SaveManager:tick()
 		end
 	end
 
-	if self.user.itemStash:checkFullPets() then
+	if self.user.stashManager:checkFullPets() then
 		if self.checkFullPetsExpiree and self.checkFullPetsExpiree > ServerMod.step then
 			return
 		end

@@ -118,7 +118,7 @@ function TradeManager:tryAcceptGift(data)
 		self.user.notifyManager:notifyError("Other player left the game")
 		return
 	end
-	if self.user.itemStash:checkFullPets() then
+	if self.user.stashManager:checkFullPets() then
 		self.user.notifyManager:notifyError("Your inventory is full!")
 		return
 	end
@@ -131,7 +131,7 @@ function TradeManager:tryAcceptGift(data)
 
 	-- accept the gift
 	local itemName = giftMod["itemName"]
-	local itemMod = gifterUser.itemStash:getItemMod(itemName)
+	local itemMod = gifterUser.stashManager:getItemMod(itemName)
 
 	-- item could be already deleted
 	if not itemMod then
@@ -142,13 +142,13 @@ function TradeManager:tryAcceptGift(data)
 
 	-- add the item to the user's stash
 	local newItemMod = Common.deepCopy(itemMod)
-	self.user.itemStash:addItemMod(newItemMod)
+	self.user.stashManager:addItemMod(newItemMod)
 
 	-- remove the item from the gifter's stash and tools
 	gifterUser.toolManager:removeStashTool({
 		toolName = itemName,
 	})
-	gifterUser.itemStash:removeItemMod({
+	gifterUser.stashManager:removeItemMod({
 		itemName = itemName,
 	})
 

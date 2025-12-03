@@ -13,7 +13,7 @@ RunInfo["USERMANAGERS_LIST"] = {
 	{ "StatManager", "statManager" },
 	{ "CodeManager", "codeManager" },
 
-	{ "ItemStash", "itemStash" },
+	{ "StashManager", "stashManager" },
 	{ "BadgeManager", "badgeManager" },
 	{ "TradeManager", "tradeManager" },
 
@@ -96,7 +96,7 @@ RunInfo["SAVE_LIST"] = {
 	"saveManager",
 	"luckWizardManager",
 
-	"itemStash",
+	"stashManager",
 }
 
 RunInfo["DESTROY_LIST"] = {

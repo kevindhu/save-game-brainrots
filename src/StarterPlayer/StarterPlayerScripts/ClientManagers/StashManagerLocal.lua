@@ -14,21 +14,15 @@ local RelicInfo = require(game.ReplicatedStorage.Data.RelicInfo)
 local CrateInfo = require(game.ReplicatedStorage.Data.CrateInfo)
 local PetBalanceInfo = require(game.ReplicatedStorage.Data.PetBalanceInfo)
 
--- local Icon = require(game.ReplicatedStorage.Libraries.Icon)
-
 local Common = require(game.ReplicatedStorage.Common)
 local len, routine, wait = Common.len, Common.routine, Common.wait
-
--- local buttonGUI = playerGui:WaitForChild("ButtonGUI")
--- local buttonsFrame = buttonGUI.LeftFrame.ButtonsFrame
--- local stashButton = buttonsFrame.Stash
 
 local stashGUI = playerGui:WaitForChild("StashGUI")
 local bottomFrame = stashGUI.BottomFrame
 local stashFrame = stashGUI.StashFrame
 local itemInfoFrame = stashGUI.ItemInfoFrame
 
-local ItemStash = {
+local StashManager = {
 	itemMods = {},
 	itemModsList = {},
 
@@ -43,7 +37,7 @@ local ItemStash = {
 	},
 }
 
-function ItemStash:init()
+function StashManager:init()
 	self:addCons()
 	self:addTabCons()
 	self:addBottomCons()
@@ -97,7 +91,7 @@ function ItemStash:init()
 	self:chooseTab("All")
 end
 
-function ItemStash:addFavoriteCons()
+function StashManager:addFavoriteCons()
 	local favoriteButton = stashFrame.DecorFrame.FavoritesFrame.FavoriteButton
 	ClientMod.buttonManager:addActivateCons(favoriteButton, function()
 		self:toggleFavorite(not self.favoriteToggled)
@@ -105,7 +99,7 @@ function ItemStash:addFavoriteCons()
 	ClientMod.buttonManager:addBasicButtonCons(favoriteButton)
 end
 
-function ItemStash:toggleFavorite(newBool)
+function StashManager:toggleFavorite(newBool)
 	local favoriteButton = stashFrame.DecorFrame.FavoritesFrame.FavoriteButton
 
 	self.favoriteToggled = newBool
@@ -117,7 +111,7 @@ function ItemStash:toggleFavorite(newBool)
 	end
 end
 
-function ItemStash:addCons()
+function StashManager:addCons()
 	StarterGui:SetCoreGuiEnabled(Enum.CoreGuiType.Backpack, false)
 
 	self.templateStashItem = stashFrame.InnerFrame.Pages.Inventory.TemplateItem
@@ -149,7 +143,7 @@ function ItemStash:addCons()
 	ClientMod.buttonManager:addBasicButtonCons(equipBestButton)
 end
 
-function ItemStash:addTabCons()
+function StashManager:addTabCons()
 	local tabsFrame = stashFrame.DecorFrame.Tabs
 
 	local tabList = {
@@ -168,7 +162,7 @@ function ItemStash:addTabCons()
 	end
 end
 
-function ItemStash:newTabMod(tabData)
+function StashManager:newTabMod(tabData)
 	local tabClass = tabData["tabClass"]
 	local frame = tabData["frame"]
 
@@ -183,7 +177,7 @@ function ItemStash:newTabMod(tabData)
 	self.tabMods[tabClass] = newTabMod
 end
 
-function ItemStash:chooseTab(tabClass)
+function StashManager:chooseTab(tabClass)
 	self.chosenTabClass = tabClass
 
 	local timer = 0.3
@@ -222,7 +216,7 @@ function ItemStash:chooseTab(tabClass)
 	self:refreshGUI()
 end
 
-function ItemStash:addBottomCons()
+function StashManager:addBottomCons()
 	self.templateBottomItem = bottomFrame.TemplateItem
 	self.templateBottomItem.Visible = false
 
@@ -236,7 +230,7 @@ function ItemStash:addBottomCons()
 	-- ClientMod.buttonManager:addBasicButtonCons(inventoryButton)
 end
 
-function ItemStash:addDisplayCons()
+function StashManager:addDisplayCons()
 	local camera = workspace.CurrentCamera
 	camera:GetPropertyChangedSignal("ViewportSize"):connect(function()
 		self:refreshDisplay()
@@ -244,7 +238,7 @@ function ItemStash:addDisplayCons()
 	self:refreshDisplay()
 end
 
-function ItemStash:chooseInfoItemMod(itemMod)
+function StashManager:chooseInfoItemMod(itemMod)
 	self.chosenInfoItemMod = itemMod
 
 	if not itemMod then
@@ -272,7 +266,7 @@ function ItemStash:chooseInfoItemMod(itemMod)
 	end
 end
 
-function ItemStash:getDescriptionText(itemMod)
+function StashManager:getDescriptionText(itemMod)
 	local itemClass = itemMod["itemClass"]
 	local race = itemMod["race"]
 
@@ -312,11 +306,11 @@ function ItemStash:getDescriptionText(itemMod)
 	return table.concat(descriptionParts, ", ")
 end
 
-function ItemStash:tick()
+function StashManager:tick()
 	self:tickInfoFrame()
 end
 
-function ItemStash:tickInfoFrame()
+function StashManager:tickInfoFrame()
 	local mouse = player:GetMouse()
 	local mouseX = mouse.X
 	local mouseY = mouse.Y
@@ -347,7 +341,7 @@ function ItemStash:tickInfoFrame()
 		itemInfoFrame.Visible = false
 	end
 end
-function ItemStash:newBottomMod(itemData)
+function StashManager:newBottomMod(itemData)
 	local itemClass = itemData["itemClass"]
 	local itemName = itemData["itemName"]
 	local index = itemData["index"]
@@ -463,7 +457,7 @@ function ItemStash:newBottomMod(itemData)
 	return newBottomMod
 end
 
-function ItemStash:updateAlert(data)
+function StashManager:updateAlert(data)
 	local bool = data["bool"]
 	local count = data["count"]
 
@@ -472,7 +466,7 @@ function ItemStash:updateAlert(data)
 	if bool then
 		if self.toggled then
 			local alertData = {
-				moduleName = "itemStash",
+				moduleName = "stashManager",
 				bool = false,
 			}
 			ClientMod:FireServer("updateAlert", alertData)
@@ -486,7 +480,7 @@ function ItemStash:updateAlert(data)
 	end
 end
 
-function ItemStash:clickBottomItem(bottomMod)
+function StashManager:clickBottomItem(bottomMod)
 	if self.chosenBottomMod == bottomMod then
 		local chosenTutMod = ClientMod.tutManager.chosenTutMod
 		if
@@ -512,12 +506,12 @@ function ItemStash:clickBottomItem(bottomMod)
 	end
 end
 
-function ItemStash:chooseBottomMod(bottomMod)
+function StashManager:chooseBottomMod(bottomMod)
 	self.chosenBottomMod = bottomMod
 	self:refreshAllBottomModTweens()
 end
 
-function ItemStash:refreshAllBottomModTweens()
+function StashManager:refreshAllBottomModTweens()
 	for _, bottomMod in pairs(self.bottomModsList) do
 		local frame = bottomMod["frame"]
 		local goalSize = self.tileSize
@@ -539,7 +533,7 @@ function ItemStash:refreshAllBottomModTweens()
 	self.inventoryButton.Size = self.tileSize
 end
 
-function ItemStash:removeBottomMod(itemData)
+function StashManager:removeBottomMod(itemData)
 	local itemName = itemData["itemName"]
 
 	local bottomMod = self.bottomMods[itemName]
@@ -569,7 +563,7 @@ function ItemStash:removeBottomMod(itemData)
 	self:refreshAllBottomMods()
 end
 
-function ItemStash:refreshAllBottomMods()
+function StashManager:refreshAllBottomMods()
 	table.sort(self.bottomModsList, function(a, b)
 		return a["index"] < b["index"]
 	end)
@@ -593,7 +587,7 @@ function ItemStash:refreshAllBottomMods()
 	end
 end
 
-function ItemStash:refreshBottomMod(bottomMod)
+function StashManager:refreshBottomMod(bottomMod)
 	local index = bottomMod["index"]
 	local frame = bottomMod["frame"]
 
@@ -638,7 +632,7 @@ function ItemStash:refreshBottomMod(bottomMod)
 	end
 end
 
-function ItemStash:refreshDisplay()
+function StashManager:refreshDisplay()
 	local newDevice = ClientMod.deviceManager:getDevice()
 	if self.currDevice == newDevice then
 		return
@@ -658,7 +652,7 @@ function ItemStash:refreshDisplay()
 	self:refreshGUI()
 end
 
-function ItemStash:toggle(data)
+function StashManager:toggle(data)
 	local newBool = data["newBool"]
 
 	if newBool == self.toggled then
@@ -670,7 +664,7 @@ function ItemStash:toggle(data)
 		ClientMod.uiManager:toggleOffAllGUI()
 
 		if ClientMod.alertManager then
-			ClientMod.alertManager:tryClearAlert("itemStash")
+			ClientMod.alertManager:tryClearAlert("stashManager")
 		end
 	else
 		self:chooseInfoItemMod(nil)
@@ -683,7 +677,7 @@ function ItemStash:toggle(data)
 	self.toggled = newBool
 end
 
-function ItemStash:updateAllItemMods(data)
+function StashManager:updateAllItemMods(data)
 	local noRefreshGUI = true
 
 	-- see if any existing itemMods are not in the new data
@@ -705,7 +699,7 @@ function ItemStash:updateAllItemMods(data)
 	self:refreshGUI()
 end
 
-function ItemStash:updateItemMod(data)
+function StashManager:updateItemMod(data)
 	local itemData = data["itemMod"]
 	local noRefreshGUI = data["noRefreshGUI"]
 	local noClick = data["noClick"]
@@ -752,7 +746,7 @@ function ItemStash:updateItemMod(data)
 	end
 end
 
-function ItemStash:newItemMod(itemData)
+function StashManager:newItemMod(itemData)
 	local itemName = itemData["itemName"]
 
 	local frame = self.templateStashItem:Clone()
@@ -879,7 +873,7 @@ function ItemStash:newItemMod(itemData)
 	return newItemMod
 end
 
-function ItemStash:toggleBottomItem(itemData, noClick)
+function StashManager:toggleBottomItem(itemData, noClick)
 	itemData = Common.deepCopy(itemData)
 	itemData["frame"] = nil
 
@@ -907,7 +901,7 @@ function ItemStash:toggleBottomItem(itemData, noClick)
 	self:refreshGUI()
 end
 
-function ItemStash:getFullItemStats(itemClass)
+function StashManager:getFullItemStats(itemClass)
 	local itemStats = ItemInfo:getMeta(itemClass, true)
 		or ToolInfo:getMeta(itemClass, true)
 		or PetInfo:getMeta(itemClass, true)
@@ -921,7 +915,7 @@ function ItemStash:getFullItemStats(itemClass)
 	return itemStats
 end
 
-function ItemStash:removeItemMod(itemData, noRefreshGUI)
+function StashManager:removeItemMod(itemData, noRefreshGUI)
 	local itemName = itemData["itemName"]
 
 	local itemMod = self.itemMods[itemName]
@@ -950,7 +944,7 @@ function ItemStash:removeItemMod(itemData, noRefreshGUI)
 	end
 end
 
-function ItemStash:refreshGUI()
+function StashManager:refreshGUI()
 	local raceMap = {
 		pet = 1,
 		relic = 2,
@@ -1102,6 +1096,6 @@ function ItemStash:refreshGUI()
 	end
 end
 
-ItemStash:init()
+StashManager:init()
 
-return ItemStash
+return StashManager

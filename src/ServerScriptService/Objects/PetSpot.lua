@@ -104,7 +104,7 @@ function PetSpot:occupyWithDevPet()
 	local probManager = self.user.probManager
 	local randomMutationClass = probManager:generateMutationClass()
 
-	local petData = self.user.itemStash:generatePetData({
+	local petData = self.user.stashManager:generatePetData({
 		petClass = randomPetClass,
 		mutationClass = randomMutationClass,
 	})
@@ -267,7 +267,7 @@ function PetSpot:storeRelic()
 
 		-- print("STORING RELIC: ", newItemMod)
 
-		self.user.itemStash:addItemMod(newItemMod)
+		self.user.stashManager:addItemMod(newItemMod)
 	end
 	petData["relicMods"] = {}
 
@@ -470,7 +470,7 @@ function PetSpot:tryLevelUp()
 	end
 
 	local price = PetInfo:calculateLevelUpPrice(petData)
-	local coinsCount = self.user.itemStash:getItemCount({
+	local coinsCount = self.user.stashManager:getItemCount({
 		itemName = "Coins",
 	})
 
@@ -481,7 +481,7 @@ function PetSpot:tryLevelUp()
 
 	petData["level"] += 1
 
-	self.user.itemStash:updateItemCount({
+	self.user.stashManager:updateItemCount({
 		itemName = "Coins",
 		count = -price,
 	})
@@ -525,7 +525,7 @@ function PetSpot:tryCollectCoins()
 
 	local coinsCount = self.petData["totalCoins"]
 
-	self.user.itemStash:updateItemCount({
+	self.user.stashManager:updateItemCount({
 		itemName = "Coins",
 		count = coinsCount,
 	})

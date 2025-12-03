@@ -69,11 +69,11 @@ function CrateManager:tryBuyCrate(data)
 		return
 	end
 
-	-- see if already have itemStash crate
+	-- see if already have stashManager crate
 	local stashCrateCount = 0
 
-	local itemStash = self.user.itemStash
-	for _, itemMod in pairs(itemStash.itemMods) do
+	local stashManager = self.user.stashManager
+	for _, itemMod in pairs(stashManager.itemMods) do
 		if itemMod["race"] ~= "crate" then
 			continue
 		end
@@ -98,7 +98,7 @@ function CrateManager:tryBuyCrate(data)
 
 	self.shopStock[crateClass] = crateCount - 1
 
-	itemStash:addCrate({
+	stashManager:addCrate({
 		crateClass = crateClass,
 	})
 

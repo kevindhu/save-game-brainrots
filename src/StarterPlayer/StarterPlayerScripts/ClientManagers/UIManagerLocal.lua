@@ -189,7 +189,7 @@ local managerList = {
 	"indexManager",
 	"luckWizardManager",
 	"speedManager",
-	"itemStash",
+	"stashManager",
 }
 
 function UIManager:toggleOffAllGUI()

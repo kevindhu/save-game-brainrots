@@ -6,6 +6,10 @@ local len, routine, wait = Common.len, Common.routine, Common.wait
 local AnimUtils = {}
 AnimUtils.__index = AnimUtils
 
+local MARKER_CLASSES = {
+	"TestMarker1",
+}
+
 function AnimUtils:init() end
 
 function AnimUtils:clearAnimations(entity)
@@ -151,13 +155,7 @@ function AnimUtils:getTrackMod(entity, id)
 
 	-- print("NEW TRACK MOD: ", newTrackMod, entity:getName(), id)
 
-	local markerClasses = {
-		"LeftSwingStart",
-		"LeftSwingEnd",
-		"RightSwingStart",
-		"RightSwingEnd",
-	}
-	for _, markerClass in pairs(markerClasses) do
+	for _, markerClass in pairs(MARKER_CLASSES) do
 		local con = track:GetMarkerReachedSignal(markerClass):Connect(function(paramString)
 			entity:handleAnimateMarker(markerClass)
 		end)

@@ -42,7 +42,7 @@ function TradeManager:updateGiftMod(data)
 	self.giftMod = data["giftMod"]
 
 	local itemClass = self.giftMod["itemClass"]
-	local itemStats = ClientMod.itemStash:getFullItemStats(itemClass)
+	local itemStats = ClientMod.stashManager:getFullItemStats(itemClass)
 
 	confirmFrame.DescriptionTitle.Text =
 		string.format("%s is gifting you a %s", self.gifterUserName, itemStats["alias"])

@@ -30,13 +30,13 @@ function LoadAllModules()
 		ClientMod[moduleAlias] = module
 	end
 
-	ClientMod.itemStash:newBottomMod({
+	ClientMod.stashManager:newBottomMod({
 		itemName = "Bat1",
 		itemClass = "Bat1",
 		mutationClass = nil,
 		index = -1,
 	})
-	ClientMod.itemStash:refreshAllBottomModTweens()
+	ClientMod.stashManager:refreshAllBottomModTweens()
 
 	-- print(("CLIENT LOAD MODULES: %.2f seconds"):format(os.clock() - startTime))
 end

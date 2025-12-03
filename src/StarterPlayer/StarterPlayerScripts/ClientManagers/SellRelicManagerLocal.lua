@@ -149,7 +149,7 @@ end
 function SellRelicManager:refreshSellAllFrame()
 	local totalSellPrice = 0
 	local sellAllCount = 0
-	for _, itemMod in pairs(ClientMod.itemStash.itemMods) do
+	for _, itemMod in pairs(ClientMod.stashManager.itemMods) do
 		local race = itemMod["race"]
 		if race ~= "relic" then
 			continue

@@ -30,7 +30,7 @@ function SellPetManager:addCons()
 		self:toggle({
 			newBool = false,
 		})
-		ClientMod.itemStash:toggle({
+		ClientMod.stashManager:toggle({
 			newBool = true,
 		})
 	end)

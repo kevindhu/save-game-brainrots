@@ -37,7 +37,7 @@ ClientConfig["CLIENT_MODULES_LIST"] = {
 
 	{ "PetManager", "petManager" },
 
-	{ "ItemStash", "itemStash" },
+	{ "StashManager", "stashManager" },
 	{ "CurrManager", "currManager" },
 	{ "PlotManager", "plotManager" },
 	{ "WeatherManager", "weatherManager" },
@@ -98,7 +98,7 @@ ClientConfig["CLIENT_MODULES_LIST"] = {
 
 ClientConfig["TICK_LIST"] = {
 
-	"itemStash",
+	"stashManager",
 
 	"luckManager",
 	"tutManager",

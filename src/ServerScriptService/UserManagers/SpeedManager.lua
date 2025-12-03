@@ -134,7 +134,7 @@ function SpeedManager:tryUnlockSpeedMod(data)
 	end
 
 	local price = SpeedInfo.speedPriceMap[rating][tostring(speedIndex)]
-	local coinsCount = self.user.itemStash:getItemCount({
+	local coinsCount = self.user.stashManager:getItemCount({
 		itemName = "Coins",
 	})
 
@@ -159,7 +159,7 @@ function SpeedManager:tryUnlockSpeedMod(data)
 	self:unlockSpeedMod(rating, speedIndex, noSend)
 	self:toggleSpeedMod(speedMod, noSend)
 
-	self.user.itemStash:updateItemCount({
+	self.user.stashManager:updateItemCount({
 		itemName = "Coins",
 		count = -price,
 	})

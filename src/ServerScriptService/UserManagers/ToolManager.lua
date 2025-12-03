@@ -37,7 +37,7 @@ function ToolManager:tryBuyTool(data)
 		return
 	end
 
-	local coinsCount = self.user.itemStash:getItemCount({
+	local coinsCount = self.user.stashManager:getItemCount({
 		itemName = "Coins",
 	})
 	if coinsCount < price then
@@ -79,7 +79,7 @@ function ToolManager:tryEquipBottomMod(data)
 		end
 		chosenToolMod:toggleEquipped()
 	else
-		local itemMod = self.user.itemStash:getItemMod(itemName)
+		local itemMod = self.user.stashManager:getItemMod(itemName)
 		if not itemMod then
 			warn("NO ITEM MOD TO EQUIP: ", itemName)
 			return
@@ -324,7 +324,7 @@ function ToolManager:tryPlaceCrate(data)
 		return
 	end
 
-	local relicItemCount = self.user.itemStash:getRelicItemCount()
+	local relicItemCount = self.user.stashManager:getRelicItemCount()
 	if relicItemCount >= 1000 then
 		self.user.notifyManager:notifyError("Sell relics to open this")
 		return

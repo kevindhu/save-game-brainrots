@@ -22,8 +22,6 @@ function PetSpot.new(data)
 	local u = {}
 	u.data = data
 
-	u.partTextureMap = {}
-
 	u.fullRelicMods = {}
 
 	setmetatable(u, PetSpot)
@@ -684,8 +682,6 @@ function PetSpot:refreshRig()
 end
 
 function PetSpot:initRig()
-	-- print("INIT RIG FOR PET SPOT: ", self.petSpotName)
-
 	local baseRig = game.ReplicatedStorage.Assets[self.petClass]
 	if not baseRig.PrimaryPart then
 		baseRig.PrimaryPart = baseRig:FindFirstChild("HumanoidRootPart")
@@ -738,24 +734,6 @@ function PetSpot:initRig()
 		end
 	end
 
-	for _, child in pairs(rig:GetDescendants()) do
-		if child:IsA("BasePart") then
-			local textureMod = {}
-			textureMod["Color"] = child.Color
-			textureMod["Transparency"] = child.Transparency
-
-			if child:IsA("MeshPart") then
-				textureMod["TextureID"] = child.TextureID
-
-				local surfaceAppearance = child:FindFirstChildWhichIsA("SurfaceAppearance")
-				if surfaceAppearance then
-					textureMod["SurfaceAppearance"] = surfaceAppearance:Clone()
-				end
-			end
-			self.partTextureMap[child] = textureMod
-		end
-	end
-
 	local outerShell = Instance.new("Model")
 	rig.Parent = outerShell
 
@@ -769,13 +747,12 @@ function PetSpot:initRig()
 
 	self:updateRigFrame(self.currFrame)
 
-	local trackMod = ClientMod.animUtils:animate(self, {
+	ClientMod.animUtils:animate(self, {
 		race = "Idle",
 		animationId = PetInfo.idleAnimationMap[self.petClass],
 	})
 
 	self:initPetBB()
-	-- print("DONE INIT RIG FOR PET SPOT: ", self.petSpotName, self.rig)
 end
 
 function PetSpot:initPetBB()

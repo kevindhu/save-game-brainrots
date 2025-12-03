@@ -65,7 +65,7 @@ function LuckWizardManager:tryUpgradeLuck()
 	end
 
 	local coins = luckRequirementData["coins"]
-	local currentCoins = self.user.itemStash:getItemCount({
+	local currentCoins = self.user.stashManager:getItemCount({
 		itemName = "Coins",
 	})
 	if currentCoins < coins then
@@ -85,7 +85,7 @@ function LuckWizardManager:tryUpgradeLuck()
 
 	self:upgradeLuck()
 
-	self.user.itemStash:updateItemCount({
+	self.user.stashManager:updateItemCount({
 		itemName = "Coins",
 		count = -coins,
 	})
@@ -109,7 +109,7 @@ function LuckWizardManager:upgradeLuck()
 end
 
 function LuckWizardManager:checkHasPet(petClass)
-	for _, itemMod in pairs(self.user.itemStash.itemMods) do
+	for _, itemMod in pairs(self.user.stashManager.itemMods) do
 		if itemMod["itemClass"] == petClass and not itemMod["favorited"] then
 			return true
 		end
@@ -131,13 +131,13 @@ end
 function LuckWizardManager:removeFirstPet(petClass)
 	-- first try to remove from item stash
 
-	local itemStash = self.user.itemStash
-	for _, itemMod in pairs(itemStash.itemMods) do
+	local stashManager = self.user.stashManager
+	for _, itemMod in pairs(stashManager.itemMods) do
 		if itemMod["favorited"] then
 			continue
 		end
 		if itemMod["itemClass"] == petClass then
-			itemStash:removeItemMod({
+			stashManager:removeItemMod({
 				itemName = itemMod["itemName"],
 			})
 			return

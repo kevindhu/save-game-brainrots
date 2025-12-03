@@ -164,11 +164,11 @@ function handleRequest(req, data)
 	elseif req == "updateFriends" then
 		ClientMod.friendManager:updateFriends(data)
 
-	-- ITEMSTASH
+	-- STASHMANAGER
 	elseif req == "updateItemMod" then
-		ClientMod.itemStash:updateItemMod(data)
+		ClientMod.stashManager:updateItemMod(data)
 	elseif req == "updateAllItemMods" then
-		ClientMod.itemStash:updateAllItemMods(data)
+		ClientMod.stashManager:updateAllItemMods(data)
 
 	-- FAVORITEMANAGER
 	elseif req == "updateFavoriteData" then

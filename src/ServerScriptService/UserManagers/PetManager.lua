@@ -153,7 +153,7 @@ function PetManager:claimOfflineCoins(data)
 		totalOfflineCoins = totalOfflineCoins * 10
 	end
 
-	self.user.itemStash:updateItemCount({
+	self.user.stashManager:updateItemCount({
 		itemName = "Coins",
 		count = totalOfflineCoins,
 	})
@@ -206,7 +206,7 @@ function PetManager:tryUnlockPetSpot(data)
 
 	local index = petSpot.index
 	local unlockCost = PetBalanceInfo["petSpotUnlockCostMap"][tostring(index)]
-	local coinsCount = self.user.itemStash:getItemCount({
+	local coinsCount = self.user.stashManager:getItemCount({
 		itemName = "Coins",
 	})
 	if coinsCount < unlockCost then
@@ -216,7 +216,7 @@ function PetManager:tryUnlockPetSpot(data)
 
 	petSpot:unlock()
 
-	self.user.itemStash:updateItemCount({
+	self.user.stashManager:updateItemCount({
 		itemName = "Coins",
 		count = -unlockCost,
 	})
@@ -438,7 +438,7 @@ function PetManager:tryEquipBestPets(data)
 	end
 
 	local bestItemModList = {}
-	for _, itemMod in pairs(self.user.itemStash.itemMods) do
+	for _, itemMod in pairs(self.user.stashManager.itemMods) do
 		if itemMod["race"] ~= "pet" then
 			continue
 		end
@@ -460,11 +460,11 @@ function PetManager:tryEquipBestPets(data)
 
 		local itemMod = bestItemModList[i]
 
-		self:placePetFromItemStash(itemMod, petSpot)
+		self:placePetFromStashManager(itemMod, petSpot)
 	end
 end
 
-function PetManager:placePetFromItemStash(itemMod, petSpot)
+function PetManager:placePetFromStashManager(itemMod, petSpot)
 	local petData = {
 		petClass = itemMod["itemClass"],
 	}
@@ -474,16 +474,16 @@ function PetManager:placePetFromItemStash(itemMod, petSpot)
 
 	self:occupyPetSpot(petSpot, petData)
 
-	self.user.itemStash:removeItemMod({
+	self.user.stashManager:removeItemMod({
 		itemName = itemMod["itemName"],
 	})
 end
 
-function PetManager:placeRelicFromItemStash(itemMod, petSpot)
+function PetManager:placeRelicFromStashManager(itemMod, petSpot)
 	local newItemMod = Common.deepCopy(itemMod)
 	petSpot:addRelicMod(newItemMod)
 
-	self.user.itemStash:removeItemMod({
+	self.user.stashManager:removeItemMod({
 		itemName = itemMod["itemName"],
 	})
 end
@@ -493,7 +493,7 @@ function PetManager:storePet(petSpot)
 	itemData["noClick"] = false
 	itemData["forceBottom"] = true
 
-	self.user.itemStash:addItemMod(itemData)
+	self.user.stashManager:addItemMod(itemData)
 
 	ServerMod:FireClient(self.user.player, "newSoundMod", {
 		soundClass = "SproutPop1",

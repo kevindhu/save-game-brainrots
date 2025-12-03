@@ -262,7 +262,7 @@ function StashTool:raycastPlaceModel(frame, whiteList)
 end
 
 function StashTool:confirmPlacement(petSpot)
-	local itemMod = self.user.itemStash:getItemMod(self.toolName)
+	local itemMod = self.user.stashManager:getItemMod(self.toolName)
 
 	ServerMod:FireClient(self.user.player, "newSoundMod", {
 		soundClass = "ItemPlacement2",
@@ -274,9 +274,9 @@ function StashTool:confirmPlacement(petSpot)
 	local race = self.race
 
 	if race == "pet" then
-		self.user.petManager:placePetFromItemStash(itemMod, petSpot)
+		self.user.petManager:placePetFromStashManager(itemMod, petSpot)
 	elseif race == "relic" then
-		self.user.petManager:placeRelicFromItemStash(itemMod, petSpot)
+		self.user.petManager:placeRelicFromStashManager(itemMod, petSpot)
 	else
 		warn("UNKNOWN RACE TO ACTIVATE: ", self.race)
 	end
@@ -291,7 +291,7 @@ function StashTool:confirmCratePlacement()
 		return
 	end
 
-	local itemMod = self.user.itemStash:getItemMod(itemName)
+	local itemMod = self.user.stashManager:getItemMod(itemName)
 
 	local crateData = {
 		crateClass = crateClass,
@@ -304,12 +304,12 @@ function StashTool:confirmCratePlacement()
 
 	local count = itemMod["count"]
 	if count > 1 then
-		self.user.itemStash:updateItemCount({
+		self.user.stashManager:updateItemCount({
 			itemName = itemName,
 			count = -1,
 		})
 	else
-		self.user.itemStash:removeItemMod({
+		self.user.stashManager:removeItemMod({
 			itemName = itemName,
 		})
 		self:destroy()

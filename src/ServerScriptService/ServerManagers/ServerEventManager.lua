@@ -64,7 +64,7 @@ function ServerEventManager:handleRequest(player, req, data)
 	local codeManager = user.codeManager
 	local toolManager = user.toolManager
 	local tutManager = user.tutManager
-	local itemStash = user.itemStash
+	local stashManager = user.stashManager
 	local tradeManager = user.tradeManager
 	local rewardManager = user.rewardManager
 	local petManager = user.petManager
@@ -93,13 +93,13 @@ function ServerEventManager:handleRequest(player, req, data)
 	elseif req == "tryClaimGroupReward" then
 		rewardManager:tryClaimGroupReward()
 
-	-- ITEMSTASH
+	-- STASHMANAGER
 	elseif req == "trySellItem" then
-		itemStash:trySellItem(data)
+		stashManager:trySellItem(data)
 	elseif req == "trySellAllToolItems" then
-		itemStash:trySellAllToolItems(data)
+		stashManager:trySellAllToolItems(data)
 	elseif req == "toggleItemFavorite" then
-		itemStash:toggleItemFavorite(data)
+		stashManager:toggleItemFavorite(data)
 
 	-- FAVORITEMANAGER
 	elseif req == "finishFavoriteGame" then
